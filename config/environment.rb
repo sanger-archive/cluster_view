@@ -6,6 +6,18 @@ RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
+# Override the behaviour of Rails because this is what we'll do consistently elsewhere
+class Rails::Configuration
+  # Override the default behaviour of #gem so that it will not include the gem dependency
+  # if there is a plugin defined with the same name.
+  def gem_with_vendor_checking(name, options = {})
+    plugin_directory_name = options[ :lib ] || name
+    gem_without_vendor_checking(name, options) unless File.directory?(File.join(Rails.root, 'vendor', 'plugins', plugin_directory_name))
+  end
+  alias_method(:gem_without_vendor_checking, :gem)
+  alias_method(:gem, :gem_with_vendor_checking)
+end
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
