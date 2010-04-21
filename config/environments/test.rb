@@ -29,3 +29,5 @@ config.action_mailer.delivery_method = :test
 
 # Gems required by the test environment
 config.gem 'rspec-rails', :version => '>= 1.3.2', :lib => false
+#config.gem 'ZenTest'
+#config.gem 'spork'
