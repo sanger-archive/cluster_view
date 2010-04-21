@@ -134,6 +134,10 @@ When /^(?:|I )attach the file "([^\"]*)" to "([^\"]*)"$/ do |path, field|
     type = "image/png" 
   when "gif"
     type = "image/gif"
+  when "tif"
+    type = "image/tif"
+  when "tiff"
+    type = "image/tiff"
   end
   
   attach_file(field, path, type)
