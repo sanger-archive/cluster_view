@@ -7,10 +7,12 @@ module NavigationHelpers
   #
   def path_to(page_name)
     case page_name
+
     when /the home\s?page/         then '/'
     when /the (login|logout) page/ then send(:"#{ $1 }_path")
     when /a secure page/           then secure_path
-    when /the batch search\s?page/ then batch_search_path
+    when /the batch search\s?page/ then batches_path
+
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
         "Now, go and add a mapping in #{__FILE__}"

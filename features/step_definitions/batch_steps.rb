@@ -1,9 +1,9 @@
-When /^I search for a batch number of "([^\"]*)"$/ do |batch_number|
-  fill_in "Batch Number", :with => batch_number
-  click_button "Search"
+When /^I search for a batch ID of "([^\"]*)"$/ do |batch_id|
+  When %Q{I fill in "Batch ID" with "#{ batch_id }"}
+  When 'I press "Search"'
 end
 
-Given /^there is no batch with a number of "([^\"]*)"$/ do |batch_number|
-  lambda {Batch.find(batch_number)}.
+Given /^there is no batch with an ID of "([^\"]*)"$/ do |batch_id|
+  lambda {Batch.find(batch_id)}.
     should raise_error(ActiveResource::ResourceNotFound)
 end

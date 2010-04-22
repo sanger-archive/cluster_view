@@ -4,13 +4,13 @@ Feature: Batch search
   I want to pass a batch number
 	And be presented with the corresponding batch
 
-	Scenario: Search a valid batch number
-	  Given I am on the batches page
-	  When I search for a batch number of "1044" 
-	  Then I should see "Batch Number: 1044"
+	Scenario: Search a valid batch ID
+	  Given I am on the batch search page
+	  When I search for a batch ID of "1044" 
+	  Then I should see "Batch ID: 1044"
 	
 	Scenario: Search for batch that doesn't exit
-	  Given I am on the batches page
-		And there is no batch with a number of "2"
-	  When I search for a batch number of "2"
+	  Given I am on the batch search page
+		And there is no batch with an ID of "2"
+	  When I search for a batch ID of "2"
 	  Then I should see "Batch 2 cannot be found"
