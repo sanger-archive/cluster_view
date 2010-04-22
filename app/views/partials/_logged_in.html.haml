@@ -1,0 +1,7 @@
+%li
+  - form_tag(batch_search_path, :method => :get, :id => 'quick_search') do
+    = text_field_tag(:id)
+
+%li
+  = h(current_user.username)
+  (#{ link_to('Logout', logout_path) })

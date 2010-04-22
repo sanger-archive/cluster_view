@@ -7,4 +7,24 @@
     = stylesheet_link_tag 'ie.css', :media => 'screen, projection'
 
 %body
-  = yield
+  #header
+    #description
+      = image_tag('sanger_smaller.png', :size => '12x12')
+      %h1<
+        SYBR Green Clustering QC
+
+    #controls
+      %ul
+        = render(:partial => logged_in? ? '/partials/logged_in' : '/partials/logged_out')
+        %li.last= link_to_unless_current('Cluster View', root_path)
+
+    .clear
+
+  #content
+    = yield
+
+  #footer
+    %ul
+      %li= link_to_unless_current('About', about_path)
+      %li= link_to_unless_current('Feedback', feedback_path)
+

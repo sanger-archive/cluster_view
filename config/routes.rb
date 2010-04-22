@@ -1,5 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
-  map.root :controller => 'site', :action => 'index'
+  map.with_options(:controller => 'site', :conditions => { :method => :get }) do |site|
+    site.root :action => 'index'
+    site.about('/about', :action => 'about')
+    site.feedback('/feedback', :action => 'feedback')
+  end
 
   map.with_options(:controller => 'batches', :conditions => { :method => :get }) do |batches|
     batches.batches('/batches', :action => 'index')
