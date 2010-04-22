@@ -6,11 +6,10 @@ Feature: Batch search
 
 	Scenario: Search a valid batch ID
 	  Given I am on the batch search page
-	  When I search for a batch ID of "1044" 
+	  When I search for a valid batch ID of "1044" 
 	  Then I should see "Batch ID: 1044"
 	
 	Scenario: Search for batch that doesn't exit
 	  Given I am on the batch search page
-		And there is no batch with an ID of "2"
-	  When I search for a batch ID of "2"
+	  When I search for an invalid batch ID of "2"
 	  Then I should see "Batch 2 cannot be found"
