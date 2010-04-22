@@ -28,6 +28,6 @@ config.action_mailer.delivery_method = :test
 # config.active_record.schema_format = :sql
 
 # Gems required by the test environment
-config.gem 'rspec-rails', :version => '>= 1.3.2', :lib => false
-#config.gem 'ZenTest'
-#config.gem 'spork'
+config.gem 'rspec-rails',   :version => '>= 1.3.2', :lib => false
+config.gem 'factory_girl',  :version => '>= 1.2.4'
+config.gem 'ruby-net-ldap', :version => '>= 0.0.4', :lib => 'net/ldap'

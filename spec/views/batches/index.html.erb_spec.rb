@@ -5,8 +5,11 @@ describe "/batches/index" do
     render 'batches/index'
   end
 
-  #Delete this example and add some real ones or delete this file
-  it "should tell you where to find the file" do
-    response.should have_tag('p', %r[Find me in app/views/batches/index])
+  it 'has a form for entering the search details' do
+    response.should get_form_to(batch_search_path)
+  end
+
+  it 'has a field for entering the batch ID' do
+    response.should have_text_field(:name => 'id')
   end
 end

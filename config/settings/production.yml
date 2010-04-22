@@ -1,0 +1,7 @@
+sequencescape_uri: http://localhost:3000
+
+ldap_configuration:
+  host: 'ldap.internal.sanger.ac.uk'
+  port: '636'
+  encryption: :simple_tls
+

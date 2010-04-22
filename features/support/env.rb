@@ -55,3 +55,6 @@ if defined?(ActiveRecord::Base)
   rescue LoadError => ignore_if_database_cleaner_not_present
   end
 end
+
+# Load in the authentication support stuff
+require File.join(File.dirname(__FILE__), 'authentication_setup')

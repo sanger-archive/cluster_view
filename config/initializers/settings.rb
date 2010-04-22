@@ -2,8 +2,8 @@ class Settings
   include Singleton
   
   class << self
-    def respond_to?(method)
-      super or self.instance.respond_to?(method)
+    def respond_to?(method, include_private = false)
+      super or self.instance.respond_to?(method, include_private)
     end
     
   protected
@@ -19,15 +19,33 @@ class Settings
     @settings = YAML.load(File.read(File.join(File.dirname(__FILE__), *%W[.. settings #{RAILS_ENV}.yml])))
   end
   
-  def respond_to?(method)
-    super or @settings.key?(method.to_s)
+  def respond_to?(method, include_private = false)
+    super or is_settings_query_method?(method) or @settings.key?(setting_key_for(method))
   end
   
 protected
   
   def method_missing(method, *args, &block)
-    return super unless @settings.key?(method.to_s)
-    @settings[ method.to_s ]
+    setting_key    = setting_key_for(method)
+    setting_exists = @settings.key?(setting_key)
+
+    if is_settings_query_method?(method)
+      setting_exists
+    elsif setting_exists
+      @settings[ setting_key ]
+    else
+      super
+    end
+  end
+
+private
+
+  def is_settings_query_method?(method)
+    method.to_s =~ /\?$/
+  end
+
+  def setting_key_for(method)
+    method.to_s.match(/^([^\?]+)\??$/)[ 1 ]
   end
   
 end

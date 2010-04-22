@@ -7,18 +7,11 @@ module NavigationHelpers
   #
   def path_to(page_name)
     case page_name
-    
-    when /the home\s?page/
-      '/'
-      
-    when /the batch search\s?page/
-        '/batches'
-    
-    # Add more mappings here.
-    # Here is an example that pulls values out of the Regexp:
-    #
-    #   when /^(.*)'s profile page$/i
-    #     user_profile_path(User.find_by_login($1))
+
+    when /the home\s?page/         then '/'
+    when /the (login|logout) page/ then send(:"#{ $1 }_path")
+    when /a secure page/           then secure_path
+    when /the batch search\s?page/ then batch_search_path
 
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +

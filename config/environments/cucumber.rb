@@ -21,7 +21,11 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
-config.gem 'cucumber-rails',   :lib => false, :version => '>=0.3.0'
-config.gem 'database_cleaner', :lib => false, :version => '>=0.5.0'
-config.gem 'webrat',           :lib => false, :version => '>=0.7.0'
+config.gem 'cucumber-rails',   :version => '>=0.3.0',  :lib => false
+config.gem 'database_cleaner', :version => '>=0.5.0',  :lib => false
+config.gem 'webrat',           :version => '>=0.7.0',  :lib => false
+config.gem 'factory_girl',     :version => '>= 1.2.4'
+config.gem 'ruby-net-ldap',    :version => '>= 0.0.4', :lib => 'net/ldap'
 
+# We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
+I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
