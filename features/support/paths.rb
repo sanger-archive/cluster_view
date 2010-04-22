@@ -7,8 +7,6 @@ module NavigationHelpers
   #
   def path_to(page_name)
     case page_name
-<<<<<<< HEAD
-
     when /the home\s?page/         then '/'
     when /the (login|logout) page/ then send(:"#{ $1 }_path")
     when /a secure page/           then secure_path
