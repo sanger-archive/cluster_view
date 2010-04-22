@@ -1,3 +1,3 @@
 class Batch < ActiveResource::Base
-  self.site = "http://localhost:3000"
+  self.site = Settings.sequencescape_url
 end
