@@ -1,7 +1,7 @@
-<h1>Search for a batch</h1>
+<h1>Search for Batch</h1>
 
-<% form_tag(:action => "show", :method => :show) do %>
-	<%= label_tag :id, "Batch ID" %>
+<% form_tag(:action => "show", :method => :get) do %>
+  <%= label_tag :id, "Batch Number" %>
 	<%= text_field_tag :id %>
 	<%= submit_tag "Search" %>
 <% end -%>

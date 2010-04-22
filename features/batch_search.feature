@@ -5,16 +5,12 @@ Feature: Batch search
 	And be presented with the corresponding batch
 
 	Scenario: Search a valid batch number
-		Given I am on the batch search page
-	  When I search for batch number "1044" 
-	  Then I see the batch page for batch "1044"
+	  Given I am on the batches page
+	  When I search for a batch number of "1044" 
+	  Then I should see "Batch Number: 1044"
 	
-	Scenario: Search for an unknown batch number
-		Given I am on the batch search page
-		When I search for a non-existent batch number "2"
-	  Then I should see "Batch not found"
-	
-	
-	
-	
-	
+	Scenario: Search for batch that doesn't exit
+	  Given I am on the batches page
+		And there is no batch with a number of "2"
+	  When I search for a batch number of "2"
+	  Then I should see "Batch 2 cannot be found"
