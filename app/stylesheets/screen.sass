@@ -10,6 +10,8 @@
 !color_blue_dark   = #2F3B5D
 !color_grey_light  = #D0D0D0
 !color_grey_medium = #666666
+!color_red_light   = #E98844
+!color_red_dark    = #C92200
 
 *:focus
   outline= !color_grey_medium "dotted" "medium"
@@ -28,6 +30,9 @@ body
 
   .clear
     clear: both
+
+  input.prefilled
+    color= !color_grey_light
 
 #header
   background= !color_blue_dark
@@ -74,3 +79,55 @@ body
 
     li
       margin-right: 5px
+
+#login
+  border= 3px "solid" !color_blue_dark
+  background= !color_grey_light
+  padding: 10px
+  margin: 10px
+    left: auto
+    right: auto
+  width: 400px
+
+  h1
+    font-weight: bold
+    font-size: 16px
+    margin-bottom: 10px
+    padding-bottom: 5px
+    border-bottom= 1px "solid" !color_grey_medium
+
+  form
+    text-align: center
+
+    li
+      line-height: 30px
+
+      label
+        display: inline-block
+        width: 7em
+        text-align: right
+        margin-right: 5px
+
+      input
+        width: 20em
+
+      &.error input
+        background= !color_red_light
+        border= 1px "solid" !color_red_dark
+
+      &.boolean 
+        label, input
+          width: auto
+
+      .inline-errors
+        display: none
+
+#errorExplanation
+  text-align: left
+  background= !color_red_light
+  border= 2px "solid" !color_red_dark
+  padding: 5px
+  color= !color_white
+
+  h2
+    font-weight: bold
