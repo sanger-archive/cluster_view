@@ -16,6 +16,13 @@ layout_spec_for('application') do
   it 'has a link to the login page' do
     response.should have_link_to(login_path)
   end
+  
+  it_renders_flash_field(:message)
+  it_renders_flash_field(:error)
+  
+  it 'has only one #flash element' do
+    response.should have_tag('#flash', :count => 1)
+  end
 end
 
 describe 'layout/application' do

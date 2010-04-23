@@ -23,12 +23,22 @@ module FormHelper
       end
     end
   end
+  
+  ATTRIBUTES_THAT_ARE_NOT_HTML = [ :count ]
 
   def have_tag_with_attributes_as_hash(tag, *args, &block)
-    args.extract_options!.each do |attribute_name,value|
+    attributes = args.extract_options!
+
+    options = (ATTRIBUTES_THAT_ARE_NOT_HTML & attributes.keys).inject({}) do |options,name|
+      options[ name ] = attributes.delete(name)
+      options
+    end
+    
+    attributes.each do |attribute_name,value|
       tag << "[#{ attribute_name }=?]"
       args << value
     end
+    args.push(options)
 
     have_tag_without_attributes_as_hash(tag, *args, &block)
   end
@@ -56,12 +66,34 @@ module FormHelper
     end
   end
 
+  #--
+  # Helpers for form fields:
+  #
+  #  have_text_field      => have_tag('input', :type => 'text')
+  #  have_password_field  => have_tag('input', :type => 'password')
+  #  have_checkbox_field  => have_tag('input', :type => 'checkbox')
+  #  have_hidden_field    => have_tag('input', :type => 'hidden')
+  #++
   have_field_by_type_helper(:text)
   have_field_by_type_helper(:password)
   have_field_by_type_helper(:checkbox)
+  have_field_by_type_helper(:hidden)
 
+  #--
+  # Helpers for forms:
+  #
+  #  post_form_to(destination)  => have_tag('form', :method => 'post', :action => destination)
+  #  get_form_to(destination)   => have_tag('form', :method => 'get', :action => destination)
+  #  put_form_to(destination)   => have_tag('form', :method => 'post', :action => destination) [ with hidden '_method' field 'put' ]
+  #++
   form_by_method_helper(:post)
   form_by_method_helper(:get)
+  
+  def put_form_to(action_destination)
+    have_tag('form', :method => 'post', :action => action_destination) do |form|
+      form.first.should have_hidden_field(:name => '_method', :value => 'put')
+    end
+  end
 end
 
 class Spec::Rails::Example::ViewExampleGroup

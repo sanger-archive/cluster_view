@@ -1,0 +1,16 @@
+= render :partial => 'search_form'
+
+%h1<
+  Batch ID: #{ @batch.id }
+
+%p= h flash[:message]
+
+%img{ :src => "", :alt => "2617" }
+
+- semantic_form_for(@batch, :html => { :method => :put }) do |f|
+  - f.inputs do
+    =f.input :image, :as => :file
+  - f.buttons do
+    = f.commit_button 'Upload'
+    
+  

@@ -15,6 +15,8 @@ module Spec::DSL::Main
     describe("layouts/#{ layout }", :type => :view) do
       before(:each) do
         @controller.template.stub!(:current_page?).with(any_args).and_return(false)
+        flash[:message] = 'FLASH MESSAGE'
+        flash[:error] = 'FLASH ERROR'
         render :text => 'CONTENT FOR LAYOUT', :layout => layout
       end
 
@@ -37,4 +39,12 @@ end
 
 class Spec::Rails::Example::ViewExampleGroup
   include ::LinkHelper
+  
+  class << self
+    def it_renders_flash_field(field)
+      it "displays the flash[#{ field.inspect }]" do
+        response.should have_tag("#flash .#{ field }")
+      end
+    end
+  end
 end

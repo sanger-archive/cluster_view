@@ -9,6 +9,7 @@ ActionController::Routing::Routes.draw do |map|
     batches.batches('/batches', :action => 'index')
     batches.batch_search('/batches/search', :action => 'show')
     batches.batch('/batches/:id', :action => 'show')
+    batches.batch_update('/batches/:id', :action => 'update', :conditions => { :method => :put })
   end
 
   map.with_options(:controller => 'user_sessions') do |authentication|

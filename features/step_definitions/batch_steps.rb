@@ -11,15 +11,15 @@ def invalid_batch_mock(batch_id)
   end
 end
 
+Given /^batch ID "([^\"]+)" is (valid|invalid)$/ do |batch_id,validity|
+  send(:"#{ validity }_batch_mock", batch_id)
+end
 
-When /^I search for a valid batch ID of "([^\"]*)"$/ do |batch_id|
-  valid_batch_mock(batch_id)
+When /^I search for batch ID "([^\"]*)"$/ do |batch_id|
   fill_in "Batch ID", :with =>batch_id
   click_button "Search"
 end
 
-When /^I search for an invalid batch ID of "([^\"]*)"$/ do |batch_id|
-  invalid_batch_mock(batch_id)
-  fill_in "Batch ID", :with => batch_id
-  click_button "Search"
+Then /^I should see a thumbnail for "([^\"]*)"$/ do |arg1|
+  response.should have_selector(:img, :alt => arg1)
 end

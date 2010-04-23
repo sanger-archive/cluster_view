@@ -55,3 +55,5 @@ Rails::Initializer.run do |config|
   # Setup a URI constant for the sequencescape connection
 end
 
+# We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
+I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
