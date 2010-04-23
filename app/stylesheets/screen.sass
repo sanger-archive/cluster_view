@@ -1,13 +1,133 @@
-/*
-  Welcome to Compass.
-  In this file you should write your main styles. (or centralize your imports)
-  Import this file using the following HTML or equivalent:
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
-
 @import compass/reset.sass
+@import compass/utilities/general.sass
+@import compass/utilities/lists.sass
+@import compass/utilities/links.sass
 
-/*
-  The *:focus rule is reset and suppresses link outlining.
-  You _must_ remember to redefine your own outline, as it’s an important accessibility aid. E.g.
-  *:focus
-    outline: #ccc dotted medium
+!color_black       = #222222
+!color_white       = #F8F8F8
+
+!color_blue_light  = #0077A9
+!color_blue_dark   = #2F3B5D
+!color_grey_light  = #D0D0D0
+!color_grey_medium = #666666
+!color_red_light   = #E98844
+!color_red_dark    = #C92200
+
+*:focus
+  outline= !color_grey_medium "dotted" "medium"
+
+body
+  background= !color_white
+  color= !color_black
+
+  font: 
+    family: 'Lucida Grande', helvetica, arial, sans-serif
+    size: 12px
+  line-height: 16px
+
+  a
+    +hover-link
+
+  .clear
+    clear: both
+
+  input.prefilled
+    color= !color_grey_light
+
+#header
+  background= !color_blue_dark
+  border-top= 3px "solid" !color_blue_light
+  color= #EFEFEF
+  padding: 3px 10px 5px
+
+  a
+    +link-colors(#EFEFEF)
+
+  #description
+    +float-left
+
+    img, h1
+      display: inline-block
+
+  #controls
+    +float-right
+    text-align: right
+
+    ul
+      +inline-list
+
+      li:after
+        content: ' * '
+
+      li:last-child:after, li.last
+        content: ''
+
+    #quick_search
+      display: inline-block
+
+#footer
+  border-top= 1px "solid" !color_grey_light
+  font-size: 10px
+  padding-top: 3px
+  color= !color_grey_medium
+
+  a
+    +link-colors(!color_grey_medium)
+
+  ul
+    +inline-list
+
+    li
+      margin-right: 5px
+
+#login
+  border= 3px "solid" !color_blue_dark
+  background= !color_grey_light
+  padding: 10px
+  margin: 10px
+    left: auto
+    right: auto
+  width: 400px
+
+  h1
+    font-weight: bold
+    font-size: 16px
+    margin-bottom: 10px
+    padding-bottom: 5px
+    border-bottom= 1px "solid" !color_grey_medium
+
+  form
+    text-align: center
+
+    li
+      line-height: 30px
+
+      label
+        display: inline-block
+        width: 7em
+        text-align: right
+        margin-right: 5px
+
+      input
+        width: 20em
+
+      &.error input
+        background= !color_red_light
+        border= 1px "solid" !color_red_dark
+
+      &.boolean 
+        label, input
+          width: auto
+
+      .inline-errors
+        display: none
+
+#errorExplanation
+  text-align: left
+  background= !color_red_light
+  border= 2px "solid" !color_red_dark
+  padding: 5px
+  color= !color_white
+
+  h2
+    font-weight: bold
