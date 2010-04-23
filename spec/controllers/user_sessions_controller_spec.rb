@@ -44,7 +44,12 @@ describe UserSessionsController do
 
     context 'with a valid login' do
       before(:each) do
+        @controller.should_receive(:translate).with('user_sessions.login.success').and_return('success')
         post 'create', 'user_session' => { 'username' => @user.username, 'password' => @user.username }
+      end
+
+      after(:each) do
+        flash[ :notice ].should == 'success'
       end
 
       it 'redirects to the root of the application' do
@@ -60,8 +65,14 @@ describe UserSessionsController do
   describe "GET 'destroy'" do
     context 'when logged in' do
       before(:each) do
+        @controller.should_receive(:translate).with('user_sessions.logout.success').and_return('success')
+
         Factory('User: John Smith')
         get 'destroy'
+      end
+
+      after(:each) do
+        flash[ :notice ].should == 'success'
       end
 
       it 'redirects to the login page' do

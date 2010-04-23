@@ -6,7 +6,7 @@ module NamedScopeHelper
   end
   
   def using_named_scope(scope, *args, &block)
-    context ".#{ scope }" do
+    describe ".#{ scope }" do
       subject { described_class.send(scope, *args).proxy_options }
       instance_eval(&block)
     end

@@ -10,7 +10,7 @@ describe User do
     @user = Factory('User: John Smith')
   end
 
-  context '#verify_ldap_credentials' do
+  describe '#verify_ldap_credentials' do
     before(:each) do
       Settings.instance.stub!(:ldap_configuration).and_return(:ldap => :details)
       @user.should_receive(:ldap_authentication_details_for).with('PASSWORD').and_return(:authentication => :details)
@@ -36,12 +36,24 @@ describe User do
     end
   end
 
-  context '#ldap_authentication_details_for' do
+  describe '#ldap_authentication_details_for' do
     it 'returns authentication options for the given password' do
       @user.ldap_authentication_details_for('PASSWORD').should == { 
         :username => 'uid=John Smith,ou=people,dc=sanger,dc=ac,dc=uk',
         :password => 'PASSWORD'
       }
+    end
+  end
+
+  describe '.find_by_ldap_username' do
+    it 'returns the user with the matching username' do
+      User.find_by_ldap_username(@user.username).should == @user
+    end
+
+    it 'creates a user with a persistence token if they do not already exist' do
+      user = User.find_by_ldap_username('jane doe')
+      user.should_not be_new_record
+      user.persistence_token.should_not be_blank
     end
   end
 end

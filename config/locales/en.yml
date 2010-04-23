@@ -2,4 +2,22 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  formtastic:
+    labels:
+      user_session:
+        username: 'Username'
+        password: 'Password'
+        remember_me: 'Keep me signed in on this computer'
+
+  user_sessions:
+    login:
+      login_with_systems_account: 'Login with your Unix account'
+      login_without_systems_account: 'Login'
+      link_text: 'Login'
+      success: 'Login successful!'
+
+    logout:
+      link_text: 'Logout'
+      success: 'Logout successful!'
+
+    require_login: 'You must be logged in to access this page'

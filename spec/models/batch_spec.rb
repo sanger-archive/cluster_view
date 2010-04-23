@@ -7,14 +7,14 @@ describe Batch do
     @batch = Batch.find(BatchHelper::VALID_BATCH_ID)
   end
 
-  context '#images' do
+  describe '#images' do
     it 'finds all Image instances associated with the batch' do
       Image.should_receive(:for_batch).with(@batch).and_return(:ok)
       @batch.images.should == :ok
     end
   end
   
-  context '#update_attributes' do
+  describe '#update_attributes' do
     it 'does not update the images (or fall over) if the parameter is unspecified' do
       Image.should_receive(:create!).never
       Image.should_receive(:find).never
