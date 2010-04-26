@@ -21,3 +21,11 @@ en:
       success: 'Logout successful!'
 
     require_login: 'You must be logged in to access this page'
+
+  batches:
+    errors:
+      batch_not_found: 'Batch {{batch_id}} cannot be found.'
+
+    messages:
+      image_upload:
+        success: 'Image {{filename}} uploaded successfully.'

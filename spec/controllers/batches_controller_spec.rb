@@ -8,10 +8,6 @@ shared_examples_for('the batch is invalid') do
   it "sets the flash[:error]" do
     flash[:error].should_not be_nil
   end
-  
-  it 'assigns @batch_number to be the batch ID' do
-    assigns[ :batch_number ].should == BatchHelper::INVALID_BATCH_ID.to_s
-  end
 end
 
 describe BatchesController do
