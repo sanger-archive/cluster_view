@@ -10,8 +10,32 @@ shared_examples_for('the batch is invalid') do
   end
 end
 
+shared_examples_for('returns batch image data') do
+  before(:each) do
+    image = Factory('Images for batch', :batch_id => BatchHelper::VALID_BATCH_ID)
+    get(controller_action(), :id => BatchHelper::VALID_BATCH_ID, :image_id => image.id)
+  end
+
+  it 'responds with a PNG MIME type' do
+    response.content_type.should == 'image/png'
+  end
+
+  it 'responds with some image data' do
+    response.body.to_s.should_not be_empty
+  end
+
+  it 'does not put the filename in the response body!' do
+    response.body.to_s.should_not == '/images/sanger-logo.png'
+  end
+end
+
 describe BatchesController do
   include BatchHelper
+
+  check_routing do
+    routing_to('/thumbnails/271/1', { :action => 'thumbnail', :id => '271', :image_id => '1' }, RoutingHelper::HTTP_GET_ONLY)
+    routing_to('/images/1000/200', { :action => 'image', :id => '1000', :image_id => '200' }, RoutingHelper::HTTP_GET_ONLY)
+  end
   
   context "GET 'show'" do
     context 'when the batch is valid' do
@@ -36,7 +60,7 @@ describe BatchesController do
   context "PUT 'update'" do
     def self.performs_update_with_id(id)
       before(:each) do
-        put 'update', :id => id, :batch => { :image => :some_blob_of_data }
+        put 'update', :id => id, :batch => { :images => { '0' => { :data => StringIO.new('image data'), :filename => 'my filename' } } }
       end
     end
     
@@ -47,10 +71,9 @@ describe BatchesController do
         assigns[ :batch ].should_not be_nil
       end
 
-      it 'sets the flash[:message]' do
-        flash[ :message ].should_not be_nil
+      it 'sets the flash[:events]' do
+        flash[ :events ].should_not be_empty
       end
-      
     end
     
     context "when the batch is invalid" do
@@ -64,5 +87,21 @@ describe BatchesController do
       get 'index'
       response.should be_success
     end
+  end
+
+  describe "GET 'thumbnail'" do
+    def controller_action
+      'thumbnail'
+    end
+
+    it_should_behave_like 'returns batch image data'
+  end
+
+  describe "GET 'image'" do
+    def controller_action
+      'image'
+    end
+
+    it_should_behave_like 'returns batch image data'
   end
 end

@@ -5,7 +5,7 @@ module RoutingHelper
   # Validates that the specified HTTP request method to the given path results in the expected route.
   def permitted_routing_to(request_method, path, expected_route)
     it "permits #{ request_method.to_s.upcase } to #{ expected_route.inspect }" do
-      params_from(request_method, path).should == expected_route
+      params_from(request_method, path).should == { :controller => described_class.controller_name }.merge(expected_route)
     end
   end
 

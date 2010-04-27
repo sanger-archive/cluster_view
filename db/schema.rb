@@ -9,45 +9,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100426121805) do
-
-  create_table "legacy_images", :force => true do |t|
-    t.string   "filename"
-    t.string   "content_type"
-    t.string   "batch_id"
-    t.string   "sample_name"
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.integer  "lane"
-    t.boolean  "passed"
-    t.integer  "position"
-    t.integer  "sample_id"
-    t.boolean  "batch"
-  end
-
-  create_table "legacy_sessions", :force => true do |t|
-    t.string   "session_id"
-    t.text     "data"
-    t.datetime "updated_at"
-  end
-
-  create_table "legacy_users", :force => true do |t|
-    t.string   "login"
-    t.string   "email"
-    t.string   "crypted_password",          :limit => 40
-    t.string   "salt",                      :limit => 40
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "remember_token"
-    t.datetime "remember_token_expires_at"
-    t.string   "api_key"
-  end
+ActiveRecord::Schema.define(:version => 20100428103000) do
 
   create_table "images", :force => true do |t|
     t.string   "filename"
     t.integer  "batch_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position"
+    t.binary   "data"
   end
 
   create_table "sessions", :force => true do |t|

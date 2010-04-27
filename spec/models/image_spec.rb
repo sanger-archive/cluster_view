@@ -8,10 +8,12 @@ describe Image do
     
     using_named_scope(:for_batch, mock_batch) do
       it_has_conditions('batch_id=?', 'BATCH ID')
+      it_has_order('position')
     end
     
     using_named_scope(:by_batch_and_image_id, mock_batch, 'IMAGE ID') do
       it_has_conditions('batch_id=? AND id=?', 'BATCH ID', 'IMAGE ID')
+      it_has_order('position')
     end
   end
 end

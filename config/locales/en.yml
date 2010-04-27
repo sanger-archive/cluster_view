@@ -28,4 +28,13 @@ en:
 
     messages:
       image_upload:
-        success: 'Image {{filename}} uploaded successfully.'
+        created: 'Image {{filename}} created successfully.'
+        updated: 'Image {{filename}} updated successfully.'
+        deleted: 'Image {{filename}} deleted successfully.'
+
+    statuses:
+      released: 'Released'
+      pending: 'Pending'
+      failed: 'Failed'
+      started: 'Started'
+      completed: 'Completed'

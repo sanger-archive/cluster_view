@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe UserSessionsController do
   check_routing do
-    routing_to('/new_session', { :controller => 'user_sessions', :action => 'create' }, RoutingHelper::HTTP_POST_ONLY)
-    routing_to('/login', { :controller => 'user_sessions', :action => 'new' }, RoutingHelper::HTTP_GET_ONLY)
-    routing_to('/logout', { :controller => 'user_sessions', :action => 'destroy' }, RoutingHelper::HTTP_GET_ONLY)
+    routing_to('/new_session', { :action => 'create' }, RoutingHelper::HTTP_POST_ONLY)
+    routing_to('/login', { :action => 'new' }, RoutingHelper::HTTP_GET_ONLY)
+    routing_to('/logout', { :action => 'destroy' }, RoutingHelper::HTTP_GET_ONLY)
   end
 
   describe "GET 'new'" do

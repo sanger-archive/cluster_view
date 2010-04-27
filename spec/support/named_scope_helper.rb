@@ -1,7 +1,13 @@
 module NamedScopeHelper
   def it_has_conditions(*conditions)
     it 'limits by conditions' do
-      should == { :conditions => conditions }
+      subject[ :conditions ].should == conditions
+    end
+  end
+  
+  def it_has_order(ordering)
+    it "orders by #{ ordering }" do
+      subject[ :order ].should == ordering
     end
   end
   

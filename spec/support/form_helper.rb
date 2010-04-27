@@ -27,7 +27,7 @@ module FormHelper
   ATTRIBUTES_THAT_ARE_NOT_HTML = [ :count ]
 
   def have_tag_with_attributes_as_hash(tag, *args, &block)
-    attributes = args.extract_options!
+    tag, attributes = tag.to_s, args.extract_options!
 
     options = (ATTRIBUTES_THAT_ARE_NOT_HTML & attributes.keys).inject({}) do |options,name|
       options[ name ] = attributes.delete(name)
@@ -78,6 +78,7 @@ module FormHelper
   have_field_by_type_helper(:password)
   have_field_by_type_helper(:checkbox)
   have_field_by_type_helper(:hidden)
+  have_field_by_type_helper(:file)
 
   #--
   # Helpers for forms:
@@ -89,8 +90,8 @@ module FormHelper
   form_by_method_helper(:post)
   form_by_method_helper(:get)
   
-  def put_form_to(action_destination)
-    have_tag('form', :method => 'post', :action => action_destination) do |form|
+  def put_form_to(action_destination, options = {})
+    have_tag('form', options.update(:method => 'post', :action => action_destination)) do |form|
       form.first.should have_hidden_field(:name => '_method', :value => 'put')
     end
   end

@@ -1,0 +1,5 @@
+.thumbnail{ :class => side.to_s }
+  - unless image.nil?
+    %img{ :src => batch_thumbnail_path(:id => image.batch_id, :image_id => image.id), :alt => h(image.filename) }
+    %p= link_to_full_size_image(image)
+  = image_upload_tag('batch[images]', side, sample, image)

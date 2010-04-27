@@ -10,8 +10,19 @@ class BatchesController < ApplicationController
   handles_with_batch_not_found(:show)
   
   handles_with_batch_not_found(:update) do
-    @batch.update_attributes(params[:batch])
-    flash[:message] = translate('batches.messages.image_upload.success', :filename => '2617.tif')
+    events = []
+    @batch.update_attributes(params[ :batch ]) do |event,image|
+      events.push(translate("batches.messages.image_upload.#{ event }", :filename => image.filename))
+    end
+    flash[ :events ] = events.sort
+  end
+
+  def thumbnail
+    render_image(:thumbnail)
+  end
+
+  def image
+    render_image(:image)
   end
 
 private
@@ -24,5 +35,9 @@ private
   rescue ActiveResource::ResourceNotFound => exception
     flash[:error] = translate('batches.errors.batch_not_found', :batch_id => batch_number)
     render :batch_not_found
+  end
+
+  def render_image(type)
+    send_file('public/images/sanger-logo.png', :type => 'image/png', :filename => params[ :image_id ], :stream => false)
   end
 end
