@@ -8,3 +8,10 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'tasks/rails'
+
+begin
+  gem 'ci_reporter'
+  require 'ci/reporter/rake/rspec'
+rescue Gem::LoadError => exception
+  # Ignore this, you simply don't have the file!
+end
