@@ -20,36 +20,34 @@ class Batch < ActiveResource::Base
     attributes.fetch(:images, []).each do |position,image_attributes|
       next if [ :filename, :data ].any? { |field| image_attributes[ field ].blank? }
 
-      image_attributes.update(:position => position)
-      image_attributes[ :filename ] = File.basename(image_attributes[ :filename ])
-      image_attributes[ :data ] = image_attributes[ :data ].read # TODO[md12]: remove with paperclip
+      image_attributes.update(
+        :position => position,
+        :filename => File.basename(image_attributes[ :filename ]),  # TODO[md12]: remove with paperclip?
+        :data     => image_attributes[ :data ].read                 # TODO[md12]: remove with paperclip
+      )
 
-      event_type, image = if image_attributes.key?(:id)
-        image = Image.by_batch_and_image_id(self, image_attributes[ :id ])
-        image.update_attributes(image_attributes)
-        [ :updated, image ]
-      else
-        [ :created, Image.create!(image_attributes.update(:batch_id => self.id)) ]
-      end
-
-      yield(event_type, image) if block_given?
+      update_attributes_event = image_attributes.key?(:id) ? :update : :create
+      image                   = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes)
+      yield(update_attributes_event, image) if block_given?
     end
   end
 
   def samples
     self.lanes.lane.map do |lane|
       sample_type = lane.respond_to?(:library) ? :library : :control
-      Sample.new(lane.position.to_i, lane.send(sample_type).name)
+      OpenStruct.new(:lane => lane.position.to_i, :name => lane.send(sample_type).name)
     end
   end
 
 private
 
-  class Sample
-    attr_reader :lane, :name
+  def update_attributes_by_update(image_attributes)
+    image = Image.by_batch_and_image_id(self, image_attributes[ :id ]).first
+    image.update_attributes(image_attributes)
+    image
+  end
 
-    def initialize(lane, name)
-      @lane, @name = lane, name
-    end
+  def update_attributes_by_create(image_attributes)
+    Image.create!(image_attributes.update(:batch_id => self.id))
   end
 end

@@ -62,9 +62,13 @@ When /^I view batch "([^\"]+)"$/ do |batch_id|
 end
 
 When /^I attach the file "([^\"]+)" for the (left|right) image in lane ([1-8])$/ do |filename,side,lane|
+  When %Q{I attach the file "#{ filename }" as "#{ filename }" for the #{ side } image in lane #{ lane }}
+end
+
+When /^I attach the file "([^\"]+)" as "([^\"]+)" for the (left|right) image in lane ([1-8])$/ do |file,filename,side,lane|
   index = (lane.to_i-1) * 2
   index = index + 1 if side == 'right'
-  When %Q{I attach the file "#{ filename }" to "batch[images][#{ index }][data]"}
+  When %Q{I attach the file "#{ file }" to "batch[images][#{ index }][data]"}
   set_hidden_field("batch[images][#{ index }][filename]", :to => filename) # TODO[md12]: remove with paperclip
 end
 
@@ -76,7 +80,7 @@ Then /^I should see no batch thumbnails/ do
   response.should_not have_selector('#thumbnails img')
 end
 
-Then /^I should see the (left|right) thumbnail in lane "([^\"]+)" as "([^\"]+)"$/ do |side,lane,filename|
+Then /^I should see the (left|right) thumbnail in lane ([1-8]) as "([^\"]+)"$/ do |side,lane,filename|
   response.should have_selector("#lane_#{ lane }") do |element|
     element.should have_selector('.details .lane') do |lane_details|
       lane_details.should contain(lane.to_s)
@@ -87,7 +91,7 @@ end
 
 Then /^I should see lanes with thumbnails:$/ do |table|
   table.hashes.each do |row|
-    Then %Q{I should see the left thumbnail in lane "#{ row[ 'lane' ] }" as "#{ row[ 'left' ] }"}
-    Then %Q{I should see the right thumbnail in lane "#{ row[ 'lane' ] }" as "#{ row[ 'right' ] }"}
+    Then %Q{I should see the left thumbnail in lane #{ row[ 'lane' ] } as "#{ row[ 'left' ] }"}
+    Then %Q{I should see the right thumbnail in lane #{ row[ 'lane' ] } as "#{ row[ 'right' ] }"}
   end
 end
