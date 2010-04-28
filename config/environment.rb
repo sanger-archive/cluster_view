@@ -53,6 +53,10 @@ Rails::Initializer.run do |config|
   # config.i18n.default_locale = :de
   
   # Setup a URI constant for the sequencescape connection
+  config.load_paths += Dir["#{RAILS_ROOT}/vendor/gems/**"].map do |dir| 
+    File.directory?(lib = "#{dir}/lib") ? lib : dir
+  end
+  
 end
 
 # We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
