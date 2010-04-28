@@ -34,4 +34,4 @@ config.gem 'ruby-net-ldap', :version => '>= 0.0.4', :lib => 'net/ldap'
 config.gem 'sqlite3-ruby',  :version => '>= 1.2.5', :lib => 'sqlite3'
 
 # If we're running under Hudson then we should also include the continuous integration stuff
-config.gem 'ci_reporter', :lib => false unless ENV[ 'CI_REPORTS' ].nil?
+config.gem 'ci_reporter', :lib => false unless ENV[ 'CI' ].nil?
