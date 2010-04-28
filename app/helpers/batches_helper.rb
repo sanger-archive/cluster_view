@@ -1,6 +1,7 @@
 module BatchesHelper
   def lane_organised_images_for(batch, &block)
-    batch.samples.zip(batch.images.in_groups_of(2)).each do |sample,(left,right)|
+    images = batch.images.inject([ nil ] * 16) { |images,image| images[ image.position ] = image ; images }
+    batch.samples.zip(images.in_groups_of(2)).each do |sample,(left,right)|
       yield(sample, left, right)
     end
   end
