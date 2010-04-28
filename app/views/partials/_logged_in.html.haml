@@ -4,4 +4,4 @@
 
 %li
   = h(current_user.username)
-  (#{ link_to('Logout', logout_path) })
+  (#{ link_to(self.logout_link_text, logout_path) })

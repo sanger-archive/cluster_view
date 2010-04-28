@@ -17,13 +17,13 @@ private
 
   def current_user
     return @current_user if defined?(@current_user)
-    @current_user = current_user_session && current_user_session.user
+    @current_user = current_user_session.try(:user)
   end
 
   def require_user
     unless current_user
       store_location
-      flash[:notice] = "You must be logged in to access this page"
+      flash[:notice] = translate('user_sessions.require_login')
       redirect_to login_url
       return false
     end

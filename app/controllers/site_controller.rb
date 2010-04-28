@@ -1,3 +1,4 @@
+# A very simple controller just to provide some basic site pages.
 class SiteController < ApplicationController
   before_filter :require_user, :except => [ :index, :about, :feedback ]
 

@@ -1,4 +1,4 @@
-sequencescape_uri: http://localhost:3000
+sequencescape_url: http://psd-production.internal.sanger.ac.uk:6700
 
 ldap_configuration:
   host: 'ldap.internal.sanger.ac.uk'

@@ -1,12 +1,18 @@
 module NamedScopeHelper
   def it_has_conditions(*conditions)
     it 'limits by conditions' do
-      should == { :conditions => conditions }
+      subject[ :conditions ].should == conditions
+    end
+  end
+  
+  def it_has_order(ordering)
+    it "orders by #{ ordering }" do
+      subject[ :order ].should == ordering
     end
   end
   
   def using_named_scope(scope, *args, &block)
-    context ".#{ scope }" do
+    describe ".#{ scope }" do
       subject { described_class.send(scope, *args).proxy_options }
       instance_eval(&block)
     end

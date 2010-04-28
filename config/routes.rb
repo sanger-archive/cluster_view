@@ -5,6 +5,10 @@ ActionController::Routing::Routes.draw do |map|
     site.feedback('/feedback', :action => 'feedback')
   end
 
+  map.with_options(:controller => 'batches', :conditions => { :method => :get }, :requirements => { :image_id => /\d+/ }) do |images|
+    images.batch_thumbnail('/thumbnails/:id/:image_id', :action => 'thumbnail')
+    images.batch_image('/images/:id/:image_id', :action => 'image')
+  end
   map.with_options(:controller => 'batches', :conditions => { :method => :get }) do |batches|
     batches.batches('/batches', :action => 'index')
     batches.batch_search('/batches/search', :action => 'show')

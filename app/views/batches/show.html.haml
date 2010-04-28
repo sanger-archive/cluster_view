@@ -1,16 +1,17 @@
-= render :partial => 'search_form'
-
 %h1<
-  Batch ID: #{ @batch.id }
+  Batch ID: <span class="batch_id">#{ @batch.id }</span> (<span class="status">#{ status_of(@batch) }</span>)
 
-%p= h flash[:message]
+- unless flash[ :events ].blank?
+  %ol#image_events
+    - flash[ :events ].each do |message|
+      %li= h(message)
 
-%img{ :src => "", :alt => "2617" }
+- semantic_form_for(@batch, :html => { :method => :put, :multipart => true }) do |f|
+  #thumbnails
+    - lane_organised_images_for(@batch) do |sample,left,right|
+      = render(:partial => 'lane', :locals => { :sample => sample, :left => left, :right => right })
 
-- semantic_form_for(@batch, :html => { :method => :put }) do |f|
   - f.inputs do
     =f.input :image, :as => :file
   - f.buttons do
     = f.commit_button 'Upload'
-    
-  

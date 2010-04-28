@@ -11,5 +11,4 @@
       = form.input(:remember_me, :as => :boolean, :required => false)
 
     - form.buttons do
-      = form.commit_button('Login')
-
+      = form.commit_button(self.login_button_text)
