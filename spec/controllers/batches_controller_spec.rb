@@ -16,8 +16,8 @@ shared_examples_for('returns batch image data') do
     get(controller_action(), :id => BatchHelper::VALID_BATCH_ID, :image_id => image.id)
   end
 
-  it 'responds with a PNG MIME type' do
-    response.content_type.should == 'image/png'
+  it 'responds with a JPEG MIME type' do
+    response.content_type.should == 'image/jpeg'
   end
 
   it 'responds with some image data' do
@@ -25,7 +25,7 @@ shared_examples_for('returns batch image data') do
   end
 
   it 'does not put the filename in the response body!' do
-    response.body.to_s.should_not == '/images/sanger-logo.png'
+    response.body.to_s.should_not == '/images/2617.jpg'
   end
 end
 

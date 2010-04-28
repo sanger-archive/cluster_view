@@ -22,7 +22,7 @@ Feature: Image Upload
     And I press "Upload"
     Then I should be on the show page for batch "1023"
 
-    When I attach the file "features/images/2617.tif" as "2618.tif" for the left image in lane 1
+    When I attach the file "features/images/2618.tif" for the left image in lane 1
     And I press "Upload"
     Then I should be on the show page for batch "1023"
     And I should see "Image 2618.tif updated successfully"
@@ -35,7 +35,7 @@ Feature: Image Upload
     And batch "902" has no images
     And I am on the show page for batch "902"
     When I attach the file "features/images/2617.tif" for the left image in lane 3
-    And I attach the file "features/images/2617.tif" as "2618.tif" for the right image in lane 8
+    And I attach the file "features/images/2618.tif" for the right image in lane 8
     And I press "Upload"
     Then I should be on the show page for batch "902"
     And I should see "Image 2617.tif created successfully"

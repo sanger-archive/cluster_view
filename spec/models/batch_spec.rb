@@ -42,37 +42,28 @@ describe Batch do
       @batch.update_attributes({})
     end
 
-    context 'not uploading an image' do
-      after(:each) do
-        Image.should_receive(:create!).with(any_args).never
+    it 'does not update or create an image if no image data is uploaded' do
+      Image.should_receive(:create!).with(any_args).never
 
-        callback = mock('callback')
-        callback.should_receive(:called_with).with(any_args).never
+      callback = mock('callback')
+      callback.should_receive(:called_with).with(any_args).never
 
-        @batch.update_attributes(:images => { '0' => @image_attributes }) do |*args|
-          callback.called_with(*args)
-        end
-      end
-
-      it 'does nothing if the image data is empty' do
-        @image_attributes = { :filename => 'foo' }
-      end
-
-      it 'does nothing if the filename is blank' do
-        @image_attributes = { :filename => '', :data => 'some random data' }
+      # This is missing :data parameter
+      @batch.update_attributes(:images => { '0' => { } }) do |*args|
+        callback.called_with(*args)
       end
     end
 
     shared_examples_for('acting upon an image') do
       it 'performs the correct image update' do
-        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => StringIO.new('image data')) })
+        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => "image data") })
       end
 
       it 'yields the event type and image when the block is given' do
         callback = mock('callback')
         callback.should_receive(:called_with).with(@event, :image)
 
-        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => StringIO.new('image data')) }) do |*args|
+        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => "image data") }) do |*args|
           callback.called_with(*args)
         end
       end
@@ -96,11 +87,6 @@ describe Batch do
       it_should_behave_like('acting upon an image')
     end
 
-    it 'uses removes extraneous path information from the filename' do
-      Image.should_receive(:create!).with(hash_including(:filename => 'foo')).and_return(:ok)
-
-      @batch.update_attributes({ :images => { '0' => { :filename => 'dir1/dir2/foo', :data => StringIO.new('image data') } } })
-    end
   end
 
   describe '#update_attributes_by_update' do
@@ -109,7 +95,7 @@ describe Batch do
       @image.should_receive(:update_attributes).with(:id => 'IMAGE ID', :filename => 'foo', :position => '1', :data => 'image data')
       Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ @image ])
 
-      @batch.update_attributes(:images => { '1' => { :id => 'IMAGE ID', :filename => 'foo', :data => StringIO.new('image data') } })
+      @batch.update_attributes(:images => { '1' => { :id => 'IMAGE ID', :filename => 'foo', :data => "image data" } })
     end
   end
 
@@ -120,7 +106,7 @@ describe Batch do
         :filename => 'foo', :data => 'image data'
       ).and_return(:ok)
 
-      @batch.update_attributes({ :images => { '0' => { :filename => 'foo', :data => StringIO.new('image data') } } })
+      @batch.update_attributes({ :images => { '0' => { :filename => 'foo', :data => "image data" } } })
     end
   end
 end

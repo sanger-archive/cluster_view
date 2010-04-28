@@ -17,7 +17,12 @@ ActiveRecord::Schema.define(:version => 20100428103000) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
-    t.binary   "data"
+    t.binary   "data_file",           :limit => 10485760
+    t.binary   "data_thumbnail_file", :limit => 10485760
+    t.string   "data_file_name"
+    t.integer  "data_file_size"
+    t.datetime "data_updated_at"
+    t.string   "data_content_type"
   end
 
   create_table "sessions", :force => true do |t|

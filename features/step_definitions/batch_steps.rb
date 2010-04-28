@@ -62,14 +62,9 @@ When /^I view batch "([^\"]+)"$/ do |batch_id|
 end
 
 When /^I attach the file "([^\"]+)" for the (left|right) image in lane ([1-8])$/ do |filename,side,lane|
-  When %Q{I attach the file "#{ filename }" as "#{ filename }" for the #{ side } image in lane #{ lane }}
-end
-
-When /^I attach the file "([^\"]+)" as "([^\"]+)" for the (left|right) image in lane ([1-8])$/ do |file,filename,side,lane|
   index = (lane.to_i-1) * 2
   index = index + 1 if side == 'right'
-  When %Q{I attach the file "#{ file }" to "batch[images][#{ index }][data]"}
-  set_hidden_field("batch[images][#{ index }][filename]", :to => filename) # TODO[md12]: remove with paperclip
+  When %Q{I attach the file "#{ filename }" to "batch[images][#{ index }][data]"}
 end
 
 Then /^I should see a thumbnail for "([^\"]+)"$/ do |filename|

@@ -1,3 +1,5 @@
+require 'ostruct'
+
 # An instance of this class represents a slide that is being put through the sequencing process.
 # Each Batch has a 8 lanes in which there are a number of samples.
 class Batch < ActiveResource::Base
@@ -18,13 +20,9 @@ class Batch < ActiveResource::Base
   # have been updated to the specified block (if given).
   def update_attributes(attributes, &block)
     attributes.fetch(:images, []).each do |position,image_attributes|
-      next if [ :filename, :data ].any? { |field| image_attributes[ field ].blank? }
+      next if image_attributes[ :data ].blank?
 
-      image_attributes.update(
-        :position => position,
-        :filename => File.basename(image_attributes[ :filename ]),  # TODO[md12]: remove with paperclip?
-        :data     => image_attributes[ :data ].read                 # TODO[md12]: remove with paperclip
-      )
+      image_attributes.update(:position => position)
 
       update_attributes_event = image_attributes.key?(:id) ? :update : :create
       image                   = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes)

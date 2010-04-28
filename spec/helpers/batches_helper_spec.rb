@@ -42,10 +42,9 @@ describe BatchesHelper do
   describe '#image_upload_tag' do
     after(:each) do
       helper.should_receive(:hidden_field_tag).with("root[#{ @index }][id]", 'ID').and_return('ID_FIELD')
-      helper.should_receive(:hidden_field_tag).with("root[#{ @index }][filename]", 'empty').and_return('FILENAME_FIELD') # TODO[md12]: remove with paperclip
       helper.should_receive(:file_field_tag).with("root[#{ @index }][data]").and_return('FILE_FIELD')
 
-      helper.image_upload_tag('root', @side, mock('sample', :lane => @lane), mock('image', :id => 'ID')).should == "ID_FIELD\nFILENAME_FIELD\nFILE_FIELD"
+      helper.image_upload_tag('root', @side, mock('sample', :lane => @lane), mock('image', :id => 'ID')).should == "ID_FIELD\nFILE_FIELD"
     end
 
     class << self

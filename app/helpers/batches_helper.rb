@@ -29,7 +29,6 @@ module BatchesHelper
     
     content = ''
     content << hidden_field_tag("#{ root_name }[id]", image.id) << "\n" unless image.nil?
-    content << hidden_field_tag("#{ root_name }[filename]", 'empty') << "\n"  # TODO: remove with paperclip
     content << file_field_tag("#{ root_name }[data]")
     content
   end

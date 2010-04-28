@@ -38,6 +38,7 @@ private
   end
 
   def render_image(type)
-    send_file('public/images/sanger-logo.png', :type => 'image/png', :filename => params[ :image_id ], :stream => false)
+    image = Image.find(params[ :image_id ])
+    send_data(image.data_thumbnail_file, :type => 'image/jpeg', :disposition => 'inline', :filename => image.data_thumbnail_file_name)
   end
 end
