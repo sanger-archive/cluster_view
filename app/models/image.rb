@@ -7,6 +7,12 @@ class Image < ActiveRecord::Base
     :storage => :database, :column => "data_file",
     :styles => { :thumbnail => {:geometry => "400x400>", :format => "jpg", :column => "data_thumbnail_file"} },
     :convert_options => { :thumbnail => "-normalize" }
+
+  # We do not need to destroy the attachments as they are part of the database, so override
+  # this method to do nothing!
+  def destroy_attached_files
+    # Nothing to do
+  end
     
     # Not sure if this validation will be a pain but don't think we'll create an image
     # without an attachment, so...
@@ -26,7 +32,7 @@ class Image < ActiveRecord::Base
   }
   
   def root_filename
-    File.basename(data_file_name, ".*")
+    File.basename(self.filename, ".*")
   end
   
   def filename

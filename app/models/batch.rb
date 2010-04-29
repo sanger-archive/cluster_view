@@ -20,12 +20,14 @@ class Batch < ActiveResource::Base
   # have been updated to the specified block (if given).
   def update_attributes(attributes, &block)
     attributes.fetch(:images, []).each do |position,image_attributes|
-      next if image_attributes[ :data ].blank?
+      update_attributes_event = case
+      when image_attributes.key?(:delete) then :delete
+      when image_attributes[ :data ].blank? then next
+      when !image_attributes.key?(:id) then :create
+      else :update
+      end
 
-      image_attributes.update(:position => position)
-
-      update_attributes_event = image_attributes.key?(:id) ? :update : :create
-      image                   = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes)
+      image = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes.merge(:position => position))
       yield(update_attributes_event, image) if block_given?
     end
   end
@@ -47,5 +49,11 @@ private
 
   def update_attributes_by_create(image_attributes)
     Image.create!(image_attributes.update(:batch_id => self.id))
+  end
+
+  def update_attributes_by_delete(image_attributes)
+    image = Image.by_batch_and_image_id(self, image_attributes[ :id ]).first
+    image.destroy
+    image
   end
 end

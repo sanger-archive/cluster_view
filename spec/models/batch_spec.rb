@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+class Batch
+  public :update_attributes_by_update
+  public :update_attributes_by_create
+  public :update_attributes_by_delete
+end
+
 describe Batch do
   include BatchHelper
   
@@ -87,15 +93,32 @@ describe Batch do
       it_should_behave_like('acting upon an image')
     end
 
+    context 'deleting an existing image' do
+      before(:each) do
+        @batch.should_receive(:update_attributes_by_delete).with(hash_including(:id => 'ID')).and_return(:image)
+        @attributes, @event = { :id => 'ID', :delete => 'yes' }, :delete
+      end
+
+      it_should_behave_like('acting upon an image')
+
+      it 'deletes the image even if the image data is not sent' do
+        callback = mock('callback')
+        callback.should_receive(:called_with).with(@event, :image)
+
+        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename') }) do |*args|
+          callback.called_with(*args)
+        end
+      end
+    end
   end
 
   describe '#update_attributes_by_update' do
     it 'updates an existing Image instance' do
-      @image = mock('image')
-      @image.should_receive(:update_attributes).with(:id => 'IMAGE ID', :filename => 'foo', :position => '1', :data => 'image data')
-      Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ @image ])
+      image = mock('image')
+      image.should_receive(:update_attributes).with(:id => 'IMAGE ID', :filename => 'foo', :position => '1', :data => 'image data')
+      Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ image ])
 
-      @batch.update_attributes(:images => { '1' => { :id => 'IMAGE ID', :filename => 'foo', :data => "image data" } })
+      @batch.update_attributes_by_update(:id => 'IMAGE ID', :filename => 'foo', :data => "image data", :position => '1').should == image
     end
   end
 
@@ -106,7 +129,17 @@ describe Batch do
         :filename => 'foo', :data => 'image data'
       ).and_return(:ok)
 
-      @batch.update_attributes({ :images => { '0' => { :filename => 'foo', :data => "image data" } } })
+      @batch.update_attributes_by_create(:filename => 'foo', :data => "image data", :position => '0').should == :ok
+    end
+  end
+
+  describe '#update_attributes_by_delete' do
+    it 'destroys the Image instance' do
+      image = mock('image')
+      image.should_receive(:destroy)
+      Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ image ])
+
+      @batch.update_attributes_by_delete(:id => 'IMAGE ID', :data => 'image data', :delete => 'yes').should == image
     end
   end
 end

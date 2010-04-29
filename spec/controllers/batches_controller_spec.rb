@@ -60,7 +60,7 @@ describe BatchesController do
   context "PUT 'update'" do
     def self.performs_update_with_id(id)
       before(:each) do
-        put 'update', :id => id, :batch => { :images => { '0' => { :data => StringIO.new('image data'), :filename => 'my filename' } } }
+        put 'update', :id => id, :batch => { :images => { '0' => { :data => StringIO.new('image data') } } }
       end
     end
     

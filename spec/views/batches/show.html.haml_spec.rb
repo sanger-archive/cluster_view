@@ -13,7 +13,14 @@ describe '/batches/show' do
 
   context 'with images' do
     before(:each) do
-      @images = (1..5).map { |index| mock_model(Image, :id => index, :filename => ("%03i" % index), :batch_id => 9999, :position => index-1) }
+      @images = (1..5).map do |index| 
+        mock_model(
+          Image, :id => index, 
+          :batch_id => 9999, :position => index-1,
+          :filename => ("dir/%03i" % index), 
+          :root_filename => ("%03i" % index) 
+        )
+      end
       @samples = (1..3).map { |index| mock('sample', :lane => index, :name => "Sample #{ index }") }
       render_partial
     end

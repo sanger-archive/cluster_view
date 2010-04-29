@@ -8,7 +8,7 @@ describe 'batches/_thumbnail' do
         :locals => {
           :sample => mock('sample', :lane => 3),
           :side => 'SIDE',
-          :image => mock_model(Image, :id => 1234, :batch_id => 5678, :filename => 'filename foo'),
+          :image => mock_model(Image, :id => 1234, :batch_id => 5678, :filename => 'dir/filename', :root_filename => 'filename'),
           :body => 'BODY'
         }
       )
@@ -19,7 +19,7 @@ describe 'batches/_thumbnail' do
     end
 
     it 'displays a thumbnail' do
-      response.should have_tag(:img, :src => batch_thumbnail_path(:id => 5678, :image_id => 1234), :alt => 'filename foo')
+      response.should have_tag(:img, :src => batch_thumbnail_path(:id => 5678, :image_id => 1234), :alt => 'dir/filename')
     end
 
     it 'displays a link to the full image' do
