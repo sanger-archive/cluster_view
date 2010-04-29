@@ -167,10 +167,13 @@ body {
   padding: 5px;
   margin: 5px auto;
   text-align: center; }
+  #thumbnails > .lane .details {
+    font-weight: bold; }
   #thumbnails > .lane .thumbnail {
     display: inline-block;
     margin: 2px;
-    text-align: center; }
+    text-align: center;
+    width: 410px; }
     #thumbnails > .lane .thumbnail img {
       width: 400px;
       height: 300px; }
