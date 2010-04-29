@@ -48,7 +48,7 @@ end
 
 Given /^batch "([^\"]+)" has (images \d+ to \d+)$/ do |batch_id,filenames|
   filenames.each_with_index do |filename,index|
-    Factory('Images for batch', :batch_id => batch_id, :filename => filename, :position => index)
+    Factory('Images for batch', :batch_id => batch_id, :data_file_name => filename, :position => index)
   end
 end
 

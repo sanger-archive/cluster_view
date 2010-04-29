@@ -29,10 +29,6 @@ class Image < ActiveRecord::Base
     File.basename(data_file_name, ".*")
   end
   
-  def filename
-    self.data_file_name
-  end
-  
   def data_thumbnail_file_name
     "#{self.root_filename}.jpg"
   end
