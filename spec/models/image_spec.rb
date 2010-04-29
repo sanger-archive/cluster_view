@@ -18,7 +18,7 @@ describe Image do
   end
 
   describe '#root_filename' do
-    subject { Image.new(:data_file_name => 'dir1/dir2/data file name.ext', :filename => 'filename').root_filename }
+    subject { Image.new(:data_file_name => 'dir1/dir2/data file name.ext').root_filename }
 
     it 'uses data_file_name for the name of the file' do
       should == 'data file name'
