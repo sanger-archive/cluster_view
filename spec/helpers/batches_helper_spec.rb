@@ -1,23 +1,6 @@
 require 'spec_helper'
 
 describe BatchesHelper do
-  describe '#lane_organised_images_for' do
-    it 'yield the images in pairs' do
-      batch = mock('batch', :id => 12345)
-      images = (1..5).map { |index| Factory('Images for batch', :batch_id => 12345, :position => index-1) }
-      samples = (1..3).map { |index| mock("Sample #{ index }", :lane => index, :name => "Sample #{ index }") }
-      batch.stub!(:images).and_return(images)
-      batch.stub!(:samples).and_return(samples)
-
-      callback = mock('callback')
-      callback.should_receive(:called_with).with(samples[ 0 ], images[ 0 ], images[ 1 ])
-      callback.should_receive(:called_with).with(samples[ 1 ], images[ 2 ], images[ 3 ])
-      callback.should_receive(:called_with).with(samples[ 2 ], images[ 4 ], nil)
-
-      helper.lane_organised_images_for(batch) { |*args| callback.called_with(*args) }
-    end
-  end
-
   describe '#thumbnail_for' do
     it 'passes through to the batches/thumnail partial' do
       helper.should_receive(:render).with(:partial => 'batches/thumbnail', :locals => { :sample => 'sample', :image => 'image', :side => 'side' }).and_return(:ok)
@@ -27,8 +10,16 @@ describe BatchesHelper do
 
   describe '#link_to_full_size_image' do
     it 'returns a link to the image' do
-      helper.link_to_full_size_image(mock_model(Image, :id => 1234, :data_file_name => 'filename foo', :batch_id => 5678)).should ==
-        helper.link_to(h('filename foo'), batch_image_path(:id => 5678, :image_id => 1234))
+      callback = mock('callback')
+      callback.should_receive(:called_with).with(any_args).and_return('content')
+
+      helper.should_receive(:link_to).with(batch_image_path(:id => 5678, :image_id => 1234)).and_yield
+
+      output = helper.link_to_full_size_image(mock_model(Image, :id => 1234, :data_file_name => 'filename foo', :batch_id => 5678)) do |*args|
+        callback.called_with(*args)
+      end
+      
+      output.should == 'content'
     end
   end
 

@@ -16,7 +16,8 @@ class Settings
   end
   
   def initialize
-    @settings = YAML.load(File.read(File.join(File.dirname(__FILE__), *%W[.. settings #{RAILS_ENV}.yml])))
+    filename    = File.join(File.dirname(__FILE__), *%W[.. settings #{RAILS_ENV}.yml])
+    @settings   = YAML.load(eval(ERB.new(File.read(filename)).src, nil, filename))
   end
   
   def respond_to?(method, include_private = false)

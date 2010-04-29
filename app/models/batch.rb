@@ -39,6 +39,15 @@ class Batch < ActiveResource::Base
     end
   end
 
+  # Yields the sample and images (left and right) for this instance.  Images can be nil and the sample
+  # is an object that responds to :lane and :name (see Batch#samples).
+  def lane_organised_images(&block)
+    images = self.images.inject([ nil ] * 16) { |images,image| images[ image.position ] = image ; images }
+    self.samples.zip(images.in_groups_of(2)).each do |sample,(left,right)|
+      yield(sample, left, right)
+    end
+  end
+
 private
 
   def update_attributes_by_update(image_attributes)
