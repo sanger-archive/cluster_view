@@ -14,6 +14,10 @@ module BatchesHelper
     translate("batches.statuses.#{ batch.status.downcase.underscore }")
   end
 
+  def labeled_check_box_tag(name, label, value = 'yes')
+    check_box_tag(name, value) << label_tag(name, label)
+  end
+
   def image_upload_tag(root_name, side, sample, image)
     index = (sample.lane-1) * 2
     index = index + 1 if side == :right
@@ -21,11 +25,10 @@ module BatchesHelper
     root_name << "[#{ index }]"
     
     content = []
-    content << hidden_field_tag("#{ root_name }[id]", image.id) unless image.nil?
     content << file_field_tag("#{ root_name }[data]")
     unless image.nil?
-      content << check_box_tag("#{ root_name }[delete]", 'yes') 
-      content << label_tag("#{ root_name }[delete]", "Delete image #{ image.root_filename }")
+      content << labeled_check_box_tag("#{ root_name }[delete]", "Delete image #{ image.root_filename }") 
+      content << hidden_field_tag("#{ root_name }[id]", image.id)
     end
     content.join("\n")
   end
