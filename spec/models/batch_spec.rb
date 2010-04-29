@@ -142,4 +142,20 @@ describe Batch do
       @batch.update_attributes_by_delete(:id => 'IMAGE ID', :data => 'image data', :delete => 'yes').should == image
     end
   end
+
+  describe '#lane_organised_images_for' do
+    it 'yield the images in pairs' do
+      images = (1..5).map { |index| Factory('Images for batch', :batch_id => 12345, :position => index-1) }
+      samples = (1..3).map { |index| mock("Sample #{ index }", :lane => index, :name => "Sample #{ index }") }
+      @batch.stub!(:images).and_return(images)
+      @batch.stub!(:samples).and_return(samples)
+
+      callback = mock('callback')
+      callback.should_receive(:called_with).with(samples[ 0 ], images[ 0 ], images[ 1 ])
+      callback.should_receive(:called_with).with(samples[ 1 ], images[ 2 ], images[ 3 ])
+      callback.should_receive(:called_with).with(samples[ 2 ], images[ 4 ], nil)
+
+      @batch.lane_organised_images { |*args| callback.called_with(*args) }
+    end
+  end
 end

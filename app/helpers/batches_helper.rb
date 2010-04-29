@@ -1,11 +1,4 @@
 module BatchesHelper
-  def lane_organised_images_for(batch, &block)
-    images = batch.images.inject([ nil ] * 16) { |images,image| images[ image.position ] = image ; images }
-    batch.samples.zip(images.in_groups_of(2)).each do |sample,(left,right)|
-      yield(sample, left, right)
-    end
-  end
-
   def thumbnail_for(sample, image, side)
     render(
       :partial => 'batches/thumbnail',

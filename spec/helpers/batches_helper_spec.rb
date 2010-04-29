@@ -1,23 +1,6 @@
 require 'spec_helper'
 
 describe BatchesHelper do
-  describe '#lane_organised_images_for' do
-    it 'yield the images in pairs' do
-      batch = mock('batch', :id => 12345)
-      images = (1..5).map { |index| Factory('Images for batch', :batch_id => 12345, :position => index-1) }
-      samples = (1..3).map { |index| mock("Sample #{ index }", :lane => index, :name => "Sample #{ index }") }
-      batch.stub!(:images).and_return(images)
-      batch.stub!(:samples).and_return(samples)
-
-      callback = mock('callback')
-      callback.should_receive(:called_with).with(samples[ 0 ], images[ 0 ], images[ 1 ])
-      callback.should_receive(:called_with).with(samples[ 1 ], images[ 2 ], images[ 3 ])
-      callback.should_receive(:called_with).with(samples[ 2 ], images[ 4 ], nil)
-
-      helper.lane_organised_images_for(batch) { |*args| callback.called_with(*args) }
-    end
-  end
-
   describe '#thumbnail_for' do
     it 'passes through to the batches/thumnail partial' do
       helper.should_receive(:render).with(:partial => 'batches/thumbnail', :locals => { :sample => 'sample', :image => 'image', :side => 'side' }).and_return(:ok)
