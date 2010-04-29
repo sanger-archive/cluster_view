@@ -98,10 +98,31 @@ describe BatchesController do
   end
 
   describe "GET 'image'" do
-    def controller_action
-      'image'
+    # def controller_action
+    #   'image'
+    # end
+    
+    before(:each) do
+      @original_image = Factory('Images for batch', :batch_id => BatchHelper::VALID_BATCH_ID)
+      get :image, :id => BatchHelper::VALID_BATCH_ID, :image_id => @original_image.id
     end
 
-    it_should_behave_like 'returns batch image data'
+    it "returns an image with the original MIME type." do
+      response.content_type.should == @original_image.data_content_type
+    end
+    
+    it 'responds with some image data' do
+      response.body.to_s.should_not be_empty
+    end
+
+    it 'does not put the filename in the response body!' do
+      response.body.to_s.should_not == "/images/#{@original_image.data_file_name}"
+    end
+    
+    it "doesn't return the thumbnail instead of the original image." do
+      response.body.to_s.should_not == @original_image.data_thumbnail_file.to_s
+    end
+    
+    # it_should_behave_like 'returns batch image data'
   end
 end
