@@ -9,10 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100428103000) do
+ActiveRecord::Schema.define(:version => 20100429132234) do
 
   create_table "images", :force => true do |t|
-    t.string   "filename"
     t.integer  "batch_id"
     t.datetime "created_at"
     t.datetime "updated_at"

@@ -41,9 +41,16 @@ class MigrateLegacyData < ActiveRecord::Migration
   ]
 
   def self.up
-    Legacy::Image.valid_for_migration.all.each do |image|
+    Legacy::Image.valid_for_migration.all.each_with_index do |image,index|
       new_position = LEGACY_POSITIONS_TO_NEW_VALUES.index(image.position.to_i) or raise StandardError, "Legacy position #{ image.position } unmapped!"
-      Image.create!(:batch_id => image.batch_id.to_i, :filename => image.filename, :position => new_position)
+      filename     = File.expand_path(File.join(Settings.legacy_clusterview_image_path, '2617.tif'))
+
+      begin
+        File.open(filename, 'r') { |file| Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
+        say("Migrated #{ index } legacy images") if (index % 50) == 0
+      rescue Errno::ENOENT => exception
+        say("Legacy image file #{ filename } is missing - source image #{ image.id }")
+      end
     end
   end
 

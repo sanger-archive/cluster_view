@@ -5,3 +5,4 @@ ldap_configuration:
   port: '636'
   encryption: :simple_tls
 
+legacy_clusterview_image_path: '/nfs/disk54/badger/sybrgreenqc/uploads'
