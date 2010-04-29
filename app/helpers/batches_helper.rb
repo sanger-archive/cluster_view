@@ -14,7 +14,7 @@ module BatchesHelper
   end
 
   def link_to_full_size_image(image)
-    link_to(h(image.filename), batch_image_path(:id => image.batch_id, :image_id => image.id))
+    link_to(h(image.data_file_name), batch_image_path(:id => image.batch_id, :image_id => image.id))
   end
 
   def status_of(batch)

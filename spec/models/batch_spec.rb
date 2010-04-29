@@ -62,14 +62,14 @@ describe Batch do
 
     shared_examples_for('acting upon an image') do
       it 'performs the correct image update' do
-        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => "image data") })
+        @batch.update_attributes(:images => { '0' => @attributes.update(:data_file_name => 'filename', :data => "image data") })
       end
 
       it 'yields the event type and image when the block is given' do
         callback = mock('callback')
         callback.should_receive(:called_with).with(@event, :image)
 
-        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => "image data") }) do |*args|
+        @batch.update_attributes(:images => { '0' => @attributes.update(:data_file_name => 'filename', :data => "image data") }) do |*args|
           callback.called_with(*args)
         end
       end
@@ -115,10 +115,10 @@ describe Batch do
   describe '#update_attributes_by_update' do
     it 'updates an existing Image instance' do
       image = mock('image')
-      image.should_receive(:update_attributes).with(:id => 'IMAGE ID', :filename => 'foo', :position => '1', :data => 'image data')
+      image.should_receive(:update_attributes).with(:id => 'IMAGE ID', :data_file_name => 'foo', :position => '1', :data => 'image data')
       Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ image ])
 
-      @batch.update_attributes_by_update(:id => 'IMAGE ID', :filename => 'foo', :data => "image data", :position => '1').should == image
+      @batch.update_attributes_by_update(:id => 'IMAGE ID', :data_file_name => 'foo', :data => "image data", :position => '1').should == image
     end
   end
 
@@ -126,10 +126,10 @@ describe Batch do
     it 'creates a new Image instance' do
       Image.should_receive(:create!).with(
         :batch_id => BatchHelper::VALID_BATCH_ID, :position => '0',
-        :filename => 'foo', :data => 'image data'
+        :data_file_name => 'foo', :data => 'image data'
       ).and_return(:ok)
 
-      @batch.update_attributes_by_create(:filename => 'foo', :data => "image data", :position => '0').should == :ok
+      @batch.update_attributes_by_create(:data_file_name => 'foo', :data => "image data", :position => '0').should == :ok
     end
   end
 

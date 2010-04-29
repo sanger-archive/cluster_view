@@ -8,7 +8,7 @@ describe 'batches/_thumbnail' do
         :locals => {
           :sample => mock('sample', :lane => 3),
           :side => 'SIDE',
-          :image => mock_model(Image, :id => 1234, :batch_id => 5678, :filename => 'dir/filename', :root_filename => 'filename'),
+          :image => mock_model(Image, :id => 1234, :batch_id => 5678, :data_file_name => 'dir/filename', :root_filename => 'filename'),
           :body => 'BODY'
         }
       )

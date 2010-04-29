@@ -12,7 +12,7 @@ class BatchesController < ApplicationController
   handles_with_batch_not_found(:update) do
     events = []
     @batch.update_attributes(params[ :batch ]) do |event,image|
-      events.push(translate("batches.messages.image_upload.#{ event }", :filename => image.filename))
+      events.push(translate("batches.messages.image_upload.#{ event }", :data_file_name => image.data_file_name))
     end
     flash[ :events ] = events.sort
   end
@@ -39,6 +39,6 @@ private
 
   def render_image(type)
     image = Image.find(params[ :image_id ])
-    send_data(image.data_thumbnail_file, :type => 'image/jpeg', :disposition => 'inline', :filename => image.data_thumbnail_file_name)
+    send_data(image.data_thumbnail_file, :type => 'image/jpeg', :disposition => 'inline', :data_file_name => image.data_thumbnail_file_name)
   end
 end

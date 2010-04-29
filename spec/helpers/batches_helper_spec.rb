@@ -27,7 +27,7 @@ describe BatchesHelper do
 
   describe '#link_to_full_size_image' do
     it 'returns a link to the image' do
-      helper.link_to_full_size_image(mock_model(Image, :id => 1234, :filename => 'filename foo', :batch_id => 5678)).should ==
+      helper.link_to_full_size_image(mock_model(Image, :id => 1234, :data_file_name => 'filename foo', :batch_id => 5678)).should ==
         helper.link_to(h('filename foo'), batch_image_path(:id => 5678, :image_id => 1234))
     end
   end

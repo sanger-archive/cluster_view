@@ -17,7 +17,7 @@ describe '/batches/show' do
         mock_model(
           Image, :id => index, 
           :batch_id => 9999, :position => index-1,
-          :filename => ("dir/%03i" % index), 
+          :data_file_name => ("dir/%03i" % index), 
           :root_filename => ("%03i" % index) 
         )
       end

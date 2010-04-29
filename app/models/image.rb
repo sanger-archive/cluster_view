@@ -32,11 +32,7 @@ class Image < ActiveRecord::Base
   }
   
   def root_filename
-    File.basename(self.filename, ".*")
-  end
-  
-  def filename
-    self.data_file_name
+    File.basename(self.data_file_name, ".*")
   end
   
   def data_thumbnail_file_name
