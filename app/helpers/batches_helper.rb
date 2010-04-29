@@ -1,11 +1,4 @@
 module BatchesHelper
-  def lane_organised_images_for(batch, &block)
-    images = batch.images.inject([ nil ] * 16) { |images,image| images[ image.position ] = image ; images }
-    batch.samples.zip(images.in_groups_of(2)).each do |sample,(left,right)|
-      yield(sample, left, right)
-    end
-  end
-
   def thumbnail_for(sample, image, side)
     render(
       :partial => 'batches/thumbnail',
@@ -13,8 +6,8 @@ module BatchesHelper
     )
   end
 
-  def link_to_full_size_image(image)
-    link_to(h(image.filename), batch_image_path(:id => image.batch_id, :image_id => image.id))
+  def link_to_full_size_image(image, &block)
+    link_to(batch_image_path(:id => image.batch_id, :image_id => image.id), &block)
   end
 
   def status_of(batch)
@@ -27,10 +20,13 @@ module BatchesHelper
 
     root_name << "[#{ index }]"
     
-    content = ''
-    content << hidden_field_tag("#{ root_name }[id]", image.id) << "\n" unless image.nil?
-    content << hidden_field_tag("#{ root_name }[filename]", 'empty') << "\n"  # TODO: remove with paperclip
+    content = []
+    content << hidden_field_tag("#{ root_name }[id]", image.id) unless image.nil?
     content << file_field_tag("#{ root_name }[data]")
-    content
+    unless image.nil?
+      content << check_box_tag("#{ root_name }[delete]", 'yes') 
+      content << label_tag("#{ root_name }[delete]", "Delete image #{ image.root_filename }")
+    end
+    content.join("\n")
   end
 end

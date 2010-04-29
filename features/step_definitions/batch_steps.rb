@@ -48,7 +48,7 @@ end
 
 Given /^batch "([^\"]+)" has (images \d+ to \d+)$/ do |batch_id,filenames|
   filenames.each_with_index do |filename,index|
-    Factory('Images for batch', :batch_id => batch_id, :filename => filename, :position => index)
+    Factory('Images for batch', :batch_id => batch_id, :data_file_name => filename, :position => index)
   end
 end
 
@@ -62,14 +62,9 @@ When /^I view batch "([^\"]+)"$/ do |batch_id|
 end
 
 When /^I attach the file "([^\"]+)" for the (left|right) image in lane ([1-8])$/ do |filename,side,lane|
-  When %Q{I attach the file "#{ filename }" as "#{ filename }" for the #{ side } image in lane #{ lane }}
-end
-
-When /^I attach the file "([^\"]+)" as "([^\"]+)" for the (left|right) image in lane ([1-8])$/ do |file,filename,side,lane|
   index = (lane.to_i-1) * 2
   index = index + 1 if side == 'right'
-  When %Q{I attach the file "#{ file }" to "batch[images][#{ index }][data]"}
-  set_hidden_field("batch[images][#{ index }][filename]", :to => filename) # TODO[md12]: remove with paperclip
+  When %Q{I attach the file "#{ filename }" to "batch[images][#{ index }][data]"}
 end
 
 Then /^I should see a thumbnail for "([^\"]+)"$/ do |filename|
@@ -89,9 +84,29 @@ Then /^I should see the (left|right) thumbnail in lane ([1-8]) as "([^\"]+)"$/ d
   end
 end
 
+Then /^I should not see a (left|right) thumbnail in lane (\d+)$/ do |side,lane|
+  response.should_not have_selector("#lane_#{ lane } .thumbnail.#{ side } img")
+end
+
 Then /^I should see lanes with thumbnails:$/ do |table|
   table.hashes.each do |row|
     Then %Q{I should see the left thumbnail in lane #{ row[ 'lane' ] } as "#{ row[ 'left' ] }"}
     Then %Q{I should see the right thumbnail in lane #{ row[ 'lane' ] } as "#{ row[ 'right' ] }"}
+  end
+end
+
+Given /^batch "([^\"]+)" has image "([^\"]+)" for the (left|right) image in lane (\d+)$/ do |batch_id,filename,side,lane|
+  index = (lane.to_i-1) * 2
+  index = index + 1 if side == 'right'
+  Factory('Images for batch', :batch_id => batch_id, :data_file_name => File.basename(filename), :position => index)
+end
+
+Then /^I should not see an option "([^\"]+)"$/ do |label|
+  response.should_not have_selector('label', :text => label)
+end
+
+Then /^the "Delete image 2617" checkbox should not be checked foo$/ do
+  response.should have_selector('#lane_3') do |lane|
+    raise lane.to_s.inspect
   end
 end

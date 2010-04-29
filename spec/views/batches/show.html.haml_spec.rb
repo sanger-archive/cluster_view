@@ -2,34 +2,37 @@ require 'spec_helper'
 require 'ostruct'
 
 describe '/batches/show' do
-  def render_partial
+  before(:each) do
     assigns[ :batch ] = @batch = mock_model(Batch, :id => 9999, :status => 'Released')
-    @batch.errors.stub!(:[]).with(:image).and_return(nil)
-    @batch.stub!(:images).and_return(@images)
-    @batch.stub!(:samples).and_return(@samples)
+  end
 
+  def render_partial
+    @batch.errors.stub!(:[]).with(:image).and_return(nil)
     render :action => 'batches/show'
   end
 
   context 'with images' do
     before(:each) do
-      @images = (1..5).map { |index| mock_model(Image, :id => index, :filename => ("%03i" % index), :batch_id => 9999, :position => index-1) }
-      @samples = (1..3).map { |index| mock('sample', :lane => index, :name => "Sample #{ index }") }
+      @batch.should_receive(:lane_organised_images).and_yield(
+        OpenStruct.new(:lane => 1, :name => 'sample name'),
+        mock(Image, :id => 1, :batch_id => 9999, :position => 0, :data_file_name => "dir/000", :root_filename => '000'),
+        mock(Image, :id => 2, :batch_id => 9999, :position => 1, :data_file_name => "dir/001", :root_filename => '001')
+      )
+
       render_partial
     end
 
     it 'renders the thumbnails' do
       response.should have_tag('#thumbnails') do |thumbnails|
-        @images.each do |image|
-          thumbnails.should have_tag('img', :src => batch_thumbnail_path(:id => @batch.id, :image_id => image.id))
-        end
+        thumbnails.should have_tag('img', :src => batch_thumbnail_path(:id => @batch.id, :image_id => 1))
+        thumbnails.should have_tag('img', :src => batch_thumbnail_path(:id => @batch.id, :image_id => 2))
       end
     end
   end
 
   context 'without images' do
     before(:each) do
-      @images = @samples = []
+      @batch.should_receive(:lane_organised_images)
       render_partial
     end
 

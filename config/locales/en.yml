@@ -28,9 +28,9 @@ en:
 
     messages:
       image_upload:
-        create: 'Image {{filename}} created successfully.'
-        update: 'Image {{filename}} updated successfully.'
-        delete: 'Image {{filename}} deleted successfully.'
+        create: 'Image {{data_file_name}} created successfully.'
+        update: 'Image {{data_file_name}} updated successfully.'
+        delete: 'Image {{data_file_name}} deleted successfully.'
 
     statuses:
       released: 'Released'

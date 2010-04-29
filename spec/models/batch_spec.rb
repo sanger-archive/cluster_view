@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+class Batch
+  public :update_attributes_by_update
+  public :update_attributes_by_create
+  public :update_attributes_by_delete
+end
+
 describe Batch do
   include BatchHelper
   
@@ -42,37 +48,28 @@ describe Batch do
       @batch.update_attributes({})
     end
 
-    context 'not uploading an image' do
-      after(:each) do
-        Image.should_receive(:create!).with(any_args).never
+    it 'does not update or create an image if no image data is uploaded' do
+      Image.should_receive(:create!).with(any_args).never
 
-        callback = mock('callback')
-        callback.should_receive(:called_with).with(any_args).never
+      callback = mock('callback')
+      callback.should_receive(:called_with).with(any_args).never
 
-        @batch.update_attributes(:images => { '0' => @image_attributes }) do |*args|
-          callback.called_with(*args)
-        end
-      end
-
-      it 'does nothing if the image data is empty' do
-        @image_attributes = { :filename => 'foo' }
-      end
-
-      it 'does nothing if the filename is blank' do
-        @image_attributes = { :filename => '', :data => 'some random data' }
+      # This is missing :data parameter
+      @batch.update_attributes(:images => { '0' => { } }) do |*args|
+        callback.called_with(*args)
       end
     end
 
     shared_examples_for('acting upon an image') do
       it 'performs the correct image update' do
-        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => StringIO.new('image data')) })
+        @batch.update_attributes(:images => { '0' => @attributes.update(:data_file_name => 'filename', :data => "image data") })
       end
 
       it 'yields the event type and image when the block is given' do
         callback = mock('callback')
         callback.should_receive(:called_with).with(@event, :image)
 
-        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename', :data => StringIO.new('image data')) }) do |*args|
+        @batch.update_attributes(:images => { '0' => @attributes.update(:data_file_name => 'filename', :data => "image data") }) do |*args|
           callback.called_with(*args)
         end
       end
@@ -96,20 +93,32 @@ describe Batch do
       it_should_behave_like('acting upon an image')
     end
 
-    it 'uses removes extraneous path information from the filename' do
-      Image.should_receive(:create!).with(hash_including(:filename => 'foo')).and_return(:ok)
+    context 'deleting an existing image' do
+      before(:each) do
+        @batch.should_receive(:update_attributes_by_delete).with(hash_including(:id => 'ID')).and_return(:image)
+        @attributes, @event = { :id => 'ID', :delete => 'yes' }, :delete
+      end
 
-      @batch.update_attributes({ :images => { '0' => { :filename => 'dir1/dir2/foo', :data => StringIO.new('image data') } } })
+      it_should_behave_like('acting upon an image')
+
+      it 'deletes the image even if the image data is not sent' do
+        callback = mock('callback')
+        callback.should_receive(:called_with).with(@event, :image)
+
+        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename') }) do |*args|
+          callback.called_with(*args)
+        end
+      end
     end
   end
 
   describe '#update_attributes_by_update' do
     it 'updates an existing Image instance' do
-      @image = mock('image')
-      @image.should_receive(:update_attributes).with(:id => 'IMAGE ID', :filename => 'foo', :position => '1', :data => 'image data')
-      Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ @image ])
+      image = mock('image')
+      image.should_receive(:update_attributes).with(:id => 'IMAGE ID', :data_file_name => 'foo', :position => '1', :data => 'image data')
+      Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ image ])
 
-      @batch.update_attributes(:images => { '1' => { :id => 'IMAGE ID', :filename => 'foo', :data => StringIO.new('image data') } })
+      @batch.update_attributes_by_update(:id => 'IMAGE ID', :data_file_name => 'foo', :data => "image data", :position => '1').should == image
     end
   end
 
@@ -117,10 +126,36 @@ describe Batch do
     it 'creates a new Image instance' do
       Image.should_receive(:create!).with(
         :batch_id => BatchHelper::VALID_BATCH_ID, :position => '0',
-        :filename => 'foo', :data => 'image data'
+        :data_file_name => 'foo', :data => 'image data'
       ).and_return(:ok)
 
-      @batch.update_attributes({ :images => { '0' => { :filename => 'foo', :data => StringIO.new('image data') } } })
+      @batch.update_attributes_by_create(:data_file_name => 'foo', :data => "image data", :position => '0').should == :ok
+    end
+  end
+
+  describe '#update_attributes_by_delete' do
+    it 'destroys the Image instance' do
+      image = mock('image')
+      image.should_receive(:destroy)
+      Image.should_receive(:by_batch_and_image_id).with(@batch, 'IMAGE ID').and_return([ image ])
+
+      @batch.update_attributes_by_delete(:id => 'IMAGE ID', :data => 'image data', :delete => 'yes').should == image
+    end
+  end
+
+  describe '#lane_organised_images_for' do
+    it 'yield the images in pairs' do
+      images = (1..5).map { |index| Factory('Images for batch', :batch_id => 12345, :position => index-1) }
+      samples = (1..3).map { |index| mock("Sample #{ index }", :lane => index, :name => "Sample #{ index }") }
+      @batch.stub!(:images).and_return(images)
+      @batch.stub!(:samples).and_return(samples)
+
+      callback = mock('callback')
+      callback.should_receive(:called_with).with(samples[ 0 ], images[ 0 ], images[ 1 ])
+      callback.should_receive(:called_with).with(samples[ 1 ], images[ 2 ], images[ 3 ])
+      callback.should_receive(:called_with).with(samples[ 2 ], images[ 4 ], nil)
+
+      @batch.lane_organised_images { |*args| callback.called_with(*args) }
     end
   end
 end

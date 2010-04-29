@@ -10,25 +10,6 @@ shared_examples_for('the batch is invalid') do
   end
 end
 
-shared_examples_for('returns batch image data') do
-  before(:each) do
-    image = Factory('Images for batch', :batch_id => BatchHelper::VALID_BATCH_ID)
-    get(controller_action(), :id => BatchHelper::VALID_BATCH_ID, :image_id => image.id)
-  end
-
-  it 'responds with a PNG MIME type' do
-    response.content_type.should == 'image/png'
-  end
-
-  it 'responds with some image data' do
-    response.body.to_s.should_not be_empty
-  end
-
-  it 'does not put the filename in the response body!' do
-    response.body.to_s.should_not == '/images/sanger-logo.png'
-  end
-end
-
 describe BatchesController do
   include BatchHelper
 
@@ -60,7 +41,7 @@ describe BatchesController do
   context "PUT 'update'" do
     def self.performs_update_with_id(id)
       before(:each) do
-        put 'update', :id => id, :batch => { :images => { '0' => { :data => StringIO.new('image data'), :filename => 'my filename' } } }
+        put 'update', :id => id, :batch => { :images => { '0' => { :data => StringIO.new('image data') } } }
       end
     end
     
@@ -88,20 +69,65 @@ describe BatchesController do
       response.should be_success
     end
   end
+  
+  context "when downloading images from clusterview" do
+    describe "GET 'image' to download original tiff images" do
+      before(:each) do
+        @image = Factory('Images for batch', :batch_id => BatchHelper::VALID_BATCH_ID)
+      end
+      
+      def do_get_image_file
+        get :image, :id => BatchHelper::VALID_BATCH_ID, :image_id => @image.id
+      end
+      
+      it "returns an image with the original image's MIME type." do
+        do_get_image_file()
+        response.content_type.should == @image.data_content_type
+      end
+    
+      it 'responds with some image data' do
+        do_get_image_file()
+        response.body.to_s.should_not be_empty
+      end
 
-  describe "GET 'thumbnail'" do
-    def controller_action
-      'thumbnail'
+      it 'does not put the filename in the response body!' do
+        do_get_image_file()
+        response.body.to_s.should_not == "/images/#{@image.data_file_name}"
+      end
+    
+      it "doesn't return the thumbnail instead of the original image." do
+        do_get_image_file()
+        response.body.to_s.should_not == @image.data_thumbnail_file.to_s
+      end
+      
+      it "returns the original image with the correct filename." do
+        controller.should_receive(:send_data).with(
+          @image.data_file,
+          :filename => @image.data_file_name,
+          :type => @image.data_content_type)
+          
+        do_get_image_file()
+      end
     end
+    
+    describe "GET 'thumbnail' to download JPEG thumbnails" do
+      before(:each) do
+        @image = Factory('Images for batch', :batch_id => BatchHelper::VALID_BATCH_ID)
+        get :thumbnail, :id => BatchHelper::VALID_BATCH_ID, :image_id => @image.id
+      end
 
-    it_should_behave_like 'returns batch image data'
+      it 'responds with the thumbnail MIME type' do
+        response.content_type.should == Image::DATA_THUMBNAIL_CONTENT_TYPE
+      end
+
+      it 'responds with some image data' do
+        response.body.to_s.should_not be_empty
+      end
+
+      it 'does not put the filename in the response body!' do
+        response.body.to_s.should_not == "/thumbnails/#{BatchHelper::VALID_BATCH_ID}/#{@image.id}"
+      end
+    end
   end
 
-  describe "GET 'image'" do
-    def controller_action
-      'image'
-    end
-
-    it_should_behave_like 'returns batch image data'
-  end
 end

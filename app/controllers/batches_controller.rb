@@ -12,17 +12,24 @@ class BatchesController < ApplicationController
   handles_with_batch_not_found(:update) do
     events = []
     @batch.update_attributes(params[ :batch ]) do |event,image|
-      events.push(translate("batches.messages.image_upload.#{ event }", :filename => image.filename))
+      events.push(translate("batches.messages.image_upload.#{ event }", :data_file_name => image.data_file_name))
     end
     flash[ :events ] = events.sort
   end
 
   def thumbnail
-    render_image(:thumbnail)
+    image = Image.find(params[ :image_id ])
+    send_data(image.data_thumbnail_file,
+      :type => 'image/jpeg', 
+      :disposition => 'inline', 
+      :filename => image.data_thumbnail_file_name)
   end
 
   def image
-    render_image(:image)
+    image = Image.find(params[:image_id])
+    send_data(image.data_file, 
+      :type => image.data_content_type,
+      :filename => image.data_file_name)
   end
 
 private
@@ -37,7 +44,4 @@ private
     render :batch_not_found
   end
 
-  def render_image(type)
-    send_file('public/images/sanger-logo.png', :type => 'image/png', :filename => params[ :image_id ], :stream => false)
-  end
 end

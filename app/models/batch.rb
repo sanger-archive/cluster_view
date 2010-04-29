@@ -1,3 +1,5 @@
+require 'ostruct'
+
 # An instance of this class represents a slide that is being put through the sequencing process.
 # Each Batch has a 8 lanes in which there are a number of samples.
 class Batch < ActiveResource::Base
@@ -18,16 +20,14 @@ class Batch < ActiveResource::Base
   # have been updated to the specified block (if given).
   def update_attributes(attributes, &block)
     attributes.fetch(:images, []).each do |position,image_attributes|
-      next if [ :filename, :data ].any? { |field| image_attributes[ field ].blank? }
+      update_attributes_event = case
+      when image_attributes.key?(:delete) then :delete
+      when image_attributes[ :data ].blank? then next
+      when !image_attributes.key?(:id) then :create
+      else :update
+      end
 
-      image_attributes.update(
-        :position => position,
-        :filename => File.basename(image_attributes[ :filename ]),  # TODO[md12]: remove with paperclip?
-        :data     => image_attributes[ :data ].read                 # TODO[md12]: remove with paperclip
-      )
-
-      update_attributes_event = image_attributes.key?(:id) ? :update : :create
-      image                   = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes)
+      image = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes.merge(:position => position))
       yield(update_attributes_event, image) if block_given?
     end
   end
@@ -36,6 +36,15 @@ class Batch < ActiveResource::Base
     self.lanes.lane.map do |lane|
       sample_type = lane.respond_to?(:library) ? :library : :control
       OpenStruct.new(:lane => lane.position.to_i, :name => lane.send(sample_type).name)
+    end
+  end
+
+  # Yields the sample and images (left and right) for this instance.  Images can be nil and the sample
+  # is an object that responds to :lane and :name (see Batch#samples).
+  def lane_organised_images(&block)
+    images = self.images.inject([ nil ] * 16) { |images,image| images[ image.position ] = image ; images }
+    self.samples.zip(images.in_groups_of(2)).each do |sample,(left,right)|
+      yield(sample, left, right)
     end
   end
 
@@ -49,5 +58,11 @@ private
 
   def update_attributes_by_create(image_attributes)
     Image.create!(image_attributes.update(:batch_id => self.id))
+  end
+
+  def update_attributes_by_delete(image_attributes)
+    image = Image.by_batch_and_image_id(self, image_attributes[ :id ]).first
+    image.destroy
+    image
   end
 end

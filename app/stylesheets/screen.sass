@@ -3,16 +3,17 @@
 @import compass/utilities/lists.sass
 @import compass/utilities/links.sass
 
-!color_black       = #222222
-!color_white       = #F8F8F8
+!color_black        = #222222
+!color_white        = #F8F8F8
 
-!color_blue_light  = #0077A9
-!color_blue_dark   = #2F3B5D
-!color_grey_light  = #D0D0D0
-!color_grey_medium = #666666
-!color_grey_dark   = #484848
-!color_red_light   = #E98844
-!color_red_dark    = #C92200
+!color_blue_light   = #0077A9
+!color_blue_dark    = #2F3B5D
+!color_grey_light   = #D0D0D0
+!color_grey_medium  = #666666
+!color_grey_dark    = #484848
+!color_red_light    = #E98844
+!color_red_dark     = #C92200
+!color_yellow_light = #F8F8CC
 
 *:focus
   outline= !color_grey_medium "dotted" "medium"
@@ -34,6 +35,12 @@ body
 
   input.prefilled
     color= !color_grey_light
+
+#content
+  h1
+    font-size: 24px
+    line-height: 30px
+    text-align: center
 
 #header
   background= !color_blue_dark
@@ -139,10 +146,23 @@ body
   margin: 5px auto
   text-align: center
 
+  .details
+    font-weight: bold
+
   .thumbnail
     display: inline-block
     margin: 2px
     text-align: center
+    width: 410px
 
     img
-      margin-bottom: 4px
+      width: 400px
+      height: 300px
+
+      & + p
+        margin: 4px auto
+
+#image_events
+  background-color= !color_yellow_light
+  padding: 4px
+  text-align: center
