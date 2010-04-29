@@ -18,13 +18,18 @@ class BatchesController < ApplicationController
   end
 
   def thumbnail
-    render_image(:thumbnail)
+    image = Image.find(params[ :image_id ])
+    send_data(image.data_thumbnail_file,
+      :type => 'image/jpeg', 
+      :disposition => 'inline', 
+      :filename => image.data_thumbnail_file_name)
   end
 
   def image
-    # render_image(:image)
     image = Image.find(params[:image_id])
-    send_data(image.data_file, :type => image.data_content_type, :data_file_name => image.data_file_name)
+    send_data(image.data_file, 
+      :type => image.data_content_type,
+      :filename => image.data_file_name)
   end
 
 private
@@ -39,8 +44,4 @@ private
     render :batch_not_found
   end
 
-  def render_image(type)
-    image = Image.find(params[ :image_id ])
-    send_data(image.data_thumbnail_file, :type => 'image/jpeg', :disposition => 'inline', :data_file_name => image.data_thumbnail_file_name)
-  end
 end

@@ -3,10 +3,14 @@
 # greyscale TIFF images.
 class Image < ActiveRecord::Base
   
+  DATA_THUMBNAIL_CONTENT_TYPE = "image/jpeg"
+  
   has_attached_file :data,
     :storage => :database, :column => "data_file",
     :styles => { :thumbnail => {:geometry => "400x400>", :format => "jpg", :column => "data_thumbnail_file"} },
     :convert_options => { :thumbnail => "-normalize" }
+    
+  
 
   # We do not need to destroy the attachments as they are part of the database, so override
   # this method to do nothing!
@@ -38,4 +42,5 @@ class Image < ActiveRecord::Base
   def data_thumbnail_file_name
     "#{self.root_filename}.jpg"
   end
+  
 end
