@@ -27,13 +27,11 @@ Rails::Initializer.run do |config|
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
 
   # Specify gems that this application depends on and have them installed with rake gems:install
-  config.gem 'sqlite3-ruby', :lib => 'sqlite3', :version => '>= 1.2.5'
   config.gem 'haml', :version => '>= 2.2.23'
   config.gem 'compass', :version => '>= 0.8.17'
   config.gem 'formtastic', :version => '>= 0.9.8'
   config.gem 'authlogic', :version => '>= 2.1.3'
   config.gem 'patshaughnessy-paperclip', :lib => 'paperclip', :version => '>= 2.2.8'
-  # config.gem 'paperclip', :version => '>= 2.3.1.1'
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
