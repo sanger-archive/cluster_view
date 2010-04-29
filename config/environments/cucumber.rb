@@ -26,3 +26,4 @@ config.gem 'database_cleaner', :version => '>=0.5.0',  :lib => false
 config.gem 'webrat',           :version => '>=0.7.0',  :lib => false
 config.gem 'factory_girl',     :version => '>= 1.2.4'
 config.gem 'ruby-net-ldap',    :version => '>= 0.0.4', :lib => 'net/ldap'
+config.gem 'sqlite3-ruby',     :version => '>= 1.2.5', :lib => 'sqlite3'

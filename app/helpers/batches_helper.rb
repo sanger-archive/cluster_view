@@ -27,9 +27,13 @@ module BatchesHelper
 
     root_name << "[#{ index }]"
     
-    content = ''
-    content << hidden_field_tag("#{ root_name }[id]", image.id) << "\n" unless image.nil?
+    content = []
+    content << hidden_field_tag("#{ root_name }[id]", image.id) unless image.nil?
     content << file_field_tag("#{ root_name }[data]")
-    content
+    unless image.nil?
+      content << check_box_tag("#{ root_name }[delete]", 'yes') 
+      content << label_tag("#{ root_name }[delete]", "Delete image #{ image.root_filename }")
+    end
+    content.join("\n")
   end
 end
