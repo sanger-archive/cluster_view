@@ -4,7 +4,6 @@ class Batch
   public :update_attributes_by_update
   public :update_attributes_by_create
   public :update_attributes_by_delete
-  public :event_type_from_parameters
 end
 
 describe Batch do
@@ -52,12 +51,12 @@ describe Batch do
     end
 
     it 'does not update or create an image if the event is nil' do
-      @batch.should_receive(:event_type_from_parameters).with(@attributes).and_return(nil)
+      Batch.should_receive(:event_type_from_parameters).with(@attributes).and_return(nil)
       @callback.should_receive(:called_with).with(any_args).never
     end
 
     it 'performs the update based on the event type' do
-      @batch.should_receive(:event_type_from_parameters).with(@attributes).and_return(:does_not_exist)
+      Batch.should_receive(:event_type_from_parameters).with(@attributes).and_return(:does_not_exist)
       @batch.should_receive(:update_attributes_by_does_not_exist).with(@attributes.merge(:position => '0')).and_return(:image)
       @callback.should_receive(:called_with).with(:does_not_exist, :image)
     end
@@ -110,25 +109,43 @@ describe Batch do
     end
   end
 
-  describe '#event_type_from_parameters' do
+  describe '.event_type_from_parameters' do
     it 'returns :delete if the :delete parameter is set' do
-      @batch.event_type_from_parameters(:delete => 'yes').should == :delete
+      Batch.event_type_from_parameters(:delete => 'yes').should == :delete
     end
 
     it 'returns nil if the :data parameter is blank' do
-      @batch.event_type_from_parameters({}).should be_nil
+      Batch.event_type_from_parameters({}).should be_nil
     end
 
     it 'returns :create if the :id parameter is unspecified for :data' do
-      @batch.event_type_from_parameters(:data => 'data foo').should == :create
+      Batch.event_type_from_parameters(:data => 'data foo').should == :create
     end
 
     it 'returns :update if :data and :id are specified' do
-      @batch.event_type_from_parameters(:data => 'data foo', :id => 'id foo').should == :update
+      Batch.event_type_from_parameters(:data => 'data foo', :id => 'id foo').should == :update
     end
 
     it 'returns :delete even when :data and :id are specified with :delete' do
-      @batch.event_type_from_parameters(:data => 'data foo', :id => 'id foo', :delete => 'yes').should == :delete
+      Batch.event_type_from_parameters(:data => 'data foo', :id => 'id foo', :delete => 'yes').should == :delete
+    end
+  end
+
+  describe '.image_index_from_sample_and_side' do
+    after(:each) do
+      Batch.image_index_from_sample_and_side(OpenStruct.new(:lane => @lane), @side).should == @expected
+    end
+
+    it 'returns 0 for the left image in lane 1' do
+      @lane, @side, @expected = 1, :left, 0
+    end
+
+    it 'returns 1 for the right image in lane 1' do
+      @lane, @side, @expected = 1, :right, 1
+    end
+
+    it 'returns 15 for the right image in lane 8' do
+      @lane, @side, @expected = 8, :right, 15
     end
   end
 end

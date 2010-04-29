@@ -9,6 +9,12 @@ class Batch < ActiveResource::Base
     def human_name
       self.name.humanize
     end
+
+    def image_index_from_sample_and_side(sample, side)
+      index = (sample.lane-1) * 2
+      index = index + 1 if side == :right
+      index
+    end
   end
   
   def images
@@ -20,7 +26,7 @@ class Batch < ActiveResource::Base
   # have been updated to the specified block (if given).
   def update_attributes(attributes, &block)
     attributes.fetch(:images, []).each do |position,image_attributes|
-      update_attributes_event = event_type_from_parameters(image_attributes) or next
+      update_attributes_event = self.class.event_type_from_parameters(image_attributes) or next
       image = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes.merge(:position => position))
       yield(update_attributes_event, image) if block_given?
     end
@@ -60,7 +66,7 @@ private
     image
   end
 
-  def event_type_from_parameters(parameters)
+  def self.event_type_from_parameters(parameters)
     case
     when parameters.key?(:delete)   then :delete
     when parameters[ :data ].blank? then nil

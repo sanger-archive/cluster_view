@@ -18,11 +18,8 @@ module BatchesHelper
     check_box_tag(name, value) << label_tag(name, label)
   end
 
-  def image_upload_tag(root_name, side, sample, image)
-    index = (sample.lane-1) * 2
-    index = index + 1 if side == :right
-
-    root_name << "[#{ index }]"
+  def image_upload_tag(side, sample, image)
+    root_name = "batch[images][#{ Batch.image_index_from_sample_and_side(sample, side) }]"
     
     content = []
     content << file_field_tag("#{ root_name }[data]")

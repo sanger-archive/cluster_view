@@ -32,11 +32,11 @@ describe BatchesHelper do
 
   describe '#image_upload_tag' do
     after(:each) do
-      helper.should_receive(:hidden_field_tag).with("root[#{ @index }][id]", 'ID').and_return('ID_FIELD')
-      helper.should_receive(:file_field_tag).with("root[#{ @index }][data]").and_return('FILE_FIELD')
-      helper.should_receive(:labeled_check_box_tag).with("root[#{ @index }][delete]", "Delete image FOO.tif").and_return('CHECK_BOX')
+      helper.should_receive(:hidden_field_tag).with("batch[images][#{ @index }][id]", 'ID').and_return('ID_FIELD')
+      helper.should_receive(:file_field_tag).with("batch[images][#{ @index }][data]").and_return('FILE_FIELD')
+      helper.should_receive(:labeled_check_box_tag).with("batch[images][#{ @index }][delete]", "Delete image FOO.tif").and_return('CHECK_BOX')
 
-      output = helper.image_upload_tag('root', @side, mock('sample', :lane => @lane), mock('image', :id => 'ID', :root_filename => 'FOO.tif'))
+      output = helper.image_upload_tag(@side, mock('sample', :lane => @lane), mock('image', :id => 'ID', :root_filename => 'FOO.tif'))
       output.should == [ 'FILE_FIELD', 'CHECK_BOX', 'ID_FIELD' ].join("\n")
     end
 
