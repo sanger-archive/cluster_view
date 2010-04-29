@@ -64,6 +64,11 @@ body {
   body input.prefilled {
     color: #d0d0d0; }
 
+#content h1 {
+  font-size: 24px;
+  line-height: 30px;
+  text-align: center; }
+
 #header {
   background: #2f3b5d;
   border-top: 3px solid #0077a9;
@@ -167,4 +172,12 @@ body {
     margin: 2px;
     text-align: center; }
     #thumbnails > .lane .thumbnail img {
-      margin-bottom: 4px; }
+      width: 400px;
+      height: 300px; }
+      #thumbnails > .lane .thumbnail img + p {
+        margin: 4px auto; }
+
+#image_events {
+  background-color: #f8f8cc;
+  padding: 4px;
+  text-align: center; }

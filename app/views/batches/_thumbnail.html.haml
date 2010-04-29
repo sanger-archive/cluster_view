@@ -2,4 +2,5 @@
   - unless image.nil?
     %img{ :src => batch_thumbnail_path(:id => image.batch_id, :image_id => image.id), :alt => h(image.data_file_name) }
     %p= link_to_full_size_image(image)
-  = image_upload_tag('batch[images]', side, sample, image)
+
+  .upload_details= image_upload_tag('batch[images]', side, sample, image)
