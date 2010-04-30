@@ -9,19 +9,12 @@ class Image < ActiveRecord::Base
     :storage => :database, :column => "data_file",
     :styles => { :thumbnail => {:geometry => "400x400>", :format => "jpg", :column => "data_thumbnail_file"} },
     :convert_options => { :thumbnail => "-normalize" }
-    
-  
 
   # We do not need to destroy the attachments as they are part of the database, so override
   # this method to do nothing!
   def destroy_attached_files
     # Nothing to do
   end
-    
-    # Not sure if this validation will be a pain but don't think we'll create an image
-    # without an attachment, so...
-    # validates_attachment_presence :data
-    
 
   validates_presence_of :position
   validates_numericality_of :position, :integer_only => true
@@ -42,5 +35,31 @@ class Image < ActiveRecord::Base
   def data_thumbnail_file_name
     "#{self.root_filename}.jpg"
   end
+  
+  def data_thumbnail_content_type
+    DATA_THUMBNAIL_CONTENT_TYPE
+  end
+
+  # Column aliases to support the self.define_send_image_data_via(image_type)
+  alias_attribute :data_image_file, :data_file
+  alias_attribute :data_image_content_type, :data_content_type
+  alias_attribute :data_image_file_name, :data_file_name
+  
+  # Creates a method to send a type of image back to conduit class (e.g. a Controller)
+  # with the correct MIME type and filename.
+  def self.define_send_image_data_via(image_type)
+    define_method(:"send_#{image_type}_data_via") do |conduit, options|
+      conduit.send_data(
+        self.send(:"data_#{image_type}_file"),
+        options.merge(
+          :type => self.send(:"data_#{image_type}_content_type"), 
+          :filename => self.send(:"data_#{image_type}_file_name")
+        )
+      )
+    end
+  end
+  
+  define_send_image_data_via(:thumbnail)
+  define_send_image_data_via(:image)
   
 end

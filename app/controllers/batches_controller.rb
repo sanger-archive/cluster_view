@@ -1,9 +1,23 @@
 # Responsible for handling requests related to Batch instances, this controller is the main hub
 # of the application.
+#
+# Supports the following actions:
+#
+#   thumbnail => sends back the image thumbnail data for image_id
+#   image     => sends back the original image data for image_id
 class BatchesController < ApplicationController
+  # Open #send_data so that it can called from Image.
+  public :send_data
+  
   class << self
     def handles_with_batch_not_found(action, &block)  
       define_method(action) { handle_with_batch_not_found(&block) }
+    end
+
+    def define_action_to_send_the(part, options = {})
+      define_method(part) do
+        Image.find(params[:image_id]).send(:"send_#{ part }_data_via", self, options)
+      end
     end
   end
 
@@ -16,22 +30,10 @@ class BatchesController < ApplicationController
     end
     flash[ :events ] = events.sort
   end
-
-  def thumbnail
-    image = Image.find(params[ :image_id ])
-    send_data(image.data_thumbnail_file,
-      :type => 'image/jpeg', 
-      :disposition => 'inline', 
-      :filename => image.data_thumbnail_file_name)
-  end
-
-  def image
-    image = Image.find(params[:image_id])
-    send_data(image.data_file, 
-      :type => image.data_content_type,
-      :filename => image.data_file_name)
-  end
-
+  
+  define_action_to_send_the(:thumbnail, :disposition => 'inline')
+  define_action_to_send_the(:image)
+  
 private
 
   def handle_with_batch_not_found(&block)
