@@ -19,7 +19,7 @@ module BatchesHelper
   end
 
   def image_upload_tag(side, sample, image)
-    root_name = "batch[images][#{ Batch.image_index_from_sample_and_side(sample, side) }]"
+    root_name = "batch[images][#{ sample.image_index_for_side(side) }]"
     
     content = []
     content << file_field_tag("#{ root_name }[data]")

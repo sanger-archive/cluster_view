@@ -31,39 +31,16 @@ describe BatchesHelper do
   end
 
   describe '#image_upload_tag' do
-    after(:each) do
-      helper.should_receive(:hidden_field_tag).with("batch[images][#{ @index }][id]", 'ID').and_return('ID_FIELD')
-      helper.should_receive(:file_field_tag).with("batch[images][#{ @index }][data]").and_return('FILE_FIELD')
-      helper.should_receive(:labeled_check_box_tag).with("batch[images][#{ @index }][delete]", "Delete image FOO.tif").and_return('CHECK_BOX')
+    it 'generates the appropriate output' do
+      helper.should_receive(:hidden_field_tag).with("batch[images][11][id]", 'ID').and_return('ID_FIELD')
+      helper.should_receive(:file_field_tag).with("batch[images][11][data]").and_return('FILE_FIELD')
+      helper.should_receive(:labeled_check_box_tag).with("batch[images][11][delete]", "Delete image FOO.tif").and_return('CHECK_BOX')
 
-      output = helper.image_upload_tag(@side, mock('sample', :lane => @lane), mock('image', :id => 'ID', :root_filename => 'FOO.tif'))
+      sample = mock('sample', :lane => 1)
+      sample.stub!(:image_index_for_side).with(:random_side).and_return(11)
+
+      output = helper.image_upload_tag(:random_side, sample, mock('image', :id => 'ID', :root_filename => 'FOO.tif'))
       output.should == [ 'FILE_FIELD', 'CHECK_BOX', 'ID_FIELD' ].join("\n")
-    end
-
-    class << self
-      def side(side)
-        before(:each) do
-          @side = side
-        end
-      end
-
-      def lane_checks(&block)
-        (1..8).map { |lane| [ lane, yield(lane) ] }.each do |lane,index|
-          it "indexes lane #{ lane } as #{ index }" do
-            @lane, @index = lane, index
-          end
-        end
-      end
-    end
-
-    context 'left side images' do
-      side(:left)
-      lane_checks { |lane| (lane-1)*2 }
-    end
-
-    context 'right side images' do
-      side(:right)
-      lane_checks { |lane| (lane-1)*2 + 1 }
     end
   end
 end

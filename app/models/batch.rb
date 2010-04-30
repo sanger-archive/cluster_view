@@ -9,12 +9,6 @@ class Batch < ActiveResource::Base
     def human_name
       self.name.humanize
     end
-
-    def image_index_from_sample_and_side(sample, side)
-      index = (sample.lane-1) * 2
-      index = index + 1 if side == :right
-      index
-    end
   end
   
   def images
@@ -35,7 +29,7 @@ class Batch < ActiveResource::Base
   def samples
     self.lanes.lane.map do |lane|
       sample_type = lane.respond_to?(:library) ? :library : :control
-      OpenStruct.new(:lane => lane.position.to_i, :name => lane.send(sample_type).name)
+      Sample.new(lane.position.to_i, lane.send(sample_type).name)
     end
   end
 
@@ -72,6 +66,21 @@ private
     when parameters[ :data ].blank? then nil
     when !parameters.key?(:id)      then :create
     else :update
+    end
+  end
+
+  class Sample
+    attr_reader :lane
+    attr_reader :name
+
+    def initialize(lane, name)
+      @lane, @name = lane, name
+    end
+
+    def image_index_for_side(side)
+      index = (self.lane-1) * 2
+      index = index + 1 if side == :right
+      index
     end
   end
 end

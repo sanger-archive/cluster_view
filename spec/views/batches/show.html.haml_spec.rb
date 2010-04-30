@@ -14,7 +14,7 @@ describe '/batches/show' do
   context 'with images' do
     before(:each) do
       @batch.should_receive(:lane_organised_images).and_yield(
-        OpenStruct.new(:lane => 1, :name => 'sample name'),
+        Batch::Sample.new(1, 'sample name'),
         mock(Image, :id => 1, :batch_id => 9999, :position => 0, :data_file_name => "dir/000", :root_filename => '000'),
         mock(Image, :id => 2, :batch_id => 9999, :position => 1, :data_file_name => "dir/001", :root_filename => '001')
       )
