@@ -1,3 +1,4 @@
+@requires_user_to_be_logged_in
 Feature: Batch search
   In order to find a particular batch
   As a user

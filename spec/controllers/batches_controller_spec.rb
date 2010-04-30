@@ -17,6 +17,10 @@ describe BatchesController do
     routing_to('/thumbnails/271/1', { :action => 'thumbnail', :id => '271', :image_id => '1' }, RoutingHelper::HTTP_GET_ONLY)
     routing_to('/images/1000/200', { :action => 'image', :id => '1000', :image_id => '200' }, RoutingHelper::HTTP_GET_ONLY)
   end
+
+  before(:each) do
+    log_in_user('John Smith')
+  end
   
   context "GET 'show'" do
     context 'when the batch is valid' do

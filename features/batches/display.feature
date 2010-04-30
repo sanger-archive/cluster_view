@@ -1,3 +1,4 @@
+@requires_user_to_be_logged_in
 Feature: Batch display
   Scenario: Batch with no images
     Given batch ID "2010" is valid

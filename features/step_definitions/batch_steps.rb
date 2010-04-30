@@ -53,8 +53,7 @@ Given /^batch "([^\"]+)" has (images \d+ to \d+)$/ do |batch_id,filenames|
 end
 
 When /^I search for batch ID "([^\"]+)"$/ do |batch_id|
-  fill_in "Batch ID", :with =>batch_id
-  click_button "Search"
+  fill_in_and_submit('id', :with => batch_id)
 end
 
 When /^I view batch "([^\"]+)"$/ do |batch_id|

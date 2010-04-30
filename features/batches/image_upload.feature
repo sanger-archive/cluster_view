@@ -1,3 +1,4 @@
+@requires_user_to_be_logged_in
 Feature: Image Upload
   In order to associate images with a batch
   As a User

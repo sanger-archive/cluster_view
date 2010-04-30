@@ -1,6 +1,8 @@
 # Responsible for handling requests related to Batch instances, this controller is the main hub
 # of the application.
 class BatchesController < ApplicationController
+  before_filter :require_user
+
   class << self
     def handles_with_batch_not_found(action, &block)  
       define_method(action) { handle_with_batch_not_found(&block) }
