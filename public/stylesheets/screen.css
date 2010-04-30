@@ -174,6 +174,8 @@ body {
     margin: 2px;
     text-align: center;
     width: 410px; }
+    #thumbnails > .lane .thumbnail .upload_details {
+      display: none; }
     #thumbnails > .lane .thumbnail img {
       width: 400px;
       height: 300px; }

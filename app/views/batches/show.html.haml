@@ -7,11 +7,9 @@
       %li= h(message)
 
 - semantic_form_for(@batch, :html => { :method => :put, :multipart => true }) do |f|
+  - f.buttons do
+    = f.commit_button 'Upload'
+
   #thumbnails
     - @batch.lane_organised_images do |sample,left,right|
       = render(:partial => 'lane', :locals => { :sample => sample, :left => left, :right => right })
-
-  - f.inputs do
-    =f.input :image, :as => :file
-  - f.buttons do
-    = f.commit_button 'Upload'
