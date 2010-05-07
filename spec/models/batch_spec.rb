@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+Batch  # Force Hudson environment to load the class before we alter it
 class Batch
   public :update_attributes_by_update
   public :update_attributes_by_create
