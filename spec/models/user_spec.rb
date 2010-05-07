@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+User  # Force Hudson environment to load the class before we alter it
 class User
   public :ldap_authentication_details_for
   public :verify_ldap_credentials

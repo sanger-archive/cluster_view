@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+ApplicationController  # Force Hudson environment to load the class before we alter it
 class ApplicationController
   public :current_user_session
   public :current_user
