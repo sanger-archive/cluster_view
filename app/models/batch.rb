@@ -20,13 +20,7 @@ class Batch < ActiveResource::Base
   # have been updated to the specified block (if given).
   def update_attributes(attributes, &block)
     attributes.fetch(:images, []).each do |position,image_attributes|
-      update_attributes_event = case
-      when image_attributes.key?(:delete) then :delete
-      when image_attributes[ :data ].blank? then next
-      when !image_attributes.key?(:id) then :create
-      else :update
-      end
-
+      update_attributes_event = self.class.event_type_from_parameters(image_attributes) or next
       image = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes.merge(:position => position))
       yield(update_attributes_event, image) if block_given?
     end
@@ -35,7 +29,7 @@ class Batch < ActiveResource::Base
   def samples
     self.lanes.lane.map do |lane|
       sample_type = lane.respond_to?(:library) ? :library : :control
-      OpenStruct.new(:lane => lane.position.to_i, :name => lane.send(sample_type).name)
+      Sample.new(lane.position.to_i, lane.send(sample_type).name)
     end
   end
 
@@ -64,5 +58,29 @@ private
     image = Image.by_batch_and_image_id(self, image_attributes[ :id ]).first
     image.destroy
     image
+  end
+
+  def self.event_type_from_parameters(parameters)
+    case
+    when parameters.key?(:delete)   then :delete
+    when parameters[ :data ].blank? then nil
+    when !parameters.key?(:id)      then :create
+    else :update
+    end
+  end
+
+  class Sample
+    attr_reader :lane
+    attr_reader :name
+
+    def initialize(lane, name)
+      @lane, @name = lane, name
+    end
+
+    def image_index_for_side(side)
+      index = (self.lane-1) * 2
+      index = index + 1 if side == :right
+      index
+    end
   end
 end

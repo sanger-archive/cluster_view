@@ -4,6 +4,7 @@ require 'ostruct'
 describe '/batches/show' do
   before(:each) do
     assigns[ :batch ] = @batch = mock_model(Batch, :id => 9999, :status => 'Released')
+    assigns[ :events ] = @events = []
   end
 
   def render_partial
@@ -14,7 +15,7 @@ describe '/batches/show' do
   context 'with images' do
     before(:each) do
       @batch.should_receive(:lane_organised_images).and_yield(
-        OpenStruct.new(:lane => 1, :name => 'sample name'),
+        Batch::Sample.new(1, 'sample name'),
         mock(Image, :id => 1, :batch_id => 9999, :position => 0, :data_file_name => "dir/000", :root_filename => '000'),
         mock(Image, :id => 2, :batch_id => 9999, :position => 1, :data_file_name => "dir/001", :root_filename => '001')
       )
@@ -46,6 +47,18 @@ describe '/batches/show' do
 
     it 'displays the status of the batch' do
       response.should have_tag('.status', 'Released')
+    end
+  end
+
+  context 'with events' do
+    before(:each) do
+      @batch.should_receive(:lane_organised_images)
+      @events << 'Message 1' << 'Message 2'
+      render_partial
+    end
+
+    it 'renders the events' do
+      response.should have_tag('#image_events .event', :count => 2)
     end
   end
 end

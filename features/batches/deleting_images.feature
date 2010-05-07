@@ -1,3 +1,4 @@
+@requires_user_to_be_logged_in
 Feature: Technicians need to be able to delete images from a batch
   Scenario: Deleting an image
     Given batch ID "3456" is valid

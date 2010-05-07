@@ -6,8 +6,8 @@ describe 'batches/_thumbnail' do
       render(
         :partial => 'batches/thumbnail', 
         :locals => {
-          :sample => mock('sample', :lane => 3),
-          :side => 'SIDE',
+          :sample => Batch::Sample.new(3, 'sample'),
+          :side => :left,
           :image => mock_model(Image, :id => 1234, :batch_id => 5678, :data_file_name => 'dir/filename', :root_filename => 'filename'),
           :body => 'BODY'
         }
@@ -15,7 +15,7 @@ describe 'batches/_thumbnail' do
     end
 
     it 'has a root level element of the right class' do
-      response.should have_tag('.thumbnail.SIDE')
+      response.should have_tag('.thumbnail.left')
     end
 
     it 'displays a thumbnail' do
@@ -36,8 +36,8 @@ describe 'batches/_thumbnail' do
       render(
         :partial => 'batches/thumbnail', 
         :locals => {
-          :sample => mock('sample', :lane => 3),
-          :side => 'SIDE',
+          :sample => Batch::Sample.new(3, 'sample'),
+          :side => :right,
           :image => nil,
           :body => 'BODY'
         }
@@ -53,7 +53,7 @@ describe 'batches/_thumbnail' do
     end
 
     it 'displays a file upload field' do
-      response.should have_file_field(:name => 'batch[images][4][data]')
+      response.should have_file_field(:name => 'batch[images][5][data]')
     end
   end
 end

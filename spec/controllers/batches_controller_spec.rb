@@ -2,7 +2,7 @@ require 'spec_helper'
 
 shared_examples_for('the batch is invalid') do
   it 'renders batch not found' do
-    response.should render_template('batch_not_found')
+    response.should redirect_to(batches_path)
   end
   
   it "sets the flash[:error]" do
@@ -16,6 +16,10 @@ describe BatchesController do
   check_routing do
     routing_to('/thumbnails/271/1', { :action => 'thumbnail', :id => '271', :image_id => '1' }, RoutingHelper::HTTP_GET_ONLY)
     routing_to('/images/1000/200', { :action => 'image', :id => '1000', :image_id => '200' }, RoutingHelper::HTTP_GET_ONLY)
+  end
+
+  before(:each) do
+    log_in_user('John Smith')
   end
   
   context "GET 'show'" do
@@ -52,8 +56,8 @@ describe BatchesController do
         assigns[ :batch ].should_not be_nil
       end
 
-      it 'sets the flash[:events]' do
-        flash[ :events ].should_not be_empty
+      it 'assigns the events that have occurred' do
+        assigns[ :events ].should_not be_empty
       end
     end
     

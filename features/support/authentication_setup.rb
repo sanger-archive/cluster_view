@@ -13,5 +13,13 @@ class SiteController
 end
 ActionController::Routing::Routes.add_named_route('secure', '/secure', :controller => 'site', :action => 'secure')
 
-# Finally we ensure that AuthLogic is always setup correctly for each scenario.
+# Ensure that Authlogic is properly setup before each scenario and, if the scenario requires
+# a user to be logged in, log a user in before those scenarios.  Because of the nature of
+# webrat it seems that the login has to be done through the interaction with the application.
 Before { activate_authlogic }
+
+Before('@requires_user_to_be_logged_in') do
+  Given 'the user "Default login user" is registered'
+  When 'I attempt to login as "Default login user"'
+  Then 'I should be logged in as "Default login user"'
+end

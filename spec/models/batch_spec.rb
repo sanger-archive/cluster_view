@@ -10,7 +10,7 @@ describe Batch do
   include BatchHelper
   
   before(:each) do
-    @batch = Batch.find(BatchHelper::VALID_BATCH_ID)
+    @batch = described_class.find(BatchHelper::VALID_BATCH_ID)
   end
 
   describe '#images' do
@@ -41,74 +41,24 @@ describe Batch do
   end
   
   describe '#update_attributes' do
-    it 'does not update the images (or fall over) if the parameter is unspecified' do
-      Image.should_receive(:create!).never
-      Image.should_receive(:find).never
-      
-      @batch.update_attributes({})
+    before(:each) do
+      @callback = mock('callback')
+      @attributes = { }
     end
 
-    it 'does not update or create an image if no image data is uploaded' do
-      Image.should_receive(:create!).with(any_args).never
-
-      callback = mock('callback')
-      callback.should_receive(:called_with).with(any_args).never
-
-      # This is missing :data parameter
-      @batch.update_attributes(:images => { '0' => { } }) do |*args|
-        callback.called_with(*args)
-      end
+    after(:each) do
+      @batch.update_attributes(:images => { '0' => @attributes }) { |*args| @callback.called_with(*args) }
     end
 
-    shared_examples_for('acting upon an image') do
-      it 'performs the correct image update' do
-        @batch.update_attributes(:images => { '0' => @attributes.update(:data_file_name => 'filename', :data => "image data") })
-      end
-
-      it 'yields the event type and image when the block is given' do
-        callback = mock('callback')
-        callback.should_receive(:called_with).with(@event, :image)
-
-        @batch.update_attributes(:images => { '0' => @attributes.update(:data_file_name => 'filename', :data => "image data") }) do |*args|
-          callback.called_with(*args)
-        end
-      end
+    it 'does not update or create an image if the event is nil' do
+      described_class.should_receive(:event_type_from_parameters).with(@attributes).and_return(nil)
+      @callback.should_receive(:called_with).with(any_args).never
     end
 
-    context 'updating an existing image' do
-      before(:each) do
-        @batch.should_receive(:update_attributes_by_update).with(hash_including(:id => 'ID')).and_return(:image)
-        @attributes, @event = { :id => 'ID' }, :update
-      end
-
-      it_should_behave_like('acting upon an image')
-    end
-
-    context 'creating a new image' do
-      before(:each) do
-        @batch.should_receive(:update_attributes_by_create).with(any_args).and_return(:image)
-        @attributes, @event = { }, :create
-      end
-
-      it_should_behave_like('acting upon an image')
-    end
-
-    context 'deleting an existing image' do
-      before(:each) do
-        @batch.should_receive(:update_attributes_by_delete).with(hash_including(:id => 'ID')).and_return(:image)
-        @attributes, @event = { :id => 'ID', :delete => 'yes' }, :delete
-      end
-
-      it_should_behave_like('acting upon an image')
-
-      it 'deletes the image even if the image data is not sent' do
-        callback = mock('callback')
-        callback.should_receive(:called_with).with(@event, :image)
-
-        @batch.update_attributes(:images => { '0' => @attributes.update(:filename => 'filename') }) do |*args|
-          callback.called_with(*args)
-        end
-      end
+    it 'performs the update based on the event type' do
+      described_class.should_receive(:event_type_from_parameters).with(@attributes).and_return(:does_not_exist)
+      @batch.should_receive(:update_attributes_by_does_not_exist).with(@attributes.merge(:position => '0')).and_return(:image)
+      @callback.should_receive(:called_with).with(:does_not_exist, :image)
     end
   end
 
@@ -156,6 +106,62 @@ describe Batch do
       callback.should_receive(:called_with).with(samples[ 2 ], images[ 4 ], nil)
 
       @batch.lane_organised_images { |*args| callback.called_with(*args) }
+    end
+  end
+
+  describe '.event_type_from_parameters' do
+    it 'returns :delete if the :delete parameter is set' do
+      described_class.event_type_from_parameters(:delete => 'yes').should == :delete
+    end
+
+    it 'returns nil if the :data parameter is blank' do
+      described_class.event_type_from_parameters({}).should be_nil
+    end
+
+    it 'returns :create if the :id parameter is unspecified for :data' do
+      described_class.event_type_from_parameters(:data => 'data foo').should == :create
+    end
+
+    it 'returns :update if :data and :id are specified' do
+      described_class.event_type_from_parameters(:data => 'data foo', :id => 'id foo').should == :update
+    end
+
+    it 'returns :delete even when :data and :id are specified with :delete' do
+      described_class.event_type_from_parameters(:data => 'data foo', :id => 'id foo', :delete => 'yes').should == :delete
+    end
+  end
+end
+
+describe Batch::Sample do
+  describe '#image_index_for_side' do
+    after(:each) do
+      described_class.new(@lane, 'NAME').image_index_for_side(@side).should == @index
+    end
+
+    class << self
+      def side(side)
+        before(:each) do
+          @side = side
+        end
+      end
+
+      def lane_checks(&block)
+        (1..8).map { |lane| [ lane, yield(lane) ] }.each do |lane,index|
+          it "indexes lane #{ lane } as #{ index }" do
+            @lane, @index = lane, index
+          end
+        end
+      end
+    end
+
+    context 'left side images' do
+      side(:left)
+      lane_checks { |lane| (lane-1)*2 }
+    end
+
+    context 'right side images' do
+      side(:right)
+      lane_checks { |lane| (lane-1)*2 + 1 }
     end
   end
 end

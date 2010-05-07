@@ -50,6 +50,10 @@ module Spec
         before(:each) do
           activate_authlogic
         end
+
+        def log_in_user(user_factory_name)
+          Factory("User: #{ user_factory_name }")
+        end
       end
     end
   end if const_defined?('Rails')

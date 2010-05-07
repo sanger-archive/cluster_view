@@ -17,6 +17,25 @@ require 'active_resource/http_mock'
 require 'webrat'
 require 'webrat/core/matchers'
 
+module Webrat
+  class Scope
+    def fill_in_and_submit(field_locator, options = {})
+      field = locate_field(field_locator, TextField, TextareaField, PasswordField)
+      field.raise_error_if_disabled
+      field.set(options[ :with ])
+      field.send(:form).submit
+    end
+  end
+  
+  class Session
+    def_delegators :current_scope, :fill_in_and_submit, :fill_in_and_submit
+  end
+
+  module Methods
+    delegate_to_session :fill_in_and_submit
+  end
+end
+
 Webrat.configure do |config|
   config.mode = :rails
   config.open_error_files = false # Set to true if you want error pages to pop up in the browser
