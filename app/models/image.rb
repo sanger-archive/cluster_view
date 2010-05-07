@@ -1,3 +1,5 @@
+require 'paperclip/fixes_for_db'
+
 # Clusterview is about viewing images, each Image instance represents a photograph of the
 # clusters on a slide.  Each Batch instance has 16 images, 2 per lane, and they are generally
 # greyscale TIFF images.
