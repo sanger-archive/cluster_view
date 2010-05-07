@@ -22,14 +22,16 @@ class BatchesController < ApplicationController
     end
   end
 
+  def index
+    # Do nothing and fall through to the view
+  end
+
   handles_with_batch_not_found(:show)
   
   handles_with_batch_not_found(:update) do
-    events = []
     @batch.update_attributes(params[ :batch ]) do |event,image|
-      events.push(translate("batches.messages.image_upload.#{ event }", :data_file_name => image.data_file_name))
+      @events.push(translate("batches.messages.image_upload.#{ event }", :data_file_name => image.data_file_name))
     end
-    flash[ :events ] = events.sort
   end
   
   define_action_to_send_the(:thumbnail, :disposition => 'inline')
@@ -38,13 +40,13 @@ class BatchesController < ApplicationController
 private
 
   def handle_with_batch_not_found(&block)
-    batch_number = params[ :id ]
-    @batch = Batch.find(batch_number)
+    @batch_number = params[ :id ]
+    @events, @batch = [], Batch.find(@batch_number)
     instance_eval(&block) if block_given?
     render :show
   rescue ActiveResource::ResourceNotFound => exception
-    flash[:error] = translate('batches.errors.batch_not_found', :batch_id => batch_number)
-    render :batch_not_found
+    flash[:error] = translate('batches.errors.batch_not_found', :batch_id => @batch_number)
+    redirect_to batches_path
   end
 
 end

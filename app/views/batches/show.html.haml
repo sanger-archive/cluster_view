@@ -1,10 +1,10 @@
 %h1<
   Batch ID: <span class="batch_id">#{ @batch.id }</span> (<span class="status">#{ status_of(@batch) }</span>)
 
-- unless flash[ :events ].blank?
+- unless @events.blank?
   %ol#image_events
-    - flash[ :events ].each do |message|
-      %li= h(message)
+    - @events.each do |message|
+      %li.event= h(message)
 
 - semantic_form_for(@batch, :html => { :method => :put, :multipart => true }) do |f|
   - f.buttons do

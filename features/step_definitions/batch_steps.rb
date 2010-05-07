@@ -1,30 +1,36 @@
-def valid_batch_mock(batch_id)
-  fake_batch = <<-END_OF_FAKE_BATCH_XML
-  <?xml version="1.0" encoding="utf-8"?>
-  <batch>
-    <id>#{ batch_id }</id>
-    <status>pending</status>
-    <lanes>
-      <lane position="1"><library name="sample from library 1"/></lane>
-      <lane position="2"><library name="sample from library 2"/></lane>
-      <lane position="3"><library name="sample from library 3"/></lane>
-      <lane position="4"><library name="sample from library 4"/></lane>
-      <lane position="5"><library name="sample from library 5"/></lane>
-      <lane position="6"><library name="sample from library 6"/></lane>
-      <lane position="7"><library name="sample from library 7"/></lane>
-      <lane position="8"><library name="sample from library 8"/></lane>
-    </lanes>
-  </batch>
+def configure_valid_batch_for(active_resource, batch_id)
+  active_resource.get "/batches/#{ batch_id }.xml", {}, <<-END_OF_FAKE_BATCH_XML
+    <?xml version="1.0" encoding="utf-8"?>
+    <batch>
+      <id>#{ batch_id }</id>
+      <status>pending</status>
+      <lanes>
+        <lane position="1"><library name="sample from library 1"/></lane>
+        <lane position="2"><library name="sample from library 2"/></lane>
+        <lane position="3"><library name="sample from library 3"/></lane>
+        <lane position="4"><library name="sample from library 4"/></lane>
+        <lane position="5"><library name="sample from library 5"/></lane>
+        <lane position="6"><library name="sample from library 6"/></lane>
+        <lane position="7"><library name="sample from library 7"/></lane>
+        <lane position="8"><library name="sample from library 8"/></lane>
+      </lanes>
+    </batch>
   END_OF_FAKE_BATCH_XML
+end
 
+def configure_invalid_batch_for(active_resource, batch_id)
+  active_resource.get "/batches/#{ batch_id }.xml", {}, nil, 404
+end
+
+def valid_batch_mock(batch_id)
   ActiveResource::HttpMock.respond_to do |mock|
-    mock.get "/batches/#{batch_id}.xml", {}, fake_batch
+    configure_valid_batch_for(mock, batch_id)
   end
 end
 
 def invalid_batch_mock(batch_id)
   ActiveResource::HttpMock.respond_to do |mock|
-    mock.get "/batches/#{batch_id}.xml", {}, nil, 404
+    configure_invalid_batch_for(mock, batch_id)
   end
 end
 
@@ -40,6 +46,14 @@ end
 
 Given /^batch ID "([^\"]+)" is (valid|invalid)$/ do |batch_id,validity|
   send(:"#{ validity }_batch_mock", batch_id)
+end
+
+Given /^the batches are:$/ do |batch_table|
+  ActiveResource::HttpMock.respond_to do |mock|
+    batch_table.hashes.each do |row|
+      send(:"configure_#{ row['state'] }_batch_for", mock, row['id'])
+    end
+  end
 end
 
 Given /^batch "([^\"]+)" has no images$/ do |batch_id|

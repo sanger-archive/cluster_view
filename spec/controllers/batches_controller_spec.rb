@@ -2,7 +2,7 @@ require 'spec_helper'
 
 shared_examples_for('the batch is invalid') do
   it 'renders batch not found' do
-    response.should render_template('batch_not_found')
+    response.should redirect_to(batches_path)
   end
   
   it "sets the flash[:error]" do
@@ -56,8 +56,8 @@ describe BatchesController do
         assigns[ :batch ].should_not be_nil
       end
 
-      it 'sets the flash[:events]' do
-        flash[ :events ].should_not be_empty
+      it 'assigns the events that have occurred' do
+        assigns[ :events ].should_not be_empty
       end
     end
     
