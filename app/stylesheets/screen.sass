@@ -13,7 +13,12 @@
 !color_grey_dark    = #484848
 !color_red_light    = #E98844
 !color_red_dark     = #C92200
+!color_green_dark   = #22C900
 !color_yellow_light = #F8F8CC
+!color_yellow_dark  = #C8C899
+
+!color_error = !color_red_dark
+!color_message = !color_green_dark
 
 *:focus
   outline= !color_grey_medium "dotted" "medium"
@@ -37,6 +42,8 @@ body
     color= !color_grey_light
 
 #content
+  padding: 3px
+
   h1
     font-size: 24px
     line-height: 30px
@@ -78,6 +85,7 @@ body
   font-size: 10px
   padding-top: 3px
   color= !color_grey_medium
+  text-align: center
 
   a
     +link-colors(!color_grey_medium)
@@ -155,8 +163,9 @@ body
     text-align: center
     width: 410px
 
-    .upload_details
-      display: none
+    .upload_details input[type=checkbox]
+      &, & + label
+        display: none
 
     img
       width: 400px
@@ -165,7 +174,45 @@ body
       & + p
         margin: 4px auto
 
-#image_events
-  background-color= !color_yellow_light
-  padding: 4px
+#bulk_upload 
+  padding: 5px
+
+  #file_selection_container 
+    position: relative
+
+    * 
+      position: absolute
+      width: 125px
+
+    &, & *
+      height: 18px
+  
+  #files_to_upload 
+    list-style: disc
+    margin-left: 20px
+
+  .buttons ol li
+    display: inline-block
+
+  #progress li
+    color= !color_white
+
+    &.finished
+      background-color= !color_green_dark
+
+    &.intermediate
+      background-color= !color_yellow_dark
+
+#flash .error
+  background-color= !color_error
+  color= !color_white
+
+#flash .message, #image_events
+  background-color= !color_message
+  color= !color_white
+
+#flash > *, #image_events, #bulk_upload #progress li
+  padding: 5px
+  margin: 5px
+  font-weight: bold
   text-align: center

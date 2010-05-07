@@ -1,8 +1,17 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options(:controller => 'site', :conditions => { :method => :get }) do |site|
-    site.root :action => 'index'
     site.about('/about', :action => 'about')
     site.feedback('/feedback', :action => 'feedback')
+  end
+
+  map.with_options(:controller => 'bulk_upload', :conditions => { :method => :get }) do |bulk_upload|
+    bulk_upload.bulk_start('/bulk_upload/start/:id', :action => 'start')
+    bulk_upload.bulk_cancel('/bulk_upload/:id/cancel', :action => 'cancel', :requirements => { :id => /\d+/ })
+    
+    bulk_upload.with_options(:requirements => { :id => /\d+/ }) do |during_upload|
+      during_upload.bulk_upload('/bulk_upload/:id/upload', :action => 'upload', :conditions => { :method => :put })
+      during_upload.bulk_finish('/bulk_upload/:id/finish/:batch_id', :action => 'finish')
+    end
   end
 
   map.with_options(:controller => 'batches', :conditions => { :method => :get }, :requirements => { :image_id => /\d+/ }) do |images|
@@ -10,6 +19,7 @@ ActionController::Routing::Routes.draw do |map|
     images.batch_image('/images/:id/:image_id', :action => 'image')
   end
   map.with_options(:controller => 'batches', :conditions => { :method => :get }) do |batches|
+    batches.root :action => 'index'
     batches.batches('/batches', :action => 'index')
     batches.batch_search('/batches/search', :action => 'show')
     batches.batch('/batches/:id', :action => 'show')

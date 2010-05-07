@@ -1,0 +1,39 @@
+<fieldset class="inputs">
+  <ol>
+    <%= field_for_batch_id(@batch) %>
+    <li class="string required">
+      <ul id="files_to_upload"></ul>
+      <div id="file_selection_container">
+        <a href="#">Select files to upload</a>
+        <span id="yui_uploader"></span>
+      </div>
+    </li>
+  </ol>
+</fieldset>
+<fieldset class="buttons">
+  <ol>
+    <li class="commit"><input name="cancel" type="submit" value="Cancel upload"/></li>
+    <li class="commit"><input name="clear" disabled="disabled" type="submit" value="Clear all"/></li>
+    <li class="commit"><input name="upload" disabled="disabled" type="submit" value="Bulk Upload"/></li>
+  </ol>
+</fieldset>
+
+<ol id="progress"></ol>
+
+<%= javascript_include_tag('yui_uploader') %>
+<%= javascript_include_tag('upload_handler') %>
+
+<script type="text/javascript">
+  YAHOO.widget.Uploader.SWFURL = "/flash/uploader.swf";
+  handler.init();
+  handler.uploader(new YAHOO.widget.Uploader('yui_uploader'));
+  handler.batchIdField($('input[name=batch_id]'));
+  handler.setUploadButton($('input[name=upload]'));
+  handler.setClearButton($('input[name=clear]'));
+  handler.setCancelButton($('input[name=cancel]'));
+  handler.setFinishPath('<%= bulk_finish_path(:id => @bulk_upload, :batch_id => "XXX") %>');
+  handler.setUploadPath('<%= bulk_upload_path(:id => @bulk_upload, :index => "XXX") %>');
+  handler.setCancelPath('<%= bulk_cancel_path(:id => @bulk_upload) %>');
+  handler.setProgressElement($('#progress'));
+  handler.setFileUploadList($('#files_to_upload'));
+</script>

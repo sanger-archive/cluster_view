@@ -9,7 +9,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100429132234) do
+ActiveRecord::Schema.define(:version => 20100507154056) do
+
+  create_table "bulk_uploads", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "images", :force => true do |t|
     t.integer  "batch_id"
@@ -22,6 +27,7 @@ ActiveRecord::Schema.define(:version => 20100429132234) do
     t.integer  "data_file_size"
     t.datetime "data_updated_at"
     t.string   "data_content_type"
+    t.integer  "bulk_upload_id"
   end
 
   create_table "sessions", :force => true do |t|

@@ -38,3 +38,11 @@ en:
       failed: 'Failed'
       started: 'Started'
       completed: 'Completed'
+
+  bulk_upload:
+    errors:
+      not_found: 'Unable to find the bulk upload request'
+      
+    messages:
+      completed: 'Completed bulk upload for batch {{batch_id}}'
+      cancelled: 'Bulkd upload cancelled'
