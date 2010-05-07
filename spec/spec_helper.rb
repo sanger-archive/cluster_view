@@ -9,7 +9,7 @@ require "active_resource/http_mock"
 require 'webrat/integrations/rspec-rails'
 
 # Ensure that Factory Girl is loaded before our custom matchers
-#require 'factory_girl'
+require 'factory_girl'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
