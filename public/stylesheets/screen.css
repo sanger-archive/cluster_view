@@ -1,3 +1,4 @@
+/* line 6, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -16,110 +17,141 @@ table, caption, tbody, tfoot, thead, tr, th, td {
   font-family: inherit;
   vertical-align: baseline; }
 
+/* line 17, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 *:focus {
   outline: 0; }
 
+/* line 20, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 body {
   line-height: 1em;
   color: black;
   background: #fff; }
 
+/* line 23, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 ol, ul {
   list-style: none; }
 
 /* tables still need 'cellspacing="0"' in the markup */
+/* line 27, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 table {
   border-collapse: separate;
   border-spacing: 0;
   vertical-align: middle; }
 
+/* line 30, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
+/* line 33, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 q, blockquote {
   quotes: "" ""; }
+  /* line 101, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
   q:before, q:after, blockquote:before, blockquote:after {
     content: ""; }
 
+/* line 36, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 img a {
   border: none; }
 
+/* line 18, ../../app/stylesheets/screen.sass */
 *:focus {
   outline: #666666 dotted medium; }
 
+/* line 21, ../../app/stylesheets/screen.sass */
 body {
   background: #f8f8f8;
   color: #222222;
   font-family: 'Lucida Grande', helvetica, arial, sans-serif;
   font-size: 12px;
   line-height: 16px; }
+  /* line 30, ../../app/stylesheets/screen.sass */
   body a {
     text-decoration: none; }
+    /* line 4, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/links/_hover_link.sass */
     body a:hover {
       text-decoration: underline; }
+  /* line 33, ../../app/stylesheets/screen.sass */
   body .clear {
     clear: both; }
+  /* line 36, ../../app/stylesheets/screen.sass */
   body input.prefilled {
     color: #d0d0d0; }
 
+/* line 40, ../../app/stylesheets/screen.sass */
 #content h1 {
   font-size: 24px;
   line-height: 30px;
   text-align: center; }
 
+/* line 45, ../../app/stylesheets/screen.sass */
 #header {
   background: #2f3b5d;
   border-top: 3px solid #0077a9;
   color: #efefef;
   padding: 3px 10px 5px; }
+  /* line 51, ../../app/stylesheets/screen.sass */
   #header a {
     color: #efefef; }
+  /* line 54, ../../app/stylesheets/screen.sass */
   #header #description {
     display: inline;
     float: left; }
+    /* line 57, ../../app/stylesheets/screen.sass */
     #header #description img, #header #description h1 {
       display: inline-block; }
+  /* line 60, ../../app/stylesheets/screen.sass */
   #header #controls {
     display: inline;
     float: right;
     text-align: right; }
+    /* line 64, ../../app/stylesheets/screen.sass */
     #header #controls ul {
       list-style-type: none;
       margin: 0px;
       padding: 0px;
       display: inline; }
+      /* line 8, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/lists/_inline_list.sass */
       #header #controls ul li {
         margin: 0px;
         padding: 0px;
         display: inline; }
+      /* line 67, ../../app/stylesheets/screen.sass */
       #header #controls ul li:after {
         content: ' * '; }
+      /* line 70, ../../app/stylesheets/screen.sass */
       #header #controls ul li:last-child:after, #header #controls ul li.last {
         content: ''; }
+    /* line 73, ../../app/stylesheets/screen.sass */
     #header #controls #quick_search {
       display: inline-block; }
 
+/* line 76, ../../app/stylesheets/screen.sass */
 #footer {
   border-top: 1px solid #d0d0d0;
   font-size: 10px;
   padding-top: 3px;
   color: #666666; }
+  /* line 82, ../../app/stylesheets/screen.sass */
   #footer a {
     color: #666666; }
+  /* line 85, ../../app/stylesheets/screen.sass */
   #footer ul {
     list-style-type: none;
     margin: 0px;
     padding: 0px;
     display: inline; }
+    /* line 8, ../../vendor/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/lists/_inline_list.sass */
     #footer ul li {
       margin: 0px;
       padding: 0px;
       display: inline; }
+    /* line 88, ../../app/stylesheets/screen.sass */
     #footer ul li {
       margin-right: 5px; }
 
+/* line 91, ../../app/stylesheets/screen.sass */
 #login {
   border: 3px solid #2f3b5d;
   background: #d0d0d0;
@@ -128,60 +160,77 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 400px; }
+  /* line 100, ../../app/stylesheets/screen.sass */
   #login h1 {
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 10px;
     padding-bottom: 5px;
     border-bottom: 1px solid #666666; }
+  /* line 107, ../../app/stylesheets/screen.sass */
   #login form {
     text-align: center; }
+    /* line 110, ../../app/stylesheets/screen.sass */
     #login form li {
       line-height: 30px; }
+      /* line 113, ../../app/stylesheets/screen.sass */
       #login form li label {
         display: inline-block;
         width: 7em;
         text-align: right;
         margin-right: 5px; }
+      /* line 119, ../../app/stylesheets/screen.sass */
       #login form li input {
         width: 20em; }
+      /* line 122, ../../app/stylesheets/screen.sass */
       #login form li.error input {
         background: #e98844;
         border: 1px solid #c92200; }
+      /* line 127, ../../app/stylesheets/screen.sass */
       #login form li.boolean label, #login form li.boolean input {
         width: auto; }
+      /* line 130, ../../app/stylesheets/screen.sass */
       #login form li .inline-errors {
         display: none; }
 
+/* line 133, ../../app/stylesheets/screen.sass */
 #errorExplanation {
   text-align: left;
   background: #e98844;
   border: 2px solid #c92200;
   padding: 5px;
   color: #f8f8f8; }
+  /* line 140, ../../app/stylesheets/screen.sass */
   #errorExplanation h2 {
     font-weight: bold; }
 
+/* line 143, ../../app/stylesheets/screen.sass */
 #thumbnails > .lane {
   border: 1px solid #484848;
   padding: 5px;
   margin: 5px auto;
   text-align: center; }
+  /* line 149, ../../app/stylesheets/screen.sass */
   #thumbnails > .lane .details {
     font-weight: bold; }
+  /* line 152, ../../app/stylesheets/screen.sass */
   #thumbnails > .lane .thumbnail {
     display: inline-block;
     margin: 2px;
     text-align: center;
     width: 410px; }
-    #thumbnails > .lane .thumbnail .upload_details {
+    /* line 159, ../../app/stylesheets/screen.sass */
+    #thumbnails > .lane .thumbnail .upload_details input[type=checkbox], #thumbnails > .lane .thumbnail .upload_details input[type=checkbox] + label {
       display: none; }
+    /* line 162, ../../app/stylesheets/screen.sass */
     #thumbnails > .lane .thumbnail img {
       width: 400px;
       height: 300px; }
+      /* line 166, ../../app/stylesheets/screen.sass */
       #thumbnails > .lane .thumbnail img + p {
         margin: 4px auto; }
 
+/* line 169, ../../app/stylesheets/screen.sass */
 #image_events {
   background-color: #f8f8cc;
   padding: 4px;
