@@ -1,6 +1,7 @@
 # At the point at which this migration is executed we have two databases co-existing.  We
 # migrate the data we need from the legacy tables at this point.
 class MigrateLegacyData < ActiveRecord::Migration
+  Paperclip.options[:swallow_stderr] = false #please tell us what is going on
   LEGACY_TABLE_TO_MIGRATE = 'legacy_images'
 
   module Legacy
