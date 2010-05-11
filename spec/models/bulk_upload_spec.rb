@@ -49,6 +49,7 @@ describe BulkUpload do
   describe '#complete_for_batch' do
     before(:each) do
       @batch = Batch.find(BatchHelper::VALID_BATCH_ID)
+      @bulk_upload = Factory('Bulk upload')
       @bulk_upload.complete_for_batch(@batch)
     end
 
