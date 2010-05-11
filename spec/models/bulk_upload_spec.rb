@@ -9,8 +9,6 @@ describe BulkUpload do
     @bulk_upload = described_class.create!
   end
 
-  it 'has many images ordered by data_file_name ASC'
-
   describe '#upload_data' do
     after(:each) do
       Image.should_receive(:create!).with(hash_including(
@@ -50,32 +48,21 @@ describe BulkUpload do
 
   describe '#complete_for_batch' do
     before(:each) do
-      @batch = mock('Batch', :id => 'batch id')
-    end
-
-    after(:each) do
+      @batch = Batch.find(BatchHelper::VALID_BATCH_ID)
       @bulk_upload.complete_for_batch(@batch)
     end
 
-    def mock_images(&block)
-      (0..2).inject([]) do |array,index|
-        image = mock("image #{ index }")
-        yield(image, index)
-        array << image
-      end
-    end
-
-    it 'destroys the Image instances associated with the Batch' do
-      images = mock_images { |image,_| image.should_receive(:destroy) }
-      @batch.stub!(:images).and_return(images)
-    end
-
-    it 'updates the associated Image instances' do
-      images = mock_images do |image,index|
-        image.should_receive(:update_attributes).with(hash_including(:batch_id => @batch.id, :bulk_upload_id => nil, :position => index))
-      end
-      @batch.stub!(:images).and_return([])
-      @bulk_upload.stub!(:images).and_return(images)
+    it 'updates the associated Image instances to be in the correct order' do
+      @batch.images.inject([]) { |a,image| a[ image.position ] = image.data_file_name ; a }.should == [
+        "7.tif", "8.tif", 
+        "6.tif", "9.tif", 
+        "5.tif", "10.tif", 
+        "4.tif", "11.tif", 
+        "3.tif", "12.tif", 
+        "2.tif", "13.tif", 
+        "1.tif", "14.tif", 
+        "0.tif", "15.tif"
+      ]
     end
   end
 end

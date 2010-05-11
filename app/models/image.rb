@@ -50,7 +50,10 @@ class Image < ActiveRecord::Base
   # Creates a method to send a type of image back to conduit class (e.g. a Controller)
   # with the correct MIME type and filename.
   def self.define_send_image_data_via(image_type)
-    define_method(:"send_#{image_type}_data_via") do |conduit, options|
+    define_method(:"send_#{image_type}_data_via") do |*args|
+      conduit, options = args
+      options ||= {}
+
       conduit.send_data(
         self.send(:"data_#{image_type}_file"),
         options.merge(

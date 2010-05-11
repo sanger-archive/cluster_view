@@ -2,7 +2,21 @@
 # of the upload.  This enables us to do some better error handling and dealing with the necessary
 # updates to the Batch.
 class BulkUpload < ActiveRecord::Base
-  has_many :images, :order => 'data_file_name ASC'
+  has_many :images do
+    # Returns the Image instances so that they are sorted by the numerical value of their filename,
+    # rather than the alphabetic.  This ensures that the sequence is correct for positional
+    # adjustment later.
+    def sorted_numerically
+      self.all.sort do |left,right|
+        numeric_from_filename(left.data_file_name) <=> numeric_from_filename(right.data_file_name)
+      end
+    end
+
+    def numeric_from_filename(filename)
+      match = /^(\d+)\..+$/.match(filename) or raise "Filename '#{ filename }' does not appear to be numeric"
+      match[ 0 ].to_i
+    end
+  end
 
   # Each upload of an image is attached to this instance through this method.  At this point the image
   # position is simply assumed to be based on the number that have been previously uploaded.
@@ -20,6 +34,11 @@ class BulkUpload < ActiveRecord::Base
 
 private
 
+  # The index of an Image instance within the +images+ association, when sorted numerically, can be
+  # mapped to the physical position of the image on the batch.  Essentially the images are take from
+  # lane 8 up to lane 1 and then back down from lane 1 to lane 8.
+  POSITION_FROM_INDEX = [ 14, 12, 10, 8, 6, 4, 2, 0, 1, 3, 5, 7, 9, 11, 13, 15 ]
+
   # Does the heavy lifting associated with completing a bulk upload for the given Batch.
   # Destroys all of the images currently associated with the given batch and then associates all
   # of the images associated with this instance to that Batch.  The images are associated such
@@ -27,8 +46,8 @@ private
   def complete_for_batch(batch)
     Image.transaction do
       batch.images.each { |image| image.destroy }
-      self.images.each_with_index do |image,index|
-        image.update_attributes(:batch_id => batch.id, :bulk_upload_id => nil, :position => index)
+      self.images.sorted_numerically.each_with_index do |image,index|
+        image.update_attributes(:batch_id => batch.id, :bulk_upload_id => nil, :position => POSITION_FROM_INDEX[ index ])
       end
       batch
     end

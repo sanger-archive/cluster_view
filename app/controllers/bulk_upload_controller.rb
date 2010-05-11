@@ -52,7 +52,7 @@ private
   def needs_batch_from_id
     batch_id = params[ :id ]
     @batch = Batch.find(batch_id) unless batch_id.blank?
-  rescue ActiveRecord::RecordNotFound => exception
+  rescue ActiveResource::ResourceNotFound => exception
     if request.xhr?
       render :text => ' ', :status => :internal_server_error
     else
