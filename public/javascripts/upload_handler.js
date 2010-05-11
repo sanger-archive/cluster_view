@@ -1,10 +1,19 @@
 // Class to hold the file upload information.
-var FileToUpload = function(id, name) {
+var FileToUpload = function(id, name, index) {
   object = {
-    removeFrom: function(arr) { arr.remove(this); }
+    removeFrom: function(arr) { arr.remove(this); },
+    toString: function() { return '[' + id + ':' + name + ',index=' + index + ',tries=' + this.tries + ']'; },
+
+    uploadVia: function(uploader, callback) {
+      this.tries++;
+      uploader.uploader.upload(this.id, uploader.uploadPath.replacement('' + this.index), 'POST', { '_method': 'put' }, 'data');
+      if (callback != undefined) { callback(); }
+    }
   };
-  object.id   = id;
-  object.name = name;
+  object.id    = id;
+  object.name  = name;
+  object.index = index;
+  object.tries = 0;
   return object;
 };
 var ButtonStateHelper = {
@@ -19,7 +28,9 @@ var ReplaceableContentHelper = {
 };
 var ArrayExtensions = {
   remove: function(element) { this.splice($.inArray(element, this), 1); },
-  isEmpty: function() { return this.length == 0; }
+  isEmpty: function() { return this.length == 0; },
+  first: function() { return this[ 0 ]; },
+  last: function() { return this[ this.length-1 ]; }
 };
 var ListElement = {
   row: function(content, row_class) {
@@ -36,8 +47,8 @@ var handler = {
   setCancelPath: function(path) { this.cancelPath = path; },
 
   // Utility functions used later
-  filenameFromEvent:      function(event)                 { return $.grep(this.filesToUpload, function(v) { return v.id == event.id; })[ 0 ].name; },
-  updateProgress:         function(message, step)         { this.progressElement.row(message, step); },
+  fileFromEvent:  function(event)         { return $.grep(this.filesToUpload, function(v) { return v.id == event.id; })[ 0 ]; },
+  updateProgress: function(file, message) { $('#' + file.id).replaceWith('<span id="' + file.id + '">' + message + '</span>'); },
 
   clearFileList: function() { 
     this.filesToUpload = $.extend([], ArrayExtensions);
@@ -68,10 +79,21 @@ var handler = {
   setProgressElement: function(element) { this.progressElement = $.extend(element, ListElement); },
   setFileUploadList: function(element) { this.fileUploadElement = $.extend(element, ListElement); },
 
+  redirect: function() { window.location = this.finishPath.replacement(this.batchId()); },
+
+  startUploadingNextFile: function(callback) {
+    if (this.filesToUpload.isEmpty()) {
+      callback();
+    } else {
+      this.filesToUpload.first().uploadVia(this);
+    }
+  },
+
   // Handles the YUI Uploader informing us that it is ready to do some work.
   contentReadyHandler: function() {
     this.uploader.setAllowLogging(true); 
     this.uploader.setAllowMultipleFiles(true);
+    this.uploader.setSimUploadLimit(1);
     //this.uploader.setFileFilters([ { description: 'Clusterview Images', extensions: '*.tif' } ]);
   },
 
@@ -96,10 +118,12 @@ var handler = {
     // two instance by the looks of it (name is not a full path, id is different).
     var filesToUpload = this.filesToUpload, fileList = this.fileUploadElement;
     fileList.empty();
+
+    var indexOfImageWithinUpload = filesToUpload.isEmpty() ? 0 : filesToUpload.last().index + 1;
     $.each(event.fileList, function(file, information) { 
-      var fileInfo = FileToUpload(information.id, information.name);
+      var fileInfo = FileToUpload(information.id, information.name, indexOfImageWithinUpload++);
       filesToUpload.push(fileInfo);
-      fileList.row('<span class="filename">' + fileInfo.name + '</span> (<a href="#" class="file_to_upload">Remove</a>)');
+      fileList.row('<span class="filename">' + fileInfo.name + '</span> (<a href="#" id="' + fileInfo.id + '" class="file_to_upload">Remove</a>)');
       $('a', fileList.lastChild()).click(removeHandlerFor(fileInfo));
     });
     this.updateButtonState();
@@ -107,32 +131,39 @@ var handler = {
 
   // Handles the start of uploading an individual file.
   uploadStartHandler: function(event) {
-    this.updateProgess('Uploading <span class="filename">' + this.filenameFromEvent(event) + '</span> ...', 'intermediate');
+    this.updateProgress(event, '<span class="status intermediate">Starting to upload ...</span>');
   },
 
   // Handles the completion of uploading an individual file.
   uploadCompleteHandler: function(event) {
-    this.updateProgress('Completed upload of <span class="filename">' + this.filenameFromEvent(event) + '</span>', 'intermediate');
+    this.updateProgress(event, '<span class="status intermediate">Upload complete, waiting for server ...</span>');
   },
 
   // Handles the completion of a response from the server for an individual file
   uploadCompleteDataHandler: function(event) {
-    this.filesToUpload.pop();  // TODO[md12]: We don't really care but maybe an error could occur!
-    if (this.filesToUpload.isEmpty()) {
-      this.updateProgress('Completed bulk upload, redirecting to batch view ...', 'finished');
-      window.location = this.finishPath.replacement(this.batchId());
-    }
+    var fileJustUploaded = this.fileFromEvent(event);
+    fileJustUploaded.removeFrom(this.filesToUpload);
+    this.updateProgress(event, '<span class="status finished">Upload complete</span>');
+
+    this.startUploadingNextFile($.proxy(this.redirect, this));
   },
 
-  // TODO[md12]: uploadErrorHandler needed
-  // TODO[md12]: uploadProgressHandler needed
+  // Handles the error events from the uploader for an individual file
+  uploadErrorHandler: function(event) {
+    var fileJustFailed = this.fileFromEvent(event);
+    fileJustFailed.removeFrom(this.filesToUpload);
+    this.updateProgress(event, '<span class="status error">Error uploading (' + event.status + ')</span>');
+
+    this.startUploadingNextFile($.proxy(function() {
+      alert('Failed to upload the files you selected.  Please reselect and try again.');
+      this.clearFileList();
+    }, this));
+  },
 
   clickToUploadEventHandler: function(event) {
     this.cancelButton.disable();
-    $.each(this.filesToUpload, $.proxy(function(index, file) {
-      this.uploader.upload(file.id, this.uploadPath.replacement('' + index), 'POST', { '_method': 'put' }, 'data');
-    }, this));
     this.disableButtons();
+    this.startUploadingNextFile($.proxy(this.redirect, this));
   },
 
   clickToClearEventHandler: function(event) {
@@ -151,7 +182,14 @@ var handler = {
   uploader: function(uploader) {
     var handler = this;
     this.uploader = uploader;
-    $.each([ 'contentReady', 'fileSelect', 'uploadComplete', 'uploadStart', 'uploadCompleteData' ], function(index, event_name) {
+    $.each([ 
+      'contentReady', 
+      'fileSelect', 
+      'uploadStart', 
+      'uploadComplete', 
+      'uploadCompleteData',
+      'uploadError'
+    ], function(index, event_name) {
       uploader.addListener(event_name, $.proxy(handler[ event_name + 'Handler' ], handler));
     });
   }

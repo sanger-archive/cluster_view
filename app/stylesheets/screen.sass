@@ -191,17 +191,20 @@ body
     list-style: disc
     margin-left: 20px
 
+    .status
+      color= !color_white
+
+      &.finished
+        background-color= !color_green_dark
+
+      &.intermediate
+        background-color= !color_yellow_dark
+
+      &.error
+        background-color= !color_error
+
   .buttons ol li
     display: inline-block
-
-  #progress li
-    color= !color_white
-
-    &.finished
-      background-color= !color_green_dark
-
-    &.intermediate
-      background-color= !color_yellow_dark
 
 #flash .error
   background-color= !color_error

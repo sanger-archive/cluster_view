@@ -10,23 +10,37 @@ describe BulkUpload do
   end
 
   describe '#upload_data' do
-    after(:each) do
-      Image.should_receive(:create!).with(hash_including(
-        :bulk_upload_id => @bulk_upload.id, 
-        :data           => :source, 
-        :position       => @expected_position
-      )).and_return(:image)
-
-      @bulk_upload.upload_data(:source).should == :image
-    end
-
-    it 'creates an Image instance' do
-      @expected_position = 0
+    it 'creates an appropriate image instance' do
+      @bulk_upload.upload_data(nil)
+      Image.for_bulk_upload(@bulk_upload).all.should_not be_empty
     end
 
     it 'sets the position of the image to the count of the associated images' do
-      @bulk_upload.stub!(:images).and_return((1..10).to_a)
-      @expected_position = 10
+      @bulk_upload.stub!(:images).and_return((0..10).to_a)
+      @bulk_upload.upload_data(nil)
+      Image.for_bulk_upload(@bulk_upload).in_position(11).all.should_not be_empty
+    end
+
+    it 'allows the position to be specified' do
+      @bulk_upload.upload_data(nil, 14)
+      Image.for_bulk_upload(@bulk_upload).in_position(14).all.should_not be_empty
+    end
+
+    context 'with existing images present' do
+      before(:each) do
+        @original = Image.create!(:bulk_upload_id => @bulk_upload.id, :position => 9)
+        @bulk_upload.upload_data(nil, 9)
+      end
+      
+      subject { Image.for_bulk_upload(@bulk_upload).in_position(9).all }
+
+      it 'destroys any Image instances that may already exist at the position' do
+        subject.should_not include(@original)
+      end
+
+      it 'still creates the new Image instance' do
+        subject.length.should == 1
+      end
     end
   end
 

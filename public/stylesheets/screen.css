@@ -251,30 +251,33 @@ body {
   #bulk_upload #files_to_upload {
     list-style: disc;
     margin-left: 20px; }
-  /* line 194, ../../app/stylesheets/screen.sass */
+    /* line 194, ../../app/stylesheets/screen.sass */
+    #bulk_upload #files_to_upload .status {
+      color: #f8f8f8; }
+      /* line 197, ../../app/stylesheets/screen.sass */
+      #bulk_upload #files_to_upload .status.finished {
+        background-color: #22c900; }
+      /* line 200, ../../app/stylesheets/screen.sass */
+      #bulk_upload #files_to_upload .status.intermediate {
+        background-color: #c8c899; }
+      /* line 203, ../../app/stylesheets/screen.sass */
+      #bulk_upload #files_to_upload .status.error {
+        background-color: #c92200; }
+  /* line 206, ../../app/stylesheets/screen.sass */
   #bulk_upload .buttons ol li {
     display: inline-block; }
-  /* line 197, ../../app/stylesheets/screen.sass */
-  #bulk_upload #progress li {
-    color: #f8f8f8; }
-    /* line 200, ../../app/stylesheets/screen.sass */
-    #bulk_upload #progress li.finished {
-      background-color: #22c900; }
-    /* line 203, ../../app/stylesheets/screen.sass */
-    #bulk_upload #progress li.intermediate {
-      background-color: #c8c899; }
 
-/* line 206, ../../app/stylesheets/screen.sass */
+/* line 209, ../../app/stylesheets/screen.sass */
 #flash .error {
   background-color: #c92200;
   color: #f8f8f8; }
 
-/* line 210, ../../app/stylesheets/screen.sass */
+/* line 213, ../../app/stylesheets/screen.sass */
 #flash .message, #image_events {
   background-color: #22c900;
   color: #f8f8f8; }
 
-/* line 214, ../../app/stylesheets/screen.sass */
+/* line 217, ../../app/stylesheets/screen.sass */
 #flash > *, #image_events, #bulk_upload #progress li {
   padding: 5px;
   margin: 5px;

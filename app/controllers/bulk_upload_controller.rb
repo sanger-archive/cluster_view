@@ -16,7 +16,7 @@ class BulkUploadController < ApplicationController
   # Each image that is uploaded comes through this action from the Flash upload tool.  They are simply
   # attached to the BulkUpload instance and we return OK or error.
   def upload
-    @bulk_upload.upload_data(params[ :data ])
+    @bulk_upload.upload_data(params[ :data ], params[ :index ])
     render :text => 'DONE', :status => 200  # NOTE[md12]: Send back at least 1 non-whitespace byte for YUI Uploader to work!
   end
 

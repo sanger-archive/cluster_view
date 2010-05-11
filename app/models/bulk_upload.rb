@@ -20,8 +20,13 @@ class BulkUpload < ActiveRecord::Base
 
   # Each upload of an image is attached to this instance through this method.  At this point the image
   # position is simply assumed to be based on the number that have been previously uploaded.
-  def upload_data(source)
-    Image.create!(:bulk_upload_id => self.id, :data => source, :position => self.images.length)
+  def upload_data(source, index = nil)
+    index ||= self.images.length
+
+    # Because the BulkUpload could be resuming from a previously failed state we need to destroy all of
+    # the Image instances that may occupy our position.
+    Image.for_bulk_upload(self).in_position(index).all.each(&:destroy)
+    Image.create!(:bulk_upload_id => self.id, :data => source, :position => index)
   end
 
   # Attaches all of the images that have been uploaded within this bulk upload to the specified Batch

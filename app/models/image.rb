@@ -22,12 +22,24 @@ class Image < ActiveRecord::Base
   validates_numericality_of :position, :integer_only => true
   validates_inclusion_of :position, :in => (0..15)
 
+  # The position of the image must be unique within the Batch instance, or within the BulkUpload instance.
+  validates_uniqueness_of :position, :scope => :batch_id, :if => :batch_id?
+  validates_uniqueness_of :position, :scope => :bulk_upload_id, :if => :bulk_upload_id?
+
   named_scope :for_batch, proc { |batch|
     { :conditions => [ 'batch_id=?', batch.id ], :order => 'position' }
   }
   
   named_scope :by_batch_and_image_id, proc { |batch,image_id|
     { :conditions => [ 'batch_id=? AND id=?', batch.id, image_id ], :order => 'position' }
+  }
+
+  named_scope :for_bulk_upload, proc { |bulk_upload|
+    { :conditions => [ 'bulk_upload_id=?', bulk_upload.id ], :order => 'position' }
+  }
+
+  named_scope :in_position, proc { |position|
+    { :conditions => [ 'position=?', position ] }
   }
   
   def root_filename

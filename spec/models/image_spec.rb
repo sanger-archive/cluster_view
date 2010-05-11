@@ -5,6 +5,10 @@ describe Image do
     def self.mock_batch
       mock_object_with_id('BATCH ID')
     end
+
+    def self.mock_bulk_upload
+      mock_object_with_id('BULK UPLOAD ID')
+    end
     
     using_named_scope(:for_batch, mock_batch) do
       it_has_conditions('batch_id=?', 'BATCH ID')
@@ -14,6 +18,15 @@ describe Image do
     using_named_scope(:by_batch_and_image_id, mock_batch, 'IMAGE ID') do
       it_has_conditions('batch_id=? AND id=?', 'BATCH ID', 'IMAGE ID')
       it_has_order('position')
+    end
+
+    using_named_scope(:for_bulk_upload, mock_bulk_upload) do
+      it_has_conditions('bulk_upload_id=?', 'BULK UPLOAD ID')
+      it_has_order('position')
+    end
+
+    using_named_scope(:in_position, :position) do
+      it_has_conditions('position=?', :position)
     end
   end
 
