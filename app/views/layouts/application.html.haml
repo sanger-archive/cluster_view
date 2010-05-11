@@ -25,12 +25,7 @@
     .clear
 
   #content
-    - if not flash[:message].nil? or not flash[:error].nil?
-      #flash
-        - unless flash[ :message ].nil?
-          %p.message= h(flash[ :message ])
-        - unless flash[ :error ].nil?
-          %p.error= h(flash[ :error ])
+    - display_flash_messages
     = yield
 
   #footer

@@ -11,6 +11,7 @@ Feature: Batch search
       | id | state |
       |1044| valid |
       | 2  |invalid|
+    Then setup the batches
 
 	Scenario: Search a valid batch ID
 	  When I search for batch ID "1044" 

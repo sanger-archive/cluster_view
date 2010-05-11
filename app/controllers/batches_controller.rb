@@ -35,6 +35,22 @@ class BatchesController < ApplicationController
   def image
     @image.send_image_data_via(self)
   end
+
+  def compare
+    # TODO[md12]: refactor into a filter that can be used elsewhere because this is a common idiom
+    params[ :lanes ] = params[ :lanes ].inject([]) { |a,(index,values)| a[ index.to_i ] = values; a  }
+    @lanes = params[ :lanes ].map { |details| Batch::LaneForComparison.new(details) }
+
+    if @lanes.uniq.size == 1
+      flash[:error] = translate('batches.messages.comparison.identical_lanes')
+      redirect_to root_path
+    elsif not @lanes.all? { |lane| lane.sample.same_as?(@lanes.first.sample) }
+      flash[:warning] = translate('batches.messages.comparison.different_samples')
+    end
+  rescue Batch::BatchNotFound => exception
+    flash[:error] = translate('batches.errors.batch_not_found', :batch_id => exception.batch_id)
+    redirect_to root_path
+  end
   
 private
 
@@ -42,7 +58,7 @@ private
     @batch = Batch.find(batch_id = params[:id])
   rescue ActiveResource::ResourceNotFound => exception
     flash[:error] = translate('batches.errors.batch_not_found', :batch_id => batch_id)
-    redirect_to batches_path
+    redirect_to root_path
   end
 
   def needs_events

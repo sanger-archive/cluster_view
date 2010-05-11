@@ -2,7 +2,7 @@ require 'spec_helper'
 
 shared_examples_for('the batch is invalid') do
   it 'renders batch not found' do
-    response.should redirect_to(batches_path)
+    response.should redirect_to(root_path)
   end
   
   it "sets the flash[:error]" do

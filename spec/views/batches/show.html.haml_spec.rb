@@ -14,11 +14,11 @@ describe '/batches/show' do
 
   context 'with images' do
     before(:each) do
-      @batch.should_receive(:lane_organised_images).and_yield(
-        Batch::Sample.new(1, 'sample name'),
-        mock(Image, :id => 1, :batch_id => 9999, :position => 0, :data_file_name => "dir/000", :root_filename => '000'),
-        mock(Image, :id => 2, :batch_id => 9999, :position => 1, :data_file_name => "dir/001", :root_filename => '001')
-      )
+      sample = Batch::Sample.new(@batch, 1, 'sample name')
+      sample.stub!(:image).with(:left).and_yield(mock(Image, :id => 1, :batch_id => 9999, :position => 0, :data_file_name => "dir/000", :root_filename => '000'))
+      sample.stub!(:image).with(:right).and_yield(mock(Image, :id => 2, :batch_id => 9999, :position => 1, :data_file_name => "dir/001", :root_filename => '001'))
+
+      @batch.should_receive(:samples).and_return([ sample ])
 
       render_partial
     end
@@ -33,7 +33,7 @@ describe '/batches/show' do
 
   context 'without images' do
     before(:each) do
-      @batch.should_receive(:lane_organised_images)
+      @batch.should_receive(:samples).and_return([])
       render_partial
     end
 
@@ -52,7 +52,7 @@ describe '/batches/show' do
 
   context 'with events' do
     before(:each) do
-      @batch.should_receive(:lane_organised_images)
+      @batch.should_receive(:samples).and_return([])
       @events << 'Message 1' << 'Message 2'
       render_partial
     end

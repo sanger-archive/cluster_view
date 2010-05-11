@@ -8,10 +8,11 @@ module NavigationHelpers
   def path_to(page_name)
     case page_name
 
-    when /the home\s?page/                    then '/'
+    when /the home\s?page/                    then root_path
     when /the (login|logout) page/            then send(:"#{ $1 }_path")
     when /a secure page/                      then secure_path
-    when /the batch search\s?page/            then batches_path
+    when /the batch search page/              then root_path
+    when /the batch comparison page/          then batch_compare_path
     when /the show page for batch "([^\"]+)"/ then batch_path(:id => $1)
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +

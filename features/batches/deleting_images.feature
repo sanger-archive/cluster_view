@@ -1,7 +1,10 @@
 @requires_user_to_be_logged_in
 Feature: Technicians need to be able to delete images from a batch
-  Scenario: Deleting an image
+  Background:
     Given batch ID "3456" is valid
+    Then setup the batches
+
+  Scenario: Deleting an image
     And batch "3456" has image "features/images/2617.tif" for the left image in lane 3
     And I am on the show page for batch "3456"
     Then the "Delete image 2617" checkbox should not be checked
@@ -14,7 +17,6 @@ Feature: Technicians need to be able to delete images from a batch
     And I should not see an option "Delete image 2617"
 
   Scenario: Deleting multiple images
-    Given batch ID "3456" is valid
     And batch "3456" has image "features/images/2617.tif" for the left image in lane 3
     And batch "3456" has image "features/images/2618.tif" for the right image in lane 5
     And I am on the show page for batch "3456"
@@ -33,7 +35,6 @@ Feature: Technicians need to be able to delete images from a batch
     And I should not see an option "Delete image 2618"
 
   Scenario: Deleting one of multiple images
-    Given batch ID "3456" is valid
     And batch "3456" has image "features/images/2617.tif" for the left image in lane 3
     And batch "3456" has image "features/images/2618.tif" for the right image in lane 5
     And I am on the show page for batch "3456"

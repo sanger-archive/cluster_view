@@ -32,6 +32,10 @@ en:
         update: 'Image {{data_file_name}} updated successfully.'
         delete: 'Image {{data_file_name}} deleted successfully.'
 
+      comparison:
+        identical_lanes: 'Comparing the same lane against itself makes no sense!'
+        different_samples: 'The lanes appear to not be from the same sample'
+
     statuses:
       released: 'Released'
       pending: 'Pending'

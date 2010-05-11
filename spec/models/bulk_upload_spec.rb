@@ -5,6 +5,8 @@ class BulkUpload
 end
 
 describe BulkUpload do
+  include BatchHelper
+
   before(:each) do
     @bulk_upload = described_class.create!
   end

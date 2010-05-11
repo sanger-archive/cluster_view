@@ -22,6 +22,7 @@ ActionController::Routing::Routes.draw do |map|
     batches.root :action => 'index'
     batches.batches('/batches', :action => 'index')
     batches.batch_search('/batches/search', :action => 'show')
+    batches.batch_compare('/batches/compare', :action => 'compare', :conditions => { :method => :post })
     batches.batch('/batches/:id', :action => 'show')
     batches.batch_update('/batches/:id', :action => 'update', :conditions => { :method => :put })
   end

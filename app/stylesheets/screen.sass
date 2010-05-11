@@ -16,8 +16,10 @@
 !color_green_dark   = #22C900
 !color_yellow_light = #F8F8CC
 !color_yellow_dark  = #C8C899
+!color_orange_dark  = #E87815
 
-!color_error = !color_red_dark
+!color_error   = !color_red_dark
+!color_warning = !color_orange_dark
 !color_message = !color_green_dark
 
 *:focus
@@ -148,32 +150,6 @@ body
   h2
     font-weight: bold
 
-#thumbnails > .lane
-  border= 1px "solid" !color_grey_dark
-  padding: 5px
-  margin: 5px auto
-  text-align: center
-
-  .details
-    font-weight: bold
-
-  .thumbnail
-    display: inline-block
-    margin: 2px
-    text-align: center
-    width: 410px
-
-    .upload_details input[type=checkbox]
-      &, & + label
-        display: none
-
-    img
-      width: 400px
-      height: 300px
-
-      & + p
-        margin: 4px auto
-
 #bulk_upload 
   padding: 5px
 
@@ -210,6 +186,10 @@ body
   background-color= !color_error
   color= !color_white
 
+#flash .warning
+  background-color= !color_warning
+  color= !color_black
+
 #flash .message, #image_events
   background-color= !color_message
   color= !color_white
@@ -219,3 +199,40 @@ body
   margin: 5px
   font-weight: bold
   text-align: center
+
+.batch > .lane
+  border= 1px "solid" !color_grey_dark
+  padding: 5px
+  margin: 5px auto
+  text-align: center
+
+  .details
+    font-weight: bold
+
+  .thumbnail
+    margin: 2px
+    text-align: center
+    width: 410px
+
+    .upload_details .action.delete
+      display: none
+
+    img
+      width: 400px
+      height: 300px
+
+      & + p
+        margin: 4px auto
+
+#thumbnails .lane > .thumbnail
+  display: inline-block
+
+#comparison
+  text-align: center
+
+  .batch > .lane
+    display: inline-block
+    margin: auto 5px
+
+    .upload_details
+      display: none

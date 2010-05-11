@@ -1,0 +1,14 @@
+#comparison
+  %h1<
+    Side-by-side comparison of lanes
+
+  - semantic_form_for(:lanes, :html => { :class => 'batch' }) do |form|
+    - @lanes.each do |lane|
+      %fieldset.lane
+        %legend<
+          #{ link_to("Batch #{ lane.batch.id }", batch_path(lane.batch)) }, Lane #{ lane.lane }, Sample: #{ lane.sample.name }
+
+        - [ :left, :right ].each do |side|
+          = render(:partial => 'batches/thumbnail', :locals => { :sample => lane.sample, :side => side, :form => form })
+
+  .clear

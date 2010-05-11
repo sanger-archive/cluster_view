@@ -3,12 +3,16 @@ Feature: Batch display
   Scenario: Batch with no images
     Given batch ID "2010" is valid
     And batch "2010" has no images
+    Then setup the batches
+
     When I view batch "2010"
     Then I should see no batch thumbnails
 
   Scenario: Batch with 16 images
     Given batch ID "2011" is valid
     And batch "2011" has images 1 to 16
+    Then setup the batches
+
     When I view batch "2011"
     Then I should see lanes with thumbnails:
       |lane|left|right|

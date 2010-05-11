@@ -6,15 +6,20 @@
     - @events.each do |message|
       %li.event= h(message)
 
-- semantic_form_for(@batch, :html => { :method => :put, :multipart => true }) do |f|
-  - f.buttons do
-    %p
-      You can individually upload specific images, replace existing ones, or perform a <a href="#" id="start_bulk_upload">bulk upload</a>
-      to upload several images all at once.
-
+- semantic_form_for(@batch, :html => { :method => :put, :multipart => true }) do |form|
+  %p
+    You can individually upload specific images, replace existing ones, or perform a <a href="#" id="start_bulk_upload">bulk upload</a>
+    to upload several images all at once.
+  
+  - form.buttons do
     - bulk_upload_container('#start_bulk_upload', @batch) do
-      = f.commit_button 'Upload'
+      = form.commit_button 'Upload'
 
-  #thumbnails
-    - @batch.lane_organised_images do |sample,left,right|
-      = render(:partial => 'lane', :locals => { :sample => sample, :left => left, :right => right })
+  #thumbnails.batch
+    - @batch.samples.each do |sample|
+      %fieldset.lane{ :id => "lane_#{ sample.lane }" }
+        %legend.details<
+          Lane <span class="lane">#{ sample.lane }</span>, Sample: <span class="sample">#{ sample.name }</span>
+
+        - [ :left, :right ].each do |side|
+          = render(:partial => 'batches/thumbnail', :locals => { :sample => sample, :side => side, :form => form })

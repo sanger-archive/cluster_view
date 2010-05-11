@@ -93,22 +93,6 @@ describe Batch do
     end
   end
 
-  describe '#lane_organised_images_for' do
-    it 'yield the images in pairs' do
-      images = (1..5).map { |index| Factory('Images for batch', :batch_id => 12345, :position => index-1) }
-      samples = (1..3).map { |index| mock("Sample #{ index }", :lane => index, :name => "Sample #{ index }") }
-      @batch.stub!(:images).and_return(images)
-      @batch.stub!(:samples).and_return(samples)
-
-      callback = mock('callback')
-      callback.should_receive(:called_with).with(samples[ 0 ], images[ 0 ], images[ 1 ])
-      callback.should_receive(:called_with).with(samples[ 1 ], images[ 2 ], images[ 3 ])
-      callback.should_receive(:called_with).with(samples[ 2 ], images[ 4 ], nil)
-
-      @batch.lane_organised_images { |*args| callback.called_with(*args) }
-    end
-  end
-
   describe '.event_type_from_parameters' do
     it 'returns :delete if the :delete parameter is set' do
       described_class.event_type_from_parameters(:delete => 'yes').should == :delete
@@ -133,9 +117,13 @@ describe Batch do
 end
 
 describe Batch::Sample do
+  before(:each) do
+    @batch = mock(Batch)
+  end
+
   describe '#image_index_for_side' do
     after(:each) do
-      described_class.new(@lane, 'NAME').image_index_for_side(@side).should == @index
+      described_class.new(@batch, @lane, 'NAME').image_index_for_side(@side).should == @index
     end
 
     class << self
@@ -162,6 +150,16 @@ describe Batch::Sample do
     context 'right side images' do
       side(:right)
       lane_checks { |lane| (lane-1)*2 + 1 }
+    end
+  end
+
+  describe '#same_as?' do
+    it 'is the same if the names are equal' do
+      described_class.new(@batch, 1, 'NAME').same_as?(described_class.new(@batch, 2, 'NAME')).should be_true
+    end
+
+    it 'is not the same if the names are different' do
+      described_class.new(@batch, 1, 'NAME').same_as?(described_class.new(@batch, 1, 'DIFFERENT')).should be_false
     end
   end
 end

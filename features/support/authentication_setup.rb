@@ -23,3 +23,5 @@ Before('@requires_user_to_be_logged_in') do
   When 'I attempt to login as "Default login user"'
   Then 'I should be logged in as "Default login user"'
 end
+
+Before { @batch_setup_functions = [] }

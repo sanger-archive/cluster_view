@@ -22,18 +22,6 @@ def configure_invalid_batch_for(active_resource, batch_id)
   active_resource.get "/batches/#{ batch_id }.xml", {}, nil, 404
 end
 
-def valid_batch_mock(batch_id)
-  ActiveResource::HttpMock.respond_to do |mock|
-    configure_valid_batch_for(mock, batch_id)
-  end
-end
-
-def invalid_batch_mock(batch_id)
-  ActiveResource::HttpMock.respond_to do |mock|
-    configure_invalid_batch_for(mock, batch_id)
-  end
-end
-
 def pretend_batch_for(batch_id)
   batch = Object.new
   batch.instance_eval("def id ; #{ batch_id.inspect } ; end")
@@ -45,14 +33,22 @@ Transform /^(?:(images|thumbnails)) (\d+) to (\d+)$/ do |_,lower,upper|
 end
 
 Given /^batch ID "([^\"]+)" is (valid|invalid)$/ do |batch_id,validity|
-  send(:"#{ validity }_batch_mock", batch_id)
+  @batch_setup_functions.push(lambda do |mock|
+    send(:"configure_#{ validity }_batch_for", mock, batch_id)
+  end)
 end
 
 Given /^the batches are:$/ do |batch_table|
-  ActiveResource::HttpMock.respond_to do |mock|
+  @batch_setup_functions.push(lambda do |mock|
     batch_table.hashes.each do |row|
       send(:"configure_#{ row['state'] }_batch_for", mock, row['id'])
     end
+  end)
+end
+
+Then /^setup the batches$/ do
+  ActiveResource::HttpMock.respond_to do |mock|
+    @batch_setup_functions.each { |function| function.call(mock) }
   end
 end
 
@@ -122,4 +118,41 @@ Then /^the "Delete image 2617" checkbox should not be checked foo$/ do
   response.should have_selector('#lane_3') do |lane|
     raise lane.to_s.inspect
   end
+end
+
+Given /^the samples for batches are:$/ do |table|
+  @batch_setup_functions.push(lambda do |http|
+    table.hashes.inject(Hash.new { |h,k| h[ k ] = [] }) do |batches,row|
+      batches[ row['batch'] ][ row['lane'].to_i ] = row['sample']
+      batches
+    end.each do |batch_id,lanes|
+      batch_xml = ''
+      xml = Builder::XmlMarkup.new(:target => batch_xml)
+      xml.batch {
+        xml.tag!(:id, batch_id)
+        xml.lanes {
+          lanes.each_with_index do |sample,index|
+            next if sample.nil?
+            xml.lane(:position => index) { 
+              xml.library(:name => sample)
+            }
+          end
+        }
+      }
+      http.get "/batches/#{ batch_id }.xml", {}, batch_xml
+    end
+  end)
+end
+
+When /^I choose to compare lane "([^\"]+)" of batch "([^\"]+)" with lane "([^\"]+)" of batch "([^\"]+)"$/ do |left_lane,left_id,right_lane,right_id|
+  When %Q{I fill in "Left batch" with "#{ left_id }"}
+  When %Q{I select "#{ left_lane }" from "Left lane"}
+  When %Q{I fill in "Right batch" with "#{ right_id }"}
+  When %Q{I select "#{ right_lane }" from "Right lane"}
+  When %Q{I press "Compare"}
+end
+
+Then /^show me what I'm looking at$/ do
+  $stderr.puts response.body
+  raise 'foo'
 end

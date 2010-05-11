@@ -1,0 +1,8 @@
+- semantic_form_for(:lanes, :url => batch_compare_path) do |form|
+  - [ :left, :right ].map { |side| side.to_s.capitalize }.each_with_index do |side,index|
+    - form.array_fields_for(index, :class => "inputs #{ side.downcase }") do |fields|
+      = fields.input(:id, :label => "#{ side } batch")
+      = fields.input(:lane, :as => :select, :collection => (1..8).to_a, :label => "#{ side } lane")
+
+  - form.buttons do
+    = form.commit_button('Compare')

@@ -3,6 +3,14 @@ require 'ostruct'
 # An instance of this class represents a slide that is being put through the sequencing process.
 # Each Batch has a 8 lanes in which there are a number of samples.
 class Batch < ActiveResource::Base
+  class BatchNotFound < StandardError
+    attr_reader :batch_id
+
+    def initialize(batch_id)
+      @batch_id = batch_id
+    end
+  end
+
   self.site = Settings.sequencescape_url
 
   class << self
@@ -21,6 +29,7 @@ class Batch < ActiveResource::Base
   def update_attributes(attributes, &block)
     attributes.fetch(:images, []).each do |position,image_attributes|
       update_attributes_event = self.class.event_type_from_parameters(image_attributes) or next
+      image_attributes.delete(:delete)
       image = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes.merge(:position => position))
       yield(update_attributes_event, image) if block_given?
     end
@@ -29,23 +38,14 @@ class Batch < ActiveResource::Base
   def samples
     self.lanes.lane.map do |lane|
       sample_type = lane.respond_to?(:library) ? :library : :control
-      Sample.new(lane.position.to_i, lane.send(sample_type).name)
-    end
-  end
-
-  # Yields the sample and images (left and right) for this instance.  Images can be nil and the sample
-  # is an object that responds to :lane and :name (see Batch#samples).
-  def lane_organised_images(&block)
-    images = self.images.inject([ nil ] * 16) { |images,image| images[ image.position ] = image ; images }
-    self.samples.zip(images.in_groups_of(2)).each do |sample,(left,right)|
-      yield(sample, left, right)
+      Sample.new(self, lane.position.to_i, lane.send(sample_type).name)
     end
   end
 
 private
 
   def update_attributes_by_update(image_attributes)
-    image = Image.by_batch_and_image_id(self, image_attributes[ :id ]).first
+    image = image_for_id!(image_attributes[ :id ])
     image.update_attributes(image_attributes)
     image
   end
@@ -55,32 +55,71 @@ private
   end
 
   def update_attributes_by_delete(image_attributes)
-    image = Image.by_batch_and_image_id(self, image_attributes[ :id ]).first
+    image = image_for_id!(image_attributes[ :id ])
     image.destroy
     image
   end
 
+  def image_for_id!(image_id)
+    Image.by_batch_and_image_id(self, image_id).first or raise ActiveRecord::RecordNotFound, "Cannot find image #{ image_id }"
+  end
+
   def self.event_type_from_parameters(parameters)
     case
-    when parameters.key?(:delete)   then :delete
-    when parameters[ :data ].blank? then nil
-    when !parameters.key?(:id)      then :create
+    when !parameters[ :delete ].blank? then :delete
+    when parameters[ :data ].blank?    then nil
+    when !parameters.key?(:id)         then :create
     else :update
     end
   end
 
   class Sample
+    attr_reader :batch
     attr_reader :lane
     attr_reader :name
 
-    def initialize(lane, name)
-      @lane, @name = lane, name
+    def initialize(batch, lane, name)
+      @batch, @lane, @name = batch, lane, name
+    end
+
+    def image(side, &block)
+      images = @batch.images.inject([ nil ] * 16) { |images,image| images[ image.position ] = image ; images }
+      image = images[ self.image_index_for_side(side) ]
+      yield(image) unless image.nil?
     end
 
     def image_index_for_side(side)
       index = (self.lane-1) * 2
       index = index + 1 if side == :right
       index
+    end
+
+    def same_as?(sample)
+      self.name == sample.name
+    end
+  end
+
+  class LaneForComparison
+    attr_reader :batch
+    attr_reader :lane
+
+    def initialize(details)
+      @batch, @lane = Batch.find(batch_id = details[ :id ]), details[ :lane ].to_i
+    rescue ActiveResource::ResourceNotFound => exception
+      raise Batch::BatchNotFound.new(batch_id)
+    end
+
+    def sample
+      @batch.samples.find { |sample| sample.lane == @lane }
+    end
+
+    def ==(lane)
+      (self.batch == lane.batch) and (self.lane == lane.lane)
+    end
+    alias_method :eql?, :==
+
+    def hash
+      [ self.batch, self.lane ].hash
     end
   end
 end
