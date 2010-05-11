@@ -7,46 +7,53 @@
 #   image     => sends back the original image data for image_id
 class BatchesController < ApplicationController
   before_filter :require_user
+  before_filter :needs_batch_from_id, :only => [ :show, :update ]
+  before_filter :needs_events, :only => [ :show, :update ]
+  before_filter :needs_image_from_image_id, :only => [ :image, :thumbnail ]
   
   public :send_data  # Open #send_data so that it can called from Image.
   
-  class << self
-    def handles_with_batch_not_found(action, &block)  
-      define_method(action) { handle_with_batch_not_found(&block) }
-    end
-
-    def define_action_to_send_the(part, options = {})
-      define_method(part) do
-        Image.find(params[:image_id]).send(:"send_#{ part }_data_via", self, options)
-      end
-    end
-  end
-
   def index
     # Do nothing and fall through to the view
   end
 
-  handles_with_batch_not_found(:show)
+  def show
+    # Do nothing and fall through to the view
+  end
   
-  handles_with_batch_not_found(:update) do
+  def update
     @batch.update_attributes(params[ :batch ]) do |event,image|
       @events.push(translate("batches.messages.image_upload.#{ event }", :data_file_name => image.data_file_name))
     end
+    render :show
   end
-  
-  define_action_to_send_the(:thumbnail, :disposition => 'inline')
-  define_action_to_send_the(:image)
+
+  def thumbnail
+    @image.send_thumbnail_data_via(self, :disposition => 'inline')
+  end
+
+  def image
+    @image.send_image_data_via(self)
+  end
   
 private
 
-  def handle_with_batch_not_found(&block)
-    @batch_number = params[ :id ]
-    @events, @batch = [], Batch.find(@batch_number)
-    instance_eval(&block) if block_given?
-    render :show
+  def needs_batch_from_id
+    @batch = Batch.find(batch_id = params[:id])
   rescue ActiveResource::ResourceNotFound => exception
-    flash[:error] = translate('batches.errors.batch_not_found', :batch_id => @batch_number)
+    flash[:error] = translate('batches.errors.batch_not_found', :batch_id => batch_id)
     redirect_to batches_path
   end
 
+  def needs_events
+    @events = []
+  end
+
+  def needs_image_from_image_id
+    @image = Image.find(image_id = params[:image_id])
+  rescue ActiveRecord::RecordNotFound => exception
+    # Because the image is sent back to the browser we cannot simply redirect like we normally would
+    # so we have to send back a simple '404 Not Found' response.
+    render :text => ' ', :status => :not_found
+  end
 end
