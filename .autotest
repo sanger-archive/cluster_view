@@ -3,6 +3,6 @@
 # 
 # See: http://stackoverflow.com/questions/2661221/why-the-cucumber-features-keeps-running-even-though-it-fails
 Autotest.add_hook :initialize do |at|
-  %w{.git vendor rerun.txt}.each {|exception| at.add_exception(exception)}
+  %w{.git vendor log tmp rerun.txt}.each {|exception| at.add_exception(exception)}
 end
 
