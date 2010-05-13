@@ -1,8 +1,6 @@
 # Module providing the functionality for migrating the legacy data.  Enables us to repeat
 # the migrations if something goes wrong, without having to worry about how it functions!
 module Legacy
-  Paperclip.options[:swallow_stderr] = false #please tell us what is going on
-
   LEGACY_TABLE_TO_MIGRATE = 'legacy_images'
 
   class Image < ActiveRecord::Base

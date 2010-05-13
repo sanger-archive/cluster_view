@@ -32,3 +32,5 @@ config.log_level = :info
 config.gem 'ruby-net-ldap', :lib => 'net/ldap', :version => '>= 0.0.4'
 config.gem 'mysql',         :lib => false,      :version => '>= 2.8.1'
 
+# Do not swallow the errors produced by ImageMagic convert
+Paperclip.options[:swallow_stderr] = false
