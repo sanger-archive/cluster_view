@@ -34,10 +34,7 @@ module Filters
       controller.instance_eval do
         begin
           instance_variable_set(member_variable, object_class.find(object_id = params[ parameter ]))
-        rescue ActiveRecord::RecordNotFound => exception
-          logger.debug("The #{ object_class.name } could not be found from params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
-          send(error_handler, object_id)
-        rescue ActiveResource::ResourceNotFound => exception
+        rescue ActiveRecord::RecordNotFound, ActiveResource::ResourceNotFound => exception
           logger.debug("The #{ object_class.name } could not be found from params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
           send(error_handler, object_id)
         end
