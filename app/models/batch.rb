@@ -27,7 +27,7 @@ class Batch < ActiveResource::Base
   # the form data posted through BatchController#update action and yield each of the images that
   # have been updated to the specified block (if given).
   def update_attributes(attributes, &block)
-    attributes.fetch(:images, []).each do |position,image_attributes|
+    attributes.fetch(:images, []).each_with_index do |image_attributes,position|
       update_attributes_event = self.class.event_type_from_parameters(image_attributes) or next
       image_attributes.delete(:delete)
       image = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes.merge(:position => position))

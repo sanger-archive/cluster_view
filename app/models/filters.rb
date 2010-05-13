@@ -1,4 +1,19 @@
 module Filters
+  # Returns a controller filter that will turn the specified parameter from a Hash that has numeric keys to
+  # an Array, setup as those numeric keys specify.
+  def self.ConvertArrayParameter(*parameter_path)
+    last_step = parameter_path.pop
+
+    lambda do |controller|
+      controller.instance_eval do
+        final_hash = parameter_path.inject(params) { |parameters,step| parameters.try(:[], step) }
+        unless final_hash.nil? or (original_hash = final_hash[ last_step ]).nil?
+          final_hash[ last_step ] = original_hash.inject([]) { |a,(index,value)| a[ index.to_i ] = value ; a }
+        end
+      end
+    end
+  end
+
   # This method creates a controller filter that can be used to populate a member variable with an ActiveRecord
   # or ActiveResource object based on a specified parameter value.  For instance:
   #
@@ -15,22 +30,18 @@ module Filters
     member_variable = :"@#{ member_variable_name }"
     error_handler   = :"handle_#{ member_variable_name }_not_found_for"
 
-    filter = Object.new
-    filter.class_eval do
-      define_method(:filter) do |controller|
-        controller.instance_eval do
-          begin
-            instance_variable_set(member_variable, object_class.find(object_id = params[ parameter ]))
-          rescue ActiveRecord::RecordNotFound => exception
-            logger.debug("The #{ object_class.name } could not be found from params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
-            send(error_handler, object_id)
-          rescue ActiveResource::ResourceNotFound => exception
-            logger.debug("The #{ object_class.name } could not be found from params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
-            send(error_handler, object_id)
-          end
+    lambda do |controller|
+      controller.instance_eval do
+        begin
+          instance_variable_set(member_variable, object_class.find(object_id = params[ parameter ]))
+        rescue ActiveRecord::RecordNotFound => exception
+          logger.debug("The #{ object_class.name } could not be found from params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
+          send(error_handler, object_id)
+        rescue ActiveResource::ResourceNotFound => exception
+          logger.debug("The #{ object_class.name } could not be found from params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
+          send(error_handler, object_id)
         end
       end
     end
-    filter
   end
 end

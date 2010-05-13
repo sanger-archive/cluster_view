@@ -7,6 +7,8 @@
 #   image     => sends back the original image data for image_id
 class BatchesController < ApplicationController
   before_filter :require_user
+  before_filter Filters::ConvertArrayParameter(:lanes), :only => :compare
+  before_filter Filters::ConvertArrayParameter(:batch, :images), :only => :update
   before_filter Filters::PrepareObjectFilter(Batch, :id), :only => [ :show, :update ]
   before_filter Filters::PrepareObjectFilter(Image, :image_id), :only => [ :image, :thumbnail ]
   before_filter :needs_events, :only => [ :show, :update ]
@@ -35,11 +37,9 @@ class BatchesController < ApplicationController
   end
 
   def compare
-    # TODO[md12]: refactor into a filter that can be used elsewhere because this is a common idiom
-    params[ :lanes ] = params[ :lanes ].inject([]) { |a,(index,values)| a[ index.to_i ] = values; a  }
-    @lanes = params[ :lanes ].map { |details| Batch::LaneForComparison.new(details) }
+    @lanes = params[ :lanes ].map { |details| Batch::LaneForComparison.new(details) }.uniq
 
-    if @lanes.uniq.size == 1
+    if @lanes.size == 1
       flash[:error] = translate('batches.messages.comparison.identical_lanes')
       redirect_to root_path
     elsif not @lanes.all? { |lane| lane.sample.same_as?(@lanes.first.sample) }

@@ -47,7 +47,7 @@ describe Batch do
     end
 
     after(:each) do
-      @batch.update_attributes(:images => { '0' => @attributes }) { |*args| @callback.called_with(*args) }
+      @batch.update_attributes(:images => [ @attributes ]) { |*args| @callback.called_with(*args) }
     end
 
     it 'does not update or create an image if the event is nil' do
@@ -57,7 +57,7 @@ describe Batch do
 
     it 'performs the update based on the event type' do
       described_class.should_receive(:event_type_from_parameters).with(@attributes).and_return(:does_not_exist)
-      @batch.should_receive(:update_attributes_by_does_not_exist).with(@attributes.merge(:position => '0')).and_return(:image)
+      @batch.should_receive(:update_attributes_by_does_not_exist).with(@attributes.merge(:position => 0)).and_return(:image)
       @callback.should_receive(:called_with).with(:does_not_exist, :image)
     end
   end
