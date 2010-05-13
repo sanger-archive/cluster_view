@@ -7,9 +7,9 @@
 #   image     => sends back the original image data for image_id
 class BatchesController < ApplicationController
   before_filter :require_user
-  before_filter :needs_batch_from_id, :only => [ :show, :update ]
+  before_filter Filters::PrepareObjectFilter(Batch, :id), :only => [ :show, :update ]
+  before_filter Filters::PrepareObjectFilter(Image, :image_id), :only => [ :image, :thumbnail ]
   before_filter :needs_events, :only => [ :show, :update ]
-  before_filter :needs_image_from_image_id, :only => [ :image, :thumbnail ]
   
   def index
     # Do nothing and fall through to the view
@@ -27,11 +27,11 @@ class BatchesController < ApplicationController
   end
 
   def thumbnail
-    @image.send_thumbnail_data_via(ImageSendingFacade.new(self), :disposition => 'inline')
+    @image.send_thumbnail_data_via(to_image_sending_facade, :disposition => 'inline')
   end
 
   def image
-    @image.send_image_data_via(ImageSendingFacade.new(self))
+    @image.send_image_data_via(to_image_sending_facade)
   end
 
   def compare
@@ -52,9 +52,7 @@ class BatchesController < ApplicationController
   
 private
 
-  def needs_batch_from_id
-    @batch = Batch.find(batch_id = params[:id])
-  rescue ActiveResource::ResourceNotFound => exception
+  def handle_batch_not_found_for(batch_id)
     flash[:error] = translate('batches.errors.batch_not_found', :batch_id => batch_id)
     redirect_to root_path
   end
@@ -63,12 +61,14 @@ private
     @events = []
   end
 
-  def needs_image_from_image_id
-    @image = Image.find(image_id = params[:image_id])
-  rescue ActiveRecord::RecordNotFound => exception
+  def handle_image_not_found_for(image_id)
     # Because the image is sent back to the browser we cannot simply redirect like we normally would
     # so we have to send back a simple '404 Not Found' response.
     render :text => ' ', :status => :not_found
+  end
+
+  def to_image_sending_facade
+    ImageSendingFacade.new(self)
   end
 
   # This is a facade that provides the interface required by the image sending code

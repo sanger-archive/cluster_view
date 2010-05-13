@@ -3,8 +3,8 @@ class BulkUploadController < ApplicationController
   # protection stuff needs to be disable for this controller.
   protect_from_forgery :except => [ :start, :upload, :finish, :cancel ] if allow_forgery_protection && request_forgery_protection_token
 
-  before_filter :needs_bulk_upload_from_id, :only => [ :upload, :finish, :cancel ]
-  before_filter :needs_batch_from_id, :only => [ :start ]
+  before_filter Filters::PrepareObjectFilter(BulkUpload, :id), :only => [ :upload, :finish, :cancel ]
+  before_filter Filters::PrepareObjectFilter(Batch, :id), :only => [ :start ], :if => :batch_id_specified?
 
   # Called by Ajax to start a bulk upload.  It creates a BulkUpload instance and returns the necessary
   # HTML that can be displayed to pick for that upload
@@ -38,9 +38,7 @@ class BulkUploadController < ApplicationController
 
 private
 
-  def needs_bulk_upload_from_id
-    @bulk_upload = BulkUpload.find(bulk_upload_id = params[ :id ])
-  rescue ActiveRecord::RecordNotFound => exception
+  def handle_bulk_upload_not_found_for(bulk_upload_id)
     if request.xhr?
       render :text => ' ', :status => :not_found
     else
@@ -49,10 +47,11 @@ private
     end
   end
 
-  def needs_batch_from_id
-    batch_id = params[ :id ]
-    @batch = Batch.find(batch_id) unless batch_id.blank?
-  rescue ActiveResource::ResourceNotFound => exception
+  def batch_id_specified?
+    not params[ :id ].blank?
+  end
+
+  def handle_batch_not_found_for(batch_id)
     if request.xhr?
       render :text => ' ', :status => :internal_server_error
     else
