@@ -14,7 +14,7 @@ class RemigrateLegacyImages < ActiveRecord::Migration
         Image.destroy_all
         self.migrate_legacy_images
       end
-    end
+    end if table_exists?(Legacy::LEGACY_TABLE_TO_MIGRATE)
   end
 
   def self.down

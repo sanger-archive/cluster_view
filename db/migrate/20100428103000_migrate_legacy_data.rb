@@ -8,7 +8,7 @@ class MigrateLegacyData < ActiveRecord::Migration
   def self.up
     Image.transaction do
       self.migrate_legacy_images
-    end
+    end if table_exists?(Legacy::LEGACY_TABLE_TO_MIGRATE)
   end
 
   def self.down

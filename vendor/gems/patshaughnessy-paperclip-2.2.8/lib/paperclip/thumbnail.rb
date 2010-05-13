@@ -49,7 +49,9 @@ module Paperclip
       end_command
 
       begin
-        success = Paperclip.run("convert", command.gsub(/\s+/, " "))
+        # NOTE[md12]: Thumbnail generation from TIFF files is return an exit status of 1, this should be removed
+        # once the version of ImageMagick has been updated
+        success = Paperclip.run("convert", command.gsub(/\s+/, " "), [ 0, 1 ])
       rescue PaperclipCommandLineError
         raise PaperclipError, "There was an error processing the thumbnail for #{@basename}" if @whiny
       end

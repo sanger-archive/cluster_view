@@ -1,9 +1,9 @@
 class AddMigratedToLegacyImages < ActiveRecord::Migration
   def self.up
-    add_column(:legacy_images, :migrated, :boolean, :default => false) if table_exists?(:legacy_images)
+    add_column(Legacy::LEGACY_TABLE_TO_MIGRATE, :migrated, :boolean, :default => false) if table_exists?(Legacy::LEGACY_TABLE_TO_MIGRATE)
   end
 
   def self.down
-    remove_column(:legacy_images, :migrated) if table_exists?(:legacy_images)
+    remove_column(Legacy::LEGACY_TABLE_TO_MIGRATE, :migrated) if table_exists?(Legacy::LEGACY_TABLE_TO_MIGRATE)
   end
 end
