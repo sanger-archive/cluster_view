@@ -37,4 +37,30 @@ describe Image do
       should == 'data file name'
     end
   end
+
+  shared_examples_for('there is no data to be sent') do
+    before(:each) do
+      @image, @conduit = Image.new, mock('conduit')
+    end
+
+    it 'sends an error instead of falling over' do
+      @conduit.should_receive(:error_as_no_data_for).with(@image)
+    end
+  end
+
+  describe '#send_image_data_via' do
+    it_should_behave_like 'there is no data to be sent'
+
+    after(:each) do
+      @image.send_image_data_via(@conduit)
+    end
+  end
+
+  describe '#send_thumbnail_data_via' do
+    it_should_behave_like 'there is no data to be sent'
+
+    after(:each) do
+      @image.send_thumbnail_data_via(@conduit)
+    end
+  end
 end

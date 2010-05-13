@@ -11,8 +11,6 @@ class BatchesController < ApplicationController
   before_filter :needs_events, :only => [ :show, :update ]
   before_filter :needs_image_from_image_id, :only => [ :image, :thumbnail ]
   
-  public :send_data  # Open #send_data so that it can called from Image.
-  
   def index
     # Do nothing and fall through to the view
   end
@@ -29,11 +27,11 @@ class BatchesController < ApplicationController
   end
 
   def thumbnail
-    @image.send_thumbnail_data_via(self, :disposition => 'inline')
+    @image.send_thumbnail_data_via(ImageSendingFacade.new(self), :disposition => 'inline')
   end
 
   def image
-    @image.send_image_data_via(self)
+    @image.send_image_data_via(ImageSendingFacade.new(self))
   end
 
   def compare
@@ -71,5 +69,20 @@ private
     # Because the image is sent back to the browser we cannot simply redirect like we normally would
     # so we have to send back a simple '404 Not Found' response.
     render :text => ' ', :status => :not_found
+  end
+
+  # This is a facade that provides the interface required by the image sending code
+  class ImageSendingFacade
+    def initialize(controller)
+      @controller = controller
+    end
+
+    def error_as_no_data_for(image)
+      @controller.render :text => '', :status => :not_found
+    end
+
+    def send_data(*args, &block)
+      @controller.send(:send_data, *args, &block)
+    end
   end
 end

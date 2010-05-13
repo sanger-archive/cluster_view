@@ -133,5 +133,4 @@ describe BatchesController do
       end
     end
   end
-
 end

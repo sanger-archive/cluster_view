@@ -66,8 +66,14 @@ class Image < ActiveRecord::Base
       conduit, options = args
       options ||= {}
 
+      component_data = self.send(:"data_#{ image_type }_file")
+      if component_data.nil?
+        conduit.error_as_no_data_for(self)
+        return
+      end
+
       conduit.send_data(
-        self.send(:"data_#{image_type}_file"),
+        component_data,
         options.merge(
           :type => self.send(:"data_#{image_type}_content_type"), 
           :filename => self.send(:"data_#{image_type}_file_name")
