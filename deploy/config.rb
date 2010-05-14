@@ -17,3 +17,7 @@ set :keep_releases, 4
 # your SCM below:
 set :scm, :git
 set :branch, "master"
+
+after('deploy:update') do 
+  run "ln -sf #{ shared_path }/app-config/database.yml #{ current_path }/config/database.yml"
+end
