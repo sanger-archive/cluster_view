@@ -53,7 +53,7 @@ module Legacy
         filename     = File.expand_path(File.join(Settings.legacy_clusterview_image_path, image.filename))
 
         begin
-          File.open(filename, 'r') { |file| Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
+          File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
           image.migrated!
 
           say("Migrated #{ index } legacy images") if (index % 50) == 0
