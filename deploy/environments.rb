@@ -50,5 +50,8 @@ task :setup_local do
   set :runner, "psdpipe"
   set :admin_runner, runner
   set :branch_validation_regexp, false
+
+  set :rvm_ruby, 'ruby-1.8.6-p383'
+  set :rvm_gemset, 'clusterview'
 end
 
