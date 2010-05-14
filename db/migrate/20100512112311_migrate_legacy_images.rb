@@ -2,7 +2,7 @@ require 'legacy_data_migration'
 
 # At the point at which this migration is executed we have two databases co-existing.  We
 # migrate the data we need from the legacy tables at this point.
-class MigrateLegacyData < ActiveRecord::Migration
+class MigrateLegacyImages < ActiveRecord::Migration
   extend Legacy::ImageMigration
 
   def self.up
