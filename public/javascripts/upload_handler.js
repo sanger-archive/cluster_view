@@ -164,15 +164,21 @@ var handler = {
     this.cancelButton.disable();
     this.disableButtons();
     this.startUploadingNextFile($.proxy(this.redirect, this));
+    event.stopImmediatePropagation();
+    return false;
   },
 
   clickToClearEventHandler: function(event) {
     this.clearFileList();
     this.disableButtons();
+    event.stopImmediatePropagation();
+    return false;
   },
 
   clickToCancelEventHandler: function(event) {
     window.location = this.cancelPath;
+    event.stopImmediatePropagation();
+    return false;
   },
 
   init: function() {
