@@ -1,5 +1,5 @@
 set :application, "Cluster View"
-set :repository, 'http://github.com/sanger/cluster_view.git'
+set :repository, 'git://github.com/sanger/cluster_view.git'
 #set :repository,  "ssh://git.internal.sanger.ac.uk/repos/git/psd/api.git"
 
 # Use the badger user
@@ -17,6 +17,10 @@ set :keep_releases, 4
 # your SCM below:
 set :scm, :git
 set :branch, "master"
+set :deploy_via, :copy
+# speed things up a bit by caching & exluding
+set :git_shallow_clone, 1
+set :copy_exclude, [".git"]
 
 after('deploy:update') do 
   run "ln -sf #{ shared_path }/app-config/database.yml #{ current_path }/config/database.yml"
