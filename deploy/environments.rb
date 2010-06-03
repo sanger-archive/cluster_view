@@ -54,13 +54,16 @@ task :setup_local do
   set :rvm_ruby, 'ruby-1.8.6-p383'
   set :rvm_gemset, 'clusterview'
 
+  # Case-specific: yes. Practical: yes.
+  PSD_HOME = "/nfs/users/nfs_p/psdpipe/"
   set :default_environment, {
-    'PATH' => "/nfs/users/nfs_p/psdpipe/.rvm/bin:/nfs/users/nfs_p/psdpipe/.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }/bin:/nfs/users/nfs_p/psdpipe/.rvm/gems/#{ rvm_ruby }@global/bin:/nfs/users/nfs_p/psdpipe/.rvm/rubies/#{ rvm_ruby }/bin:$PATH",
+    'HTTP_PROXY' => 'http://wwwcache.sanger.ac.uk:3128/',
+    'PATH' => "#{PSD_HOME}.rvm/bin:#{PSD_HOME}.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }/bin:#{PSD_HOME}.rvm/gems/#{ rvm_ruby }@global/bin:#{PSD_HOME}.rvm/rubies/#{ rvm_ruby }/bin:$PATH",
     'RUBY_VERSION' => rvm_ruby,
     
-    'GEM_HOME' =>     "/nfs/users/nfs_p/psdpipe/.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }",
-    'GEM_PATH' =>     "/nfs/users/nfs_p/psdpipe/.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }:/nfs/users/nfs_p/psdpipe/.rvm/gems/#{ rvm_ruby }@global",
-    'BUNDLE_PATH' =>  "/nfs/users/nfs_p/psdpipe/.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }"
+    'GEM_HOME' =>     "#{PSD_HOME}.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }",
+    'GEM_PATH' =>     "#{PSD_HOME}.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }:#{PSD_HOME}.rvm/gems/#{ rvm_ruby }@global",
+    'BUNDLE_PATH' =>  "#{PSD_HOME}.rvm/gems/#{ rvm_ruby }@#{ rvm_gemset }"
   }
 end
 
