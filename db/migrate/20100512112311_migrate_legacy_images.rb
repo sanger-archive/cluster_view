@@ -6,9 +6,7 @@ class MigrateLegacyImages < ActiveRecord::Migration
   extend Legacy::ImageMigration
 
   def self.up
-    Image.transaction do
-      self.migrate_legacy_images
-    end if table_exists?(Legacy::LEGACY_TABLE_TO_MIGRATE)
+    self.migrate_legacy_images if table_exists?(Legacy::LEGACY_TABLE_TO_MIGRATE)
   end
 
   def self.down

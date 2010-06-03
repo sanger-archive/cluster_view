@@ -8,9 +8,27 @@ module Legacy
 
     named_scope :valid_position, :conditions => [ 'position BETWEEN 1 AND 16' ]
     named_scope :valid_filename, :conditions => [ 'filename IS NOT NULL' ]
+    named_scope :not_already_migrated, :conditions => [ '(migrated IS NULL OR migrated=0)' ]
+
+    def self.find_in_batches(options = {}, &block)
+      options.symbolize_keys!
+      options[ :limit ] ||= 50
+      options.delete(:offset)
+
+      with_scope(:find => options) do 
+        offset, records = 0, self.all(:offset => 0)
+        while not records.empty?
+          yield(records)
+          break if records.size < options[ :limit ]
+
+          offset = offset + records.size
+          records = self.all(:offset => offset)
+        end
+      end
+    end
 
     def self.valid_for_migration
-      [ :valid_position, :valid_filename ].inject(self) { |target,scope| target.send(scope) }
+      [ :not_already_migrated, :valid_position, :valid_filename ].inject(self) { |target,scope| target.send(scope) }
     end
 
     { :migrated! => true, :not_migrated! => false }.each do |method,state|
@@ -46,26 +64,36 @@ module Legacy
     ]
 
     def migrate_legacy_images(images = Legacy::Image.valid_for_migration)
-      say(RAILS_DEFAULT_LOGGER.info("About to migrate #{ images.valid_for_migration.count } ..."))
+      expected, limit = images.count, (ENV['batch_size'] || 50).to_i
 
-      images.all(:order => 'created_at DESC').each_with_index do |image,index|
-        new_position = LEGACY_POSITIONS_TO_NEW_VALUES.index(image.position.to_i) or raise StandardError, "Legacy position #{ image.position } unmapped!"
-        filename     = File.expand_path(File.join(Settings.legacy_clusterview_image_path, image.filename))
+      say(RAILS_DEFAULT_LOGGER.info("About to migrate #{ expected } in batches of #{ limit } ..."))
 
-        begin
-          File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
-          image.migrated!
+      migrated = total = 0
+      images.find_in_batches(:order => 'created_at DESC', :limit => limit) do |image_batch|
+        ActiveRecord::Base.transaction do
+          image_batch.each do |image|
+            new_position = LEGACY_POSITIONS_TO_NEW_VALUES.index(image.position.to_i) or raise StandardError, "Legacy position #{ image.position } unmapped!"
+            filename     = File.expand_path(File.join(Settings.legacy_clusterview_image_path, image.filename))
 
-          say(RAILS_DEFAULT_LOGGER.info("Migrated #{ index } legacy images")) if (index % 50) == 0
-        rescue ActiveRecord::RecordInvalid => exception
-          image.not_migrated!
+            begin
+              File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
+              image.migrated!
 
-          say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } has errors - #{ exception.message }"))
-        rescue Errno::ENOENT => exception
-          image.not_migrated!
+              migrated += 1
+            rescue ActiveRecord::RecordInvalid => exception
+              image.not_migrated!
 
-          say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } is missing - source image #{ image.id }"))
+              say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } has errors - #{ exception.message }"))
+            rescue Errno::ENOENT => exception
+              image.not_migrated!
+
+              say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } is missing - source image #{ image.id }"))
+            end
+          end
         end
+        
+        total += image_batch.size
+        say(RAILS_DEFAULT_LOGGER.info("Migrated #{ migrated } legacy images out of #{ total }(#{ expected }) so far"))
       end
     end
   end
