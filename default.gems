@@ -21,4 +21,5 @@ net-ssh-gateway -v1.0.1
 rack -v1.0.1
 rake -v0.8.7
 rdoc -v2.5.8
+ruby-net-ldap -v0.0.4
 sqlite3-ruby -v1.2.5
