@@ -46,9 +46,9 @@ module Legacy
     ]
 
     def migrate_legacy_images(images = Legacy::Image.valid_for_migration)
-      say("About to migrate #{ images.valid_for_migration.count } ...")
+      say(RAILS_DEFAULT_LOGGER.info("About to migrate #{ images.valid_for_migration.count } ..."))
 
-      images.all.each_with_index do |image,index|
+      images.all(:order => 'created_at DESC').each_with_index do |image,index|
         new_position = LEGACY_POSITIONS_TO_NEW_VALUES.index(image.position.to_i) or raise StandardError, "Legacy position #{ image.position } unmapped!"
         filename     = File.expand_path(File.join(Settings.legacy_clusterview_image_path, image.filename))
 
@@ -56,11 +56,15 @@ module Legacy
           File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
           image.migrated!
 
-          say("Migrated #{ index } legacy images") if (index % 50) == 0
+          say(RAILS_DEFAULT_LOGGER.info("Migrated #{ index } legacy images")) if (index % 50) == 0
+        rescue ActiveRecord::RecordInvalid => exception
+          image.not_migrated!
+
+          say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } has errors - #{ exception.message }"))
         rescue Errno::ENOENT => exception
           image.not_migrated!
 
-          say("Legacy image file #{ filename } is missing - source image #{ image.id }")
+          say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } is missing - source image #{ image.id }"))
         end
       end
     end
