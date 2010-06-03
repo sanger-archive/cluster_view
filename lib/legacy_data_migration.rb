@@ -76,17 +76,16 @@ module Legacy
             filename     = File.expand_path(File.join(Settings.legacy_clusterview_image_path, image.filename))
 
             begin
-              File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
-              image.migrated!
+              begin
+                File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
+              ensure
+                image.migrated!
+              end
 
               migrated += 1
             rescue ActiveRecord::RecordInvalid => exception
-              image.not_migrated!
-
               say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } has errors - #{ exception.message }"))
             rescue Errno::ENOENT => exception
-              image.not_migrated!
-
               say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } is missing - source image #{ image.id }"))
             end
           end
