@@ -19,9 +19,21 @@ module Legacy
         offset, records = 0, self.all(:offset => 0)
         while not records.empty?
           yield(records)
-          break if records.size < options[ :limit ]
+          if records.size < options[ :limit ]
+            # When the migrations ran in staging there was a mismatch in the number of images processed
+            # and the total that should have been processed.  The only way a valid migration could have
+            # occurred, and these two values being different, was if the set of results in 'records' 
+            # was less that the requested limit and the offset was half way through.  In other words,
+            # some kind of bug in MySQL or the query used.
+            #
+            # This makes a second attempt to query for the group to see if the results are different
+            # sizes.  If they aren't we're apparently good, otherwise we're screwed.
+            second_attempt = self.all(:offset => offset)
+            break if records.size == second_attempt.size
+            raise StandardError, "Result set different sizes: #{ records.size } != #{ second_attempt.size } (offset=#{ offset })"
+          end
 
-          offset = offset + records.size
+          offset  = offset + records.size
           records = self.all(:offset => offset)
         end
       end
@@ -68,8 +80,11 @@ module Legacy
 
       say(RAILS_DEFAULT_LOGGER.info("About to migrate #{ expected } in batches of #{ limit } ..."))
 
+      # It is a good idea to order by multiple columns to reduce the chance of ordering issues
+      # when the first order has the same value.  Here we know that 'id' is unique, so that as a
+      # second ordering is safe.
       migrated = total = 0
-      images.find_in_batches(:order => 'created_at DESC', :limit => limit) do |image_batch|
+      images.find_in_batches(:order => 'created_at DESC, id DESC', :limit => limit) do |image_batch|
         ActiveRecord::Base.transaction do
           image_batch.each do |image|
             new_position = LEGACY_POSITIONS_TO_NEW_VALUES.index(image.position.to_i) or raise StandardError, "Legacy position #{ image.position } unmapped!"
