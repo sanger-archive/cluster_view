@@ -10,35 +10,6 @@ module Legacy
     named_scope :valid_filename, :conditions => [ 'filename IS NOT NULL' ]
     named_scope :not_already_migrated, :conditions => [ '(migrated IS NULL OR migrated=0)' ]
 
-    def self.find_in_batches(options = {}, &block)
-      options.symbolize_keys!
-      options[ :limit ] ||= 50
-      options.delete(:offset)
-
-      with_scope(:find => options) do 
-        offset, records = 0, self.all(:offset => 0)
-        while not records.empty?
-          yield(records)
-          if records.size < options[ :limit ]
-            # When the migrations ran in staging there was a mismatch in the number of images processed
-            # and the total that should have been processed.  The only way a valid migration could have
-            # occurred, and these two values being different, was if the set of results in 'records' 
-            # was less that the requested limit and the offset was half way through.  In other words,
-            # some kind of bug in MySQL or the query used.
-            #
-            # This makes a second attempt to query for the group to see if the results are different
-            # sizes.  If they aren't we're apparently good, otherwise we're screwed.
-            second_attempt = self.all(:offset => offset)
-            break if records.size == second_attempt.size
-            raise StandardError, "Result set different sizes: #{ records.size } != #{ second_attempt.size } (offset=#{ offset })"
-          end
-
-          offset  = offset + records.size
-          records = self.all(:offset => offset)
-        end
-      end
-    end
-
     def self.valid_for_migration
       [ :not_already_migrated, :valid_position, :valid_filename ].inject(self) { |target,scope| target.send(scope) }
     end
@@ -84,7 +55,7 @@ module Legacy
       # when the first order has the same value.  Here we know that 'id' is unique, so that as a
       # second ordering is safe.
       migrated = total = 0
-      images.find_in_batches(:order => 'created_at DESC, id DESC', :limit => limit) do |image_batch|
+      images.find_in_batches(:batch_size => limit) do |image_batch|
         ActiveRecord::Base.transaction do
           image_batch.each do |image|
             new_position = LEGACY_POSITIONS_TO_NEW_VALUES.index(image.position.to_i) or raise StandardError, "Legacy position #{ image.position } unmapped!"
@@ -93,11 +64,10 @@ module Legacy
             begin
               begin
                 File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
+                migrated += 1
               ensure
                 image.migrated!
               end
-
-              migrated += 1
             rescue ActiveRecord::RecordInvalid => exception
               say(RAILS_DEFAULT_LOGGER.info("Legacy image file #{ filename } has errors - #{ exception.message }"))
             rescue Errno::ENOENT => exception
