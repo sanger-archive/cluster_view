@@ -51,13 +51,17 @@ module Legacy
 
       say(RAILS_DEFAULT_LOGGER.info("About to migrate #{ expected } in batches of #{ limit } ..."))
 
-      # It is a good idea to order by multiple columns to reduce the chance of ordering issues
-      # when the first order has the same value.  Here we know that 'id' is unique, so that as a
-      # second ordering is safe.
+      # Find all of the legacy images and migrate them in batches to reduce the memory consumption
+      # and transaction time.  Can't use find_in_batches because it'll order only by one column and
+      # created_at is not unique.
       migrated = total = 0
-      images.find_in_batches(:batch_size => limit) do |image_batch|
+      migrating = images.all(:order => 'created_at DESC, id DESC')
+      while !migrating.empty?
         ActiveRecord::Base.transaction do
-          image_batch.each do |image|
+          (0...limit).each do |_|
+            break if migrating.empty?
+
+            image        = migrating.shift
             new_position = LEGACY_POSITIONS_TO_NEW_VALUES.index(image.position.to_i) or raise StandardError, "Legacy position #{ image.position } unmapped!"
             filename     = File.expand_path(File.join(Settings.legacy_clusterview_image_path, image.filename))
 
@@ -66,6 +70,7 @@ module Legacy
                 File.open(filename, 'r') { |file| ::Image.create!(:batch_id => image.batch_id.to_i, :position => new_position, :data => file) }
                 migrated += 1
               ensure
+                total    += 1
                 image.migrated!
               end
             rescue ActiveRecord::RecordInvalid => exception
@@ -76,7 +81,6 @@ module Legacy
           end
         end
         
-        total += image_batch.size
         say(RAILS_DEFAULT_LOGGER.info("Migrated #{ migrated } legacy images out of #{ total }(#{ expected }) so far"))
       end
     end
