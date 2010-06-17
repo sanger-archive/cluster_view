@@ -12,6 +12,7 @@ class Batch < ActiveResource::Base
   end
 
   self.site = Settings.sequencescape_url
+  self.headers.update('User-Agent' => Settings.user_agent_for_sequencescape)
 
   class << self
     def human_name

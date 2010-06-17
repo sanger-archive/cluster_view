@@ -24,10 +24,14 @@ module BatchHelper
     base.instance_eval do
       before(:each) do
         ActiveResource::HttpMock.respond_to do |mock|
-          mock.get "/batches/#{VALID_BATCH_ID}.xml", {}, FAKE_VALID_BATCH_XML
-          mock.get "/batches/#{INVALID_BATCH_ID}.xml", {}, nil, 404
+          mock.get "/batches/#{VALID_BATCH_ID}.xml", self.request_headers, FAKE_VALID_BATCH_XML
+          mock.get "/batches/#{INVALID_BATCH_ID}.xml", self.request_headers, nil, 404
         end
       end
     end
   end  
+
+  def request_headers
+    { 'User-Agent' => 'Clusterview (test)' }
+  end
 end
