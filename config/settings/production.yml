@@ -1,4 +1,5 @@
 sequencescape_url: http://psd-production.internal.sanger.ac.uk:6700
+user_agent_for_sequencescape: "Clusterview (production)"
 
 ldap_configuration:
   host: 'ldap.internal.sanger.ac.uk'

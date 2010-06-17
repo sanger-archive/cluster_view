@@ -1,1 +1,2 @@
 sequencescape_url: <%= ENV['sequencescape_url'] || 'http://localhost:3000' %>
+user_agent_for_sequencescape: "Clusterview (development)"
