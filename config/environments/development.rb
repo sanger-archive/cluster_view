@@ -17,4 +17,4 @@ config.action_controller.perform_caching             = false
 config.action_mailer.raise_delivery_errors = false
 
 # Gems required in the development environment.
-config.gem 'sqlite3-ruby', :version => '>= 1.2.5', :lib => 'sqlite3'
+config.gem 'sqlite3-ruby', :version => '~> 1.2.0', :lib => 'sqlite3'
