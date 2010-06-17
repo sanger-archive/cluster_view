@@ -1,5 +1,9 @@
 require 'spec_helper'
 
+class BatchesController
+  public :handle_batch_timeout
+end
+
 shared_examples_for('the batch is invalid') do
   it 'renders batch not found' do
     response.should redirect_to(root_path)
@@ -20,6 +24,15 @@ describe BatchesController do
 
   before(:each) do
     log_in_user('John Smith')
+  end
+
+  describe '#handle_batch_timeout' do
+    before(:each) do
+      Batch.should_receive(:find).with('1111').and_raise(ActiveResource::TimeoutError.new('Broken!'))
+      get 'show', :id => 1111
+    end
+
+    it_should_behave_like 'the batch is invalid'
   end
   
   context "GET 'show'" do

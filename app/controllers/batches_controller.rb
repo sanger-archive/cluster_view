@@ -57,6 +57,11 @@ private
     redirect_to root_path
   end
 
+  def handle_batch_timeout(batch_id)
+    flash[:error] = translate('batches.errors.timeout', :batch_id => batch_id)
+    redirect_to root_path
+  end
+
   def needs_events
     @events = []
   end
