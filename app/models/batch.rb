@@ -30,6 +30,8 @@ class Batch < ActiveResource::Base
   # have been updated to the specified block (if given).
   def update_attributes(attributes, &block)
     attributes.fetch(:images, []).each_with_index do |image_attributes,position|
+      next if image_attributes.blank?
+
       update_attributes_event = self.class.event_type_from_parameters(image_attributes) or next
       image_attributes.delete(:delete)
       image = send(:"update_attributes_by_#{ update_attributes_event }", image_attributes.merge(:position => position))

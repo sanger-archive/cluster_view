@@ -50,15 +50,25 @@ describe Batch do
       @batch.update_attributes(:images => [ @attributes ]) { |*args| @callback.called_with(*args) }
     end
 
-    it 'does not update or create an image if the event is nil' do
-      described_class.should_receive(:event_type_from_parameters).with(@attributes).and_return(nil)
-      @callback.should_receive(:called_with).with(any_args).never
+    it 'does not process no image attributes' do
+      described_class.should_receive(:event_type_from_parameters).with(any_args).never
     end
 
-    it 'performs the update based on the event type' do
-      described_class.should_receive(:event_type_from_parameters).with(@attributes).and_return(:does_not_exist)
-      @batch.should_receive(:update_attributes_by_does_not_exist).with(@attributes.merge(:position => 0)).and_return(:image)
-      @callback.should_receive(:called_with).with(:does_not_exist, :image)
+    context 'with attributes specified' do
+      before(:each) do
+        @attributes = { :some_attribute => :value }
+      end
+
+      it 'does not update or create an image if the event is nil' do
+        described_class.should_receive(:event_type_from_parameters).with(@attributes).and_return(nil)
+        @callback.should_receive(:called_with).with(any_args).never
+      end
+
+      it 'performs the update based on the event type' do
+        described_class.should_receive(:event_type_from_parameters).with(@attributes).and_return(:does_not_exist)
+        @batch.should_receive(:update_attributes_by_does_not_exist).with(@attributes.merge(:position => 0)).and_return(:image)
+        @callback.should_receive(:called_with).with(:does_not_exist, :image)
+      end
     end
   end
 

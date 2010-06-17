@@ -34,6 +34,16 @@ module Webrat
   module Methods
     delegate_to_session :fill_in_and_submit
   end
+
+  # Browsers do not upload blank file fields, so we have to modify the behaviour of Webrat to
+  # mimic that.
+  class FileField
+    def to_query_string
+      return nil if @value.nil?
+      @value.nil? ? set("") : set(digest_value)
+      super
+    end
+  end
 end
 
 Webrat.configure do |config|
