@@ -29,7 +29,7 @@ config.action_mailer.delivery_method = :test
 
 # Gems required by the test environment
 config.gem 'rspec-rails',   :version => '~> 1.3.2', :lib => false
-config.gem 'factory_girl',  :version => '~> 1.2.4'
+config.gem 'factory_girl',  :version => '1.2.4'
 config.gem 'ruby-net-ldap', :version => '~> 0.0.4', :lib => 'net/ldap'
 config.gem 'nokogiri'
 config.gem 'webrat'
