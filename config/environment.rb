@@ -18,6 +18,9 @@ class Rails::Configuration
   alias_method(:gem, :gem_with_vendor_checking)
 end
 
+# We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
+I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
@@ -58,6 +61,3 @@ Rails::Initializer.run do |config|
   end
   
 end
-
-# We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
-I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
