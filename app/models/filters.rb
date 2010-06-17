@@ -37,6 +37,9 @@ module Filters
         rescue ActiveRecord::RecordNotFound, ActiveResource::ResourceNotFound => exception
           logger.debug("The #{ object_class.name } could not be found from params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
           send(error_handler, object_id)
+        rescue ActiveResource::TimeoutError => exception
+          logger.debug("The #{ object_class.name } could not be retrieved for params[#{ parameter.inspect }] (id = #{ object_id.inspect })")
+          send(:"handle_#{ member_variable_name }_timeout", object_id)
         end
       end
     end

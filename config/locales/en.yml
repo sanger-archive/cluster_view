@@ -25,6 +25,7 @@ en:
   batches:
     errors:
       batch_not_found: 'Batch {{batch_id}} cannot be found.'
+      timeout: 'Sorry but we timed out trying to retrieve batch {{batch_id}}.  Please try again.'
 
     messages:
       image_upload:

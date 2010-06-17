@@ -11,7 +11,8 @@ class Batch < ActiveResource::Base
     end
   end
 
-  self.site = Settings.sequencescape_url
+  self.site    = Settings.sequencescape_url
+  self.timeout = Settings.timeout_to_sequencescape
   self.headers.update('User-Agent' => Settings.user_agent_for_sequencescape)
 
   class << self
