@@ -1,5 +1,9 @@
+def request_headers
+  { 'User-Agent' => 'Clusterview (test)' }
+end
+
 def configure_valid_batch_for(active_resource, batch_id)
-  active_resource.get "/batches/#{ batch_id }.xml", {}, <<-END_OF_FAKE_BATCH_XML
+  active_resource.get "/batches/#{ batch_id }.xml", request_headers(), <<-END_OF_FAKE_BATCH_XML
     <?xml version="1.0" encoding="utf-8"?>
     <batch>
       <id>#{ batch_id }</id>
@@ -19,7 +23,7 @@ def configure_valid_batch_for(active_resource, batch_id)
 end
 
 def configure_invalid_batch_for(active_resource, batch_id)
-  active_resource.get "/batches/#{ batch_id }.xml", {}, nil, 404
+  active_resource.get "/batches/#{ batch_id }.xml", request_headers(), nil, 404
 end
 
 def pretend_batch_for(batch_id)
@@ -139,7 +143,7 @@ Given /^the samples for batches are:$/ do |table|
           end
         }
       }
-      http.get "/batches/#{ batch_id }.xml", {}, batch_xml
+      http.get "/batches/#{ batch_id }.xml", request_headers(), batch_xml
     end
   end)
 end
