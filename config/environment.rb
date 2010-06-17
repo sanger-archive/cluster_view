@@ -18,6 +18,9 @@ class Rails::Configuration
   alias_method(:gem, :gem_with_vendor_checking)
 end
 
+# We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
+I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
@@ -31,7 +34,7 @@ Rails::Initializer.run do |config|
   config.gem 'haml', :version => '~> 2.2.23'
   config.gem 'compass', :version => '~> 0.8.0'
   config.gem 'formtastic', :version => '~> 0.9.8'
-  config.gem 'authlogic', :version => '~> 2.1.3'
+  config.gem 'authlogic', :version => '2.1.3'
   config.gem 'patshaughnessy-paperclip', :lib => 'paperclip', :version => '~> 2.2.8'
 
   # Only load the plugins named here, in the order given (default is alphabetical).
@@ -58,6 +61,3 @@ Rails::Initializer.run do |config|
   end
   
 end
-
-# We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
-I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true

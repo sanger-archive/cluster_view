@@ -28,12 +28,14 @@ config.action_mailer.delivery_method = :test
 # config.active_record.schema_format = :sql
 
 # Gems required by the test environment
-config.gem 'rspec-rails',   :version => '>= 1.3.2', :lib => false
-config.gem 'factory_girl',  :version => '>= 1.2.4'
-config.gem 'ruby-net-ldap', :version => '>= 0.0.4', :lib => 'net/ldap'
+config.gem 'rspec-rails',   :version => '~> 1.3.2', :lib => false
+config.gem 'factory_girl',  :version => '~> 1.2.4'
+config.gem 'ruby-net-ldap', :version => '~> 0.0.4', :lib => 'net/ldap'
 config.gem 'nokogiri'
 config.gem 'webrat'
 #config.gem 'rspec-rails'
 
 # If we're running under Hudson then we should also include the continuous integration stuff
 config.gem 'ci_reporter', :lib => false unless ENV[ 'CI_REPORTS' ].nil?
+
+config.gem 'sqlite3-ruby', :version => '~> 1.2.0', :lib => 'sqlite3'
