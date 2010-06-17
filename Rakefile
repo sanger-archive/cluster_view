@@ -12,6 +12,7 @@ require 'tasks/rails'
 begin
   gem 'ci_reporter'
   require 'ci/reporter/rake/rspec'
+  require 'ci/reporter/rake/cucumber'
 rescue Gem::LoadError => exception
   # Ignore this, you simply don't have the file!
 end
