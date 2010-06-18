@@ -69,16 +69,16 @@ describe BulkUpload do
       @bulk_upload.complete_for_batch(@batch)
     end
 
-    it 'updates the associated Image instances to be in the correct order' do
+    it 'updates the associated Image instances to be in the correct order starting in the bottom right corner' do
       @batch.images.inject([]) { |a,image| a[ image.position ] = image.data_file_name ; a }.should == [
-        "7.tif", "8.tif", 
-        "6.tif", "9.tif", 
-        "5.tif", "10.tif", 
-        "4.tif", "11.tif", 
-        "3.tif", "12.tif", 
-        "2.tif", "13.tif", 
-        "1.tif", "14.tif", 
-        "0.tif", "15.tif"
+         "8.tif",  "7.tif",
+         "9.tif",  "6.tif",
+         "10.tif", "5.tif", 
+         "11.tif", "4.tif", 
+         "12.tif", "3.tif", 
+         "13.tif", "2.tif", 
+         "14.tif", "1.tif", 
+         "15.tif", "0.tif"
       ]
     end
   end
