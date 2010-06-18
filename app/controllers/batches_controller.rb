@@ -22,10 +22,15 @@ class BatchesController < ApplicationController
   end
   
   def update
-    @batch.update_attributes(params[ :batch ]) do |event,image|
-      @events.push(translate("batches.messages.image_upload.#{ event }", :data_file_name => image.data_file_name))
+    if params[:batch].nil?
+      flash[:error] = translate('batches.errors.empty_submission', :batch_id => @batch.id)
+	    redirect_to(batch_path(@batch))
+    else
+      @batch.update_attributes(params[ :batch ]) do |event,image|
+        @events.push(translate("batches.messages.image_upload.#{ event }", :data_file_name => image.data_file_name))
+      end
+      render :show
     end
-    render :show
   end
 
   def thumbnail

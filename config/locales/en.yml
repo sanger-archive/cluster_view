@@ -26,6 +26,7 @@ en:
     errors:
       batch_not_found: 'Batch {{batch_id}} cannot be found.'
       timeout: 'Sorry but we timed out trying to retrieve batch {{batch_id}}.  Please try again.'
+      empty_submission: 'You have not attached any images for batch {{batch_id}}'
 
     messages:
       image_upload:

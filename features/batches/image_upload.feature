@@ -12,6 +12,12 @@ Feature: Image Upload
     And batch "902" has no images
 
     Then setup the batches
+
+  Scenario: Uploading no images should display error
+    Given I am on the show page for batch "1023"
+    When I press "Upload"
+    Then I should be on the show page for batch "1023"
+    And I should see "You have not attached any images for batch 1023"
   
   Scenario: Uploading an image in an empty position
     Given I am on the show page for batch "1023"
