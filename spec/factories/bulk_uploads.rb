@@ -3,6 +3,6 @@ Factory.define('Bulk upload', :class => BulkUpload) do |bulk|
     (0..15).map { |index| Factory('Bulk upload image', :data_file_name => "#{ index }.tif") }
   end
 end
-Factory.define('Bulk upload image', :class => Image) do |image|
+Factory.define('Bulk upload image', :class => BulkUploadImage) do |image|
   image.sequence(:position) { |index| index % 16 }
 end

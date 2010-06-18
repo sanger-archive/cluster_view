@@ -1,30 +1,10 @@
-require 'paperclip/fixes_for_db'
-
 # Clusterview is about viewing images, each Image instance represents a photograph of the
 # clusters on a slide.  Each Batch instance has 16 images, 2 per lane, and they are generally
 # greyscale TIFF images.
 class Image < ActiveRecord::Base
+  include ImageBehaviour
   
   DATA_THUMBNAIL_CONTENT_TYPE = "image/jpeg"
-  
-  has_attached_file :data,
-    :storage => :database, :column => "data_file",
-    :styles => { :thumbnail => {:geometry => "400x400>", :format => "jpg", :column => "data_thumbnail_file"} },
-    :convert_options => { :thumbnail => "-normalize" }
-
-  # We do not need to destroy the attachments as they are part of the database, so override
-  # this method to do nothing!
-  def destroy_attached_files
-    # Nothing to do
-  end
-
-  validates_presence_of :position
-  validates_numericality_of :position, :integer_only => true
-  validates_inclusion_of :position, :in => (0..15)
-
-  # The position of the image must be unique within the Batch instance, or within the BulkUpload instance.
-  validates_uniqueness_of :position, :scope => :batch_id, :if => :batch_id?
-  validates_uniqueness_of :position, :scope => :bulk_upload_id, :if => :bulk_upload_id?
 
   named_scope :for_batch, proc { |batch|
     { :conditions => [ 'batch_id=?', batch.id ], :order => 'position' }
@@ -32,14 +12,6 @@ class Image < ActiveRecord::Base
   
   named_scope :by_batch_and_image_id, proc { |batch,image_id|
     { :conditions => [ 'batch_id=? AND id=?', batch.id, image_id ], :order => 'position' }
-  }
-
-  named_scope :for_bulk_upload, proc { |bulk_upload|
-    { :conditions => [ 'bulk_upload_id=?', bulk_upload.id ], :order => 'position' }
-  }
-
-  named_scope :in_position, proc { |position|
-    { :conditions => [ 'position=?', position ] }
   }
   
   def root_filename
