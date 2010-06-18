@@ -20,11 +20,6 @@ describe Image do
       it_has_order('position')
     end
 
-    using_named_scope(:for_bulk_upload, mock_bulk_upload) do
-      it_has_conditions('bulk_upload_id=?', 'BULK UPLOAD ID')
-      it_has_order('position')
-    end
-
     using_named_scope(:in_position, :position) do
       it_has_conditions('position=?', :position)
     end

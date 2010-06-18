@@ -1,4 +1,4 @@
-@requires_user_to_be_logged_in
+@requires_user_to_be_logged_in @wip
 Feature: Technicians need to be able to delete images from a batch
   Background:
     Given batch ID "3456" is valid

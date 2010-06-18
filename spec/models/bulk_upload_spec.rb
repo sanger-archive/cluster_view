@@ -14,27 +14,28 @@ describe BulkUpload do
   describe '#upload_data' do
     it 'creates an appropriate image instance' do
       @bulk_upload.upload_data(nil)
-      Image.for_bulk_upload(@bulk_upload).all.should_not be_empty
+      BulkUploadImage.for_bulk_upload(@bulk_upload).all.should_not be_empty
     end
 
     it 'sets the position of the image to the count of the associated images' do
-      @bulk_upload.stub!(:images).and_return((0..10).to_a)
+      11.times { |_| Factory('Bulk upload image', :bulk_upload_id => @bulk_upload.id) }
+
       @bulk_upload.upload_data(nil)
-      Image.for_bulk_upload(@bulk_upload).in_position(11).all.should_not be_empty
+      BulkUploadImage.for_bulk_upload(@bulk_upload).in_position(11).all.should_not be_empty
     end
 
     it 'allows the position to be specified' do
       @bulk_upload.upload_data(nil, 14)
-      Image.for_bulk_upload(@bulk_upload).in_position(14).all.should_not be_empty
+      BulkUploadImage.for_bulk_upload(@bulk_upload).in_position(14).all.should_not be_empty
     end
 
     context 'with existing images present' do
       before(:each) do
-        @original = Image.create!(:bulk_upload_id => @bulk_upload.id, :position => 9)
+        @original = BulkUploadImage.create!(:bulk_upload_id => @bulk_upload.id, :position => 9)
         @bulk_upload.upload_data(nil, 9)
       end
       
-      subject { Image.for_bulk_upload(@bulk_upload).in_position(9).all }
+      subject { BulkUploadImage.for_bulk_upload(@bulk_upload).in_position(9).all }
 
       it 'destroys any Image instances that may already exist at the position' do
         subject.should_not include(@original)

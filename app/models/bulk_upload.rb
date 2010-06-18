@@ -18,7 +18,7 @@ class BulkUpload < ActiveRecord::Base
     end
   end
   
-  has_many :images, :extend => ImagesExtension
+  has_many :images, :extend => ImagesExtension, :class_name => 'BulkUploadImage', :dependent => :destroy
 
   # Each upload of an image is attached to this instance through this method.  At this point the image
   # position is simply assumed to be based on the number that have been previously uploaded.
@@ -27,8 +27,8 @@ class BulkUpload < ActiveRecord::Base
 
     # Because the BulkUpload could be resuming from a previously failed state we need to destroy all of
     # the Image instances that may occupy our position.
-    Image.for_bulk_upload(self).in_position(index).all.each(&:destroy)
-    Image.create!(:bulk_upload_id => self.id, :data => source, :position => index)
+    self.images.in_position(index).destroy_all
+    self.images.create!(:data => source, :position => index)
   end
 
   # Attaches all of the images that have been uploaded within this bulk upload to the specified Batch
@@ -51,11 +51,19 @@ private
   # of the images associated with this instance to that Batch.  The images are associated such
   # that they are in the correct order for the view.
   def complete_for_batch(batch)
-    Image.transaction do
-      batch.images.destroy_all
+    BulkUploadImage.transaction do
+      # We can prebuild the image data ...
+      image_data = []
       self.images.sorted_numerically.each_with_index do |image,index|
-        image.update_attributes(:batch_id => batch.id, :bulk_upload_id => nil, :position => POSITION_FROM_INDEX[ index ])
+        image_data.push(:batch_id => batch.id, :position => POSITION_FROM_INDEX[ index ], :data => image.data)
       end
+
+      # ... then do the necessary image changes
+      Image.transaction do
+        Image.all(:conditions => { :batch_id => batch.id }).each(&:destroy)
+        Image.create!(image_data)
+      end
+      
       batch
     end
   end
