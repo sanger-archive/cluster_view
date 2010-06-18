@@ -52,7 +52,7 @@ private
   # that they are in the correct order for the view.
   def complete_for_batch(batch)
     Image.transaction do
-      batch.images.each { |image| image.destroy }
+      batch.images.destroy_all
       self.images.sorted_numerically.each_with_index do |image,index|
         image.update_attributes(:batch_id => batch.id, :bulk_upload_id => nil, :position => POSITION_FROM_INDEX[ index ])
       end
