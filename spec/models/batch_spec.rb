@@ -38,6 +38,11 @@ describe Batch do
         sample.name.should == 'sample from library 1'
       end
     end
+
+    it 'returns empty array for blank sample' do
+      @batch.should_receive(:lanes).and_return('')
+      @batch.samples.should be_empty
+    end
   end
   
   describe '#update_attributes' do

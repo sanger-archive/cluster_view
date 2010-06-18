@@ -40,6 +40,9 @@ class Batch < ActiveResource::Base
   end
 
   def samples
+    # ActiveResource treats empty elements as containing a string, so we have to check whether
+    # the 'lane' method exists.  If it doesn't, return an empty array.
+    return [] unless self.lanes.respond_to?(:lane)
     self.lanes.lane.map do |lane|
       sample_type = lane.respond_to?(:library) ? :library : :control
       Sample.new(self, lane.position.to_i, lane.send(sample_type).name)
