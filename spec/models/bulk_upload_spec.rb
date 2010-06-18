@@ -82,4 +82,30 @@ describe BulkUpload do
       ]
     end
   end
+  
+  describe "#numeric_from_filename" do
+    before(:each) do
+      class ImagesExtensionDummy
+        include BulkUpload::ImagesExtension
+      end
+      
+      @images_extension_dummy = ImagesExtensionDummy.new
+    end
+    
+    it "returns 12 from a filename of 'IMAGE012.Tif'" do
+      @images_extension_dummy.numeric_from_filename('IMAGE012.Tif').should == 12
+    end
+    
+    it "returns 12 from a filename of '12.Tif'" do
+      @images_extension_dummy.numeric_from_filename('12.Tif').should == 12
+    end
+    
+    it "raise an exception if the filename doesn't contain a number" do
+      lambda {
+        @images_extension_dummy.numeric_from_filename('NOT_A_NUMBER.tiff')
+      }.should raise_error
+    end
+    
+    
+  end
 end

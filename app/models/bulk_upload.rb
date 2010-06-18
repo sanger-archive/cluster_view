@@ -2,7 +2,7 @@
 # of the upload.  This enables us to do some better error handling and dealing with the necessary
 # updates to the Batch.
 class BulkUpload < ActiveRecord::Base
-  has_many :images do
+  module ImagesExtension
     # Returns the Image instances so that they are sorted by the numerical value of their filename,
     # rather than the alphabetic.  This ensures that the sequence is correct for positional
     # adjustment later.
@@ -13,10 +13,12 @@ class BulkUpload < ActiveRecord::Base
     end
 
     def numeric_from_filename(filename)
-      match = /^(\d+)\..+$/.match(filename) or raise "Filename '#{ filename }' does not appear to be numeric"
-      match[ 0 ].to_i
+      match = /^[a-zA-Z]*(\d+)\..+$/.match(filename) or raise "Filename '#{ filename }' does not appear to be numeric"
+      match[ 1 ].to_i
     end
   end
+  
+  has_many :images, :extend => ImagesExtension
 
   # Each upload of an image is attached to this instance through this method.  At this point the image
   # position is simply assumed to be based on the number that have been previously uploaded.
