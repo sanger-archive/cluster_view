@@ -44,7 +44,8 @@ private
   # The index of an Image instance within the +images+ association, when sorted numerically, can be
   # mapped to the physical position of the image on the batch.  Essentially the images are take from
   # lane 8 up to lane 1 and then back down from lane 1 to lane 8.
-  POSITION_FROM_INDEX = [ 14, 12, 10, 8, 6, 4, 2, 0, 1, 3, 5, 7, 9, 11, 13, 15 ]
+  POSITION_FROM_INDEX = [15, 13, 11, 9, 7, 5, 3, 1, 0, 2, 4, 6, 8, 10, 12, 14]
+
 
   # Does the heavy lifting associated with completing a bulk upload for the given Batch.
   # Destroys all of the images currently associated with the given batch and then associates all
