@@ -53,16 +53,21 @@ private
   # that they are in the correct order for the view.
   def complete_for_batch(batch)
     BulkUploadImage.transaction do
-      # We can prebuild the image data ...
-      image_data = []
+      # First thing we do is remap the position of the images attached to us so that they will be
+      # correct when attached to a Batch.
       self.images.sorted_numerically.each_with_index do |image,index|
-        image_data.push(:batch_id => batch.id, :position => POSITION_FROM_INDEX[ index ], :data => image.data)
+        image.batch_id = batch.id
+        image.position = POSITION_FROM_INDEX[ index ]
+        image.save(false)
       end
 
-      # ... then do the necessary image changes
+      # Now we know that those images have passed the necessary validations for attachment to Batch
+      # and are correctly positioned, we can simply bulk insert them into the images table.  This is
+      # an efficiency saving as validates_uniqueness_of, used for the position checks, is horribly,
+      # horribly slow on such a large table.
       Image.transaction do
-        Image.all(:conditions => { :batch_id => batch.id }).each(&:destroy)
-        Image.create!(image_data)
+        Image.for_batch(batch).all.each(&:destroy)
+        Image.insert_from_bulk_upload(self)
       end
       
       batch
