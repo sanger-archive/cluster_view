@@ -1,2 +1,2 @@
-rvm use 1.8.6-p383
+rvm use 1.8.6
 rvm gemset use clusterview
