@@ -1,7 +1,7 @@
 #!/bin/sh
 # take parametes?
 #RUBY=1.8.6 #-p399
-#RAILS=2.3.5
+RAILS=2.3.5
 
 gem install rails -v=$RAILS #RY!
 rake gems:install RAILS_ENV=test
