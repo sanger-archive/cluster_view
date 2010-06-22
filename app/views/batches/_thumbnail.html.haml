@@ -5,7 +5,7 @@
 
   - form.array_fields_for(:images, sample.image_index_for_side(side)) do |fields|
     - fields.inputs(:class => 'upload_details') do
-      = fields.input(:data, :as => :file, :required => false, :label => false)
+      = fields.input(:data, :as => :file, :required => false, :label => "Image Number: #{image_number(side,sample.lane)}")
       - sample.image(side) do |image|
         = fields.input(:delete, :wrapper_html => { :class => 'action delete' }, :as => :boolean, :required => false, :unchecked_value => '', :label => "Delete image #{ image.root_filename }")
         = fields.input(:id, :as => :hidden, :input_html => { :value => image.id })

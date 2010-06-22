@@ -22,4 +22,22 @@ describe BatchesHelper do
       helper.status_of(mock('batch', :status => 'foobar')).should == 'localised status'
     end
   end
+  
+  describe "#image_number" do
+    it "returns 1 for an image in lane 8 on the right hand side." do
+      helper.image_number(:right,8).should == 1
+    end
+    
+    it "returns 8 for an image in lane 1 on the right hand side" do
+      helper.image_number(:right,1).should == 8
+    end
+    
+    it "returns 9 for an image in lane 1 on the left hand side" do
+      helper.image_number(:left,1).should == 9
+    end
+    
+    it "returns 16 for an image in lane 8 on the left hand side" do
+      helper.image_number(:left,8).should == 16
+    end
+  end
 end
