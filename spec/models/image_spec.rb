@@ -25,6 +25,15 @@ describe Image do
     end
   end
 
+  describe '.insert_from_bulk_upload' do
+    it 'uses INSERT INTO ... SELECT ... FROM' do
+      bulk_upload, connection = mock_model(BulkUpload), mock('connection')
+      connection.should_receive(:execute).with(/INSERT INTO images\(#{ Image::COLUMNS_FOR_BULK_INSERT }\) SELECT #{ Image::COLUMNS_FOR_BULK_INSERT } FROM bulk_upload_images WHERE bulk_upload_id = \d+/).and_return(:ok)
+      Image.stub!(:connection).and_return(connection)
+      Image.insert_from_bulk_upload(bulk_upload).should == :ok
+    end
+  end
+
   describe '#root_filename' do
     subject { Image.new(:data_file_name => 'dir1/dir2/data file name.ext').root_filename }
 

@@ -30,6 +30,14 @@ class Image < ActiveRecord::Base
   alias_attribute :data_image_file, :data_file
   alias_attribute :data_image_content_type, :data_content_type
   alias_attribute :data_image_file_name, :data_file_name
+
+  COLUMNS_FOR_BULK_INSERT = %w{batch_id position created_at updated_at data_file data_thumbnail_file data_file_name data_file_size data_content_type data_updated_at}.join(',')
+
+  def self.insert_from_bulk_upload(bulk_upload)
+    self.connection.execute(%Q{
+      INSERT INTO images(#{ COLUMNS_FOR_BULK_INSERT }) SELECT #{ COLUMNS_FOR_BULK_INSERT } FROM bulk_upload_images WHERE bulk_upload_id = #{ bulk_upload.id }
+    })
+  end
   
   # Creates a method to send a type of image back to conduit class (e.g. a Controller)
   # with the correct MIME type and filename.
