@@ -88,4 +88,5 @@ if defined?(ActiveRecord::Base)
 end
 
 # Load in the authentication support stuff
+require File.join(File.dirname(__FILE__), 'factory_girl')
 require File.join(File.dirname(__FILE__), 'authentication_setup')
