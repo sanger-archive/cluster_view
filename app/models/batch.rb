@@ -44,8 +44,8 @@ class Batch < ActiveResource::Base
     # the 'lane' method exists.  If it doesn't, return an empty array.
     return [] unless self.lanes.respond_to?(:lane)
     self.lanes.lane.map do |lane|
-      sample_type = lane.respond_to?(:library) ? :library : :control
-      Sample.new(self, lane.position.to_i, lane.send(sample_type).name)
+      sample_type = [ :library, :pool ].find { |m| lane.respond_to?(m) } || :control
+      InternalSample.new(self, lane.position.to_i, lane.send(sample_type).name)
     end
   end
 
@@ -80,7 +80,7 @@ private
     end
   end
 
-  class Sample
+  class InternalSample
     attr_reader :batch
     attr_reader :lane
     attr_reader :name
