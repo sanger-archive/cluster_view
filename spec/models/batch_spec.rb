@@ -131,7 +131,7 @@ describe Batch do
   end
 end
 
-describe Batch::Sample do
+describe Batch::InternalSample do
   before(:each) do
     @batch = mock(Batch)
   end

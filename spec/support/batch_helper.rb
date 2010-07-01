@@ -1,6 +1,7 @@
 module BatchHelper
-  VALID_BATCH_ID = 5555.to_s
-  INVALID_BATCH_ID = 666.to_s
+  VALID_BATCH_ID     = 5555.to_s
+  INVALID_BATCH_ID   = 6666.to_s
+  MULTIPLEX_BATCH_ID = 7777.to_s
 
   FAKE_VALID_BATCH_XML = <<-END_OF_FAKE_BATCH_XML
   <?xml version="1.0" encoding="utf-8"?>
@@ -19,12 +20,31 @@ module BatchHelper
     </lanes>
   </batch>
   END_OF_FAKE_BATCH_XML
+
+  FAKE_MULTIPLEX_BATCH = <<-END_OF_FAKE_MULTIPLEX_BATCH
+  <?xml version="1.0" encoding="UTF-8"?>
+  <batch>
+    <id>#{ MULTIPLEX_BATCH_ID }</id>
+    <status>released</status>
+    <lanes>
+      <lane position="1"><pool name="sample pool 1"/></lane>
+      <lane position="2"><pool name="sample pool 2"/></lane>
+      <lane position="3"><pool name="sample pool 3"/></lane>
+      <lane position="4"><pool name="sample pool 4"/></lane>
+      <lane position="5"><pool name="sample pool 5"/></lane>
+      <lane position="6"><pool name="sample pool 6"/></lane>
+      <lane position="7"><pool name="sample pool 7"/></lane>
+      <lane position="8"><pool name="sample pool 8"/></lane>
+    </lanes>
+  </batch>
+  END_OF_FAKE_MULTIPLEX_BATCH
   
   def self.included(base)
     base.instance_eval do
       before(:each) do
         ActiveResource::HttpMock.respond_to do |mock|
           mock.get "/batches/#{VALID_BATCH_ID}.xml", self.request_headers, FAKE_VALID_BATCH_XML
+          mock.get "/batches/#{MULTIPLEX_BATCH_ID}.xml", self.request_headers, FAKE_MULTIPLEX_BATCH
           mock.get "/batches/#{INVALID_BATCH_ID}.xml", self.request_headers, nil, 404
         end
       end

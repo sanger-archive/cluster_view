@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'batches/_thumbnail' do
   before(:each) do
     @batch = mock(Batch, :id => 5678)
-    @sample = Batch::Sample.new(@batch, 3, 'sample')
+    @sample = Batch::InternalSample.new(@batch, 3, 'sample')
   end
 
   def render_view(locals)
