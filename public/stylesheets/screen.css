@@ -1,4 +1,3 @@
-/* line 6, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -17,145 +16,113 @@ table, caption, tbody, tfoot, thead, tr, th, td {
   font-family: inherit;
   vertical-align: baseline; }
 
-/* line 17, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 *:focus {
   outline: 0; }
 
-/* line 20, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 body {
   line-height: 1em;
   color: black;
   background: #fff; }
 
-/* line 23, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 ol, ul {
   list-style: none; }
 
 /* tables still need 'cellspacing="0"' in the markup */
-/* line 27, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 table {
   border-collapse: separate;
   border-spacing: 0;
   vertical-align: middle; }
 
-/* line 30, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 33, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 q, blockquote {
   quotes: "" ""; }
-  /* line 101, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
   q:before, q:after, blockquote:before, blockquote:after {
     content: ""; }
 
-/* line 36, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/general/_reset.sass */
 img a {
   border: none; }
 
-/* line 25, ../../app/stylesheets/screen.sass */
 *:focus {
   outline: #666666 dotted medium; }
 
-/* line 28, ../../app/stylesheets/screen.sass */
 body {
   background: #f8f8f8;
   color: #222222;
   font-family: 'Lucida Grande', helvetica, arial, sans-serif;
   font-size: 12px;
   line-height: 16px; }
-  /* line 37, ../../app/stylesheets/screen.sass */
   body a {
     text-decoration: none; }
-    /* line 4, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/links/_hover_link.sass */
     body a:hover {
       text-decoration: underline; }
-  /* line 40, ../../app/stylesheets/screen.sass */
   body .clear {
     clear: both; }
-  /* line 43, ../../app/stylesheets/screen.sass */
   body input.prefilled {
     color: #d0d0d0; }
 
-/* line 46, ../../app/stylesheets/screen.sass */
 #content {
   padding: 3px; }
-  /* line 49, ../../app/stylesheets/screen.sass */
   #content h1 {
     font-size: 24px;
     line-height: 30px;
     text-align: center; }
 
-/* line 54, ../../app/stylesheets/screen.sass */
 #header {
   background: #2f3b5d;
   border-top: 3px solid #0077a9;
   color: #efefef;
   padding: 3px 10px 5px; }
-  /* line 60, ../../app/stylesheets/screen.sass */
   #header a {
     color: #efefef; }
-  /* line 63, ../../app/stylesheets/screen.sass */
   #header #description {
     display: inline;
     float: left; }
-    /* line 66, ../../app/stylesheets/screen.sass */
     #header #description img, #header #description h1 {
       display: inline-block; }
-  /* line 69, ../../app/stylesheets/screen.sass */
   #header #controls {
     display: inline;
     float: right;
     text-align: right; }
-    /* line 73, ../../app/stylesheets/screen.sass */
     #header #controls ul {
       list-style-type: none;
       margin: 0px;
       padding: 0px;
       display: inline; }
-      /* line 8, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/lists/_inline_list.sass */
       #header #controls ul li {
         margin: 0px;
         padding: 0px;
         display: inline; }
-      /* line 76, ../../app/stylesheets/screen.sass */
       #header #controls ul li:after {
         content: ' * '; }
-      /* line 79, ../../app/stylesheets/screen.sass */
       #header #controls ul li:last-child:after, #header #controls ul li.last {
         content: ''; }
-    /* line 82, ../../app/stylesheets/screen.sass */
     #header #controls #quick_search {
       display: inline-block; }
 
-/* line 85, ../../app/stylesheets/screen.sass */
 #footer {
   border-top: 1px solid #d0d0d0;
   font-size: 10px;
   padding-top: 3px;
   color: #666666;
   text-align: center; }
-  /* line 92, ../../app/stylesheets/screen.sass */
   #footer a {
     color: #666666; }
-  /* line 95, ../../app/stylesheets/screen.sass */
   #footer ul {
     list-style-type: none;
     margin: 0px;
     padding: 0px;
     display: inline; }
-    /* line 8, ../../../../.rvm/gems/ruby-1.8.6-p383/gems/compass-0.8.17/frameworks/compass/stylesheets/compass/utilities/lists/_inline_list.sass */
     #footer ul li {
       margin: 0px;
       padding: 0px;
       display: inline; }
-    /* line 98, ../../app/stylesheets/screen.sass */
     #footer ul li {
       margin-right: 5px; }
 
-/* line 101, ../../app/stylesheets/screen.sass */
 #login {
   border: 3px solid #2f3b5d;
   background: #d0d0d0;
@@ -164,151 +131,114 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 400px; }
-  /* line 110, ../../app/stylesheets/screen.sass */
   #login h1 {
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 10px;
     padding-bottom: 5px;
     border-bottom: 1px solid #666666; }
-  /* line 117, ../../app/stylesheets/screen.sass */
   #login form {
     text-align: center; }
-    /* line 120, ../../app/stylesheets/screen.sass */
     #login form li {
       line-height: 30px; }
-      /* line 123, ../../app/stylesheets/screen.sass */
       #login form li label {
         display: inline-block;
         width: 7em;
         text-align: right;
         margin-right: 5px; }
-      /* line 129, ../../app/stylesheets/screen.sass */
       #login form li input {
         width: 20em; }
-      /* line 132, ../../app/stylesheets/screen.sass */
       #login form li.error input {
         background: #e98844;
         border: 1px solid #c92200; }
-      /* line 137, ../../app/stylesheets/screen.sass */
       #login form li.boolean label, #login form li.boolean input {
         width: auto; }
-      /* line 140, ../../app/stylesheets/screen.sass */
       #login form li .inline-errors {
         display: none; }
 
-/* line 143, ../../app/stylesheets/screen.sass */
 #errorExplanation {
   text-align: left;
   background: #e98844;
   border: 2px solid #c92200;
   padding: 5px;
   color: #f8f8f8; }
-  /* line 150, ../../app/stylesheets/screen.sass */
   #errorExplanation h2 {
     font-weight: bold; }
 
-/* line 153, ../../app/stylesheets/screen.sass */
 #bulk_upload {
   padding: 5px; }
-  /* line 156, ../../app/stylesheets/screen.sass */
   #bulk_upload #file_selection_container {
     position: relative; }
-    /* line 159, ../../app/stylesheets/screen.sass */
     #bulk_upload #file_selection_container * {
       position: absolute;
       width: 125px; }
-    /* line 163, ../../app/stylesheets/screen.sass */
     #bulk_upload #file_selection_container, #bulk_upload #file_selection_container * {
       height: 18px; }
-  /* line 166, ../../app/stylesheets/screen.sass */
   #bulk_upload #files_to_upload {
     list-style: disc;
     margin-left: 20px; }
-    /* line 170, ../../app/stylesheets/screen.sass */
     #bulk_upload #files_to_upload .status {
       color: #f8f8f8; }
-      /* line 173, ../../app/stylesheets/screen.sass */
       #bulk_upload #files_to_upload .status.finished {
         background-color: #22c900; }
-      /* line 176, ../../app/stylesheets/screen.sass */
       #bulk_upload #files_to_upload .status.intermediate {
         background-color: #c8c899; }
-      /* line 179, ../../app/stylesheets/screen.sass */
       #bulk_upload #files_to_upload .status.error {
         background-color: #c92200; }
-  /* line 182, ../../app/stylesheets/screen.sass */
   #bulk_upload .buttons ol li {
     display: inline-block; }
 
-/* line 185, ../../app/stylesheets/screen.sass */
 #flash .error {
   background-color: #c92200;
   color: #f8f8f8; }
 
-/* line 189, ../../app/stylesheets/screen.sass */
 #flash .warning {
   background-color: #e87815;
   color: #222222; }
 
-/* line 193, ../../app/stylesheets/screen.sass */
 #flash .message, #image_events {
   background-color: #22c900;
   color: #f8f8f8; }
 
-/* line 197, ../../app/stylesheets/screen.sass */
 #flash > *, #image_events, #bulk_upload #progress li {
   padding: 5px;
   margin: 5px;
   font-weight: bold;
   text-align: center; }
 
-/* line 203, ../../app/stylesheets/screen.sass */
 .batch > .lane {
   border: 1px solid #484848;
   padding: 5px;
   margin: 5px auto;
   text-align: center; }
-  /* line 209, ../../app/stylesheets/screen.sass */
   .batch > .lane .details {
     font-weight: bold; }
-  /* line 212, ../../app/stylesheets/screen.sass */
   .batch > .lane .thumbnail {
     margin: 2px;
     text-align: center;
     width: 410px; }
-    /* line 217, ../../app/stylesheets/screen.sass */
     .batch > .lane .thumbnail .upload_details .action.delete {
       display: none; }
-    /* line 219, ../../app/stylesheets/screen.sass */
     .batch > .lane .thumbnail .upload_details .file label {
       margin-right: 5px; }
-    /* line 221, ../../app/stylesheets/screen.sass */
     .batch > .lane .thumbnail img {
       width: 400px;
       height: 300px; }
-      /* line 225, ../../app/stylesheets/screen.sass */
       .batch > .lane .thumbnail img + p {
         margin: 4px auto; }
 
-/* line 228, ../../app/stylesheets/screen.sass */
 #thumbnails .lane > .thumbnail {
   display: inline-block; }
 
-/* line 231, ../../app/stylesheets/screen.sass */
 #comparison, #thumbnails .lane {
   min-width: 880px; }
 
-/* line 234, ../../app/stylesheets/screen.sass */
 #comparison {
   text-align: center; }
-  /* line 237, ../../app/stylesheets/screen.sass */
   #comparison .batch > .lane {
     display: inline-block;
     margin: auto 5px; }
-    /* line 241, ../../app/stylesheets/screen.sass */
     #comparison .batch > .lane .upload_details {
       display: none; }
-    /* line 244, ../../app/stylesheets/screen.sass */
     #comparison .batch > .lane .thumbnail {
       height: 300px; }
