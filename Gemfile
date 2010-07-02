@@ -23,6 +23,7 @@ group :test do
   gem 'nokogiri'
   gem 'webrat'
   gem 'sqlite3-ruby', '~> 1.2.0', :require => 'sqlite3'
+  gem 'ci_reporter'
 end
 
 group :cucumber do
