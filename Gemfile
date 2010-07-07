@@ -33,6 +33,6 @@ group :cucumber do
   gem 'sqlite3-ruby',     '~> 1.2.0', :require => 'sqlite3'
 end
 
-group :hudson do
-  gem 'ci_reporter'
+group :deployment do
+  gem 'mongrel_cluster'
 end
