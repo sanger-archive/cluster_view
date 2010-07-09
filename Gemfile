@@ -11,13 +11,14 @@ gem 'authlogic',  '= 2.1.3'
 
 # These two are only needed in the deployed environments, and in test
 gem 'mysql',         '>= 2.8.1'
-gem 'ruby-net-ldap', '>= 0.0.4', :require => 'net/ldap'
+gem 'net-ldap',      '~> 0.1.1'
 
 group :development do
   gem 'sqlite3-ruby', '~> 1.2.0', :require => 'sqlite3'
 end
 
 group :test do
+  gem 'test-unit',    '~> 1.2.3'
   gem 'rspec-rails',  '~> 1.3.2'
   gem 'factory_girl', '= 1.2.4'
   gem 'nokogiri'
@@ -34,5 +35,6 @@ group :cucumber do
 end
 
 group :deployment do
-  gem 'mongrel_cluster'
+  gem 'mongrel',         '>= 1.2.0.pre2'
+  gem 'mongrel_cluster', '>= 1.0.5'
 end

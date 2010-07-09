@@ -30,6 +30,8 @@ module Authlogic
   end
 end
 
+require 'spec/rails'
+
 module Spec
   module Rails
     module Example
