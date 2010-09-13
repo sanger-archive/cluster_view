@@ -13,6 +13,8 @@ gem 'authlogic',  '= 2.1.3'
 gem 'mysql',         '>= 2.8.1'
 gem 'net-ldap',      '~> 0.1.1'
 
+gem "cbrunnkvist-psd_logger"
+
 group :development do
   gem 'sqlite3-ruby', '~> 1.2.0', :require => 'sqlite3'
 end
