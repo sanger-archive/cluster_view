@@ -1,14 +1,6 @@
 require 'spec_helper'
 
 layout_spec_for('application') do
-  it 'has a link to the about page' do
-    response.should have_link_to(about_path)
-  end
-
-  it 'has a link to the feedback page' do
-    response.should have_link_to(feedback_path)
-  end
-
   it 'has a link to the root page' do
     response.should have_link_to(root_path)
   end
