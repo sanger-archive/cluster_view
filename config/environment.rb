@@ -55,7 +55,7 @@ Rails::Initializer.run do |config|
     File.directory?(lib = "#{dir}/lib") ? lib : dir
   end
   
-  unless ['development','test'].include? ENV['RAILS_ENV'] #Rails.env.development?
+  unless ['development','cucumber','test'].include? ENV['RAILS_ENV'] #Rails.env.development?
     require 'psd_logger'
     config.logger = PsdLogger.new
     config.active_record.colorize_logging = false
