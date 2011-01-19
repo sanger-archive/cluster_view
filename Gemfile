@@ -38,5 +38,5 @@ end
 
 group :deployment do
   gem 'mongrel',         '>= 1.2.0.pre2'
-  gem 'mongrel_cluster', :git => "http://github.com/kyusik/mongrel_cluster.git"
+  gem 'mongrel_cluster', '>= 1.0.5'
 end
