@@ -37,6 +37,5 @@ group :cucumber do
 end
 
 group :deployment do
-  gem 'mongrel',         '>= 1.2.0.pre2'
-  gem 'mongrel_cluster', :git => "http://github.com/kyusik/mongrel_cluster.git"
+  gem 'thin'
 end
