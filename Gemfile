@@ -6,8 +6,9 @@ gem 'compass',    '~> 0.8.0'
 gem 'formtastic', '~> 0.9.8'
 gem 'authlogic',  '= 2.1.3'
 
-# NOTE: this gem is in the vendor/gems directory because it has been modified
-#gem 'patshaughnessy-paperclip', '~> 2.2.8', :require => 'paperclip'
+# NOTE: using fork of the thoughtbot gem for :database storage module
+gem 'paperclip', '~> 2.3.0', :git => 'http://github.com/patshaughnessy/paperclip.git'
+
 
 # These two are only needed in the deployed environments, and in test
 gem 'mysql',         '>= 2.8.1'
