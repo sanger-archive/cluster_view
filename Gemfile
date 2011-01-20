@@ -7,7 +7,8 @@ gem 'formtastic', '~> 0.9.8'
 gem 'authlogic',  '= 2.1.3'
 
 # NOTE: using fork of the thoughtbot gem for :database storage module
-gem 'paperclip', '~> 2.3.0', :git => 'http://github.com/patshaughnessy/paperclip.git'
+# and then a fork of that which adds our changes for ImageMagick compat
+gem 'paperclip', '~> 2.3.0', :git => 'http://github.com/cbrunnkvist/paperclip.git'
 
 
 # These two are only needed in the deployed environments, and in test

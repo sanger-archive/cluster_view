@@ -1,6 +1,6 @@
 GIT
-  remote: http://github.com/patshaughnessy/paperclip.git
-  revision: 942a2b43383fd04c0434ca4b27379a114cb28a50
+  remote: http://github.com/cbrunnkvist/paperclip.git
+  revision: e90fca516c35d4a34b817c99a5e16c1d500c3091
   specs:
     paperclip (2.3.6)
       activerecord
