@@ -27,6 +27,3 @@ config.log_level = :info
 
 # Enable threaded mode
 # config.threadsafe!
-
-# Do not swallow the errors produced by ImageMagic convert
-Paperclip.options[:swallow_stderr] = false
