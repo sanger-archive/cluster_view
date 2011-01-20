@@ -26,6 +26,3 @@ config.action_view.cache_template_loading            = true
 
 # Enable threaded mode
 # config.threadsafe!
-
-# Do not swallow the errors produced by ImageMagic convert
-Paperclip.options[:swallow_stderr] = false
