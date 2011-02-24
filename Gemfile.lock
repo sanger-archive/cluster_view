@@ -24,7 +24,7 @@ GEM
       activesupport
     builder (3.0.0)
     cbrunnkvist-psd_logger (0.1.5)
-    ci_reporter (1.6.3)
+    ci_reporter (1.6.4)
       builder (>= 2.1.2)
     columnize (0.3.2)
     compass (0.8.17)

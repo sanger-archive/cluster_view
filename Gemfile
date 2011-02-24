@@ -22,6 +22,8 @@ group :development do
   gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
+gem 'factory_girl', '= 1.2.4', :groups => [:test, :cucumber]
+
 group :test do
   gem 'test-unit',    '~> 1.2.3'
   gem 'rspec-rails',  '~> 1.3.2'
@@ -31,10 +33,8 @@ group :test do
 end
 
 group :cucumber do
-#  gem "capybara", '~>0.3.9', :require => false
   gem "cucumber-rails"
   gem "database_cleaner", :require => false
-  gem "factory_girl", '~>1.3.1'
 end
 
 group :deployment do
