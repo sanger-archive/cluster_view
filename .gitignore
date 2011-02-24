@@ -15,3 +15,5 @@ metrics_directory/*
 db/*test.sqlite3
 .bundle
 rerun.txt
+.idea
+*/reports/*.xml
