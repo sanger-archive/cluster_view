@@ -27,7 +27,7 @@ class BulkUpload < ActiveRecord::Base
 
     # Because the BulkUpload could be resuming from a previously failed state we need to destroy all of
     # the Image instances that may occupy our position.
-    self.images.in_position(index).destroy_all
+    self.images.in_position(index).each {|i| i.destroy}
     self.images.create!(:data => source, :position => index)
   end
 

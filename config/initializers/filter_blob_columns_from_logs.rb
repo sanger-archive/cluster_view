@@ -2,10 +2,8 @@
 # that they get displayed in the log files.  This simply hides those columns.
 class ActiveRecord::ConnectionAdapters::AbstractAdapter
   def format_log_entry_with_blob_filtering(message, dump = nil)
-    dump = case
-    when /^INSERT INTO "?images"?/ =~ dump.to_s then 'INSERT INTO "images" (*** image data hidden ***)'
-    when /^UPDATE "?images"?/ =~ dump.to_s      then 'UPDATE "images" (*** image data hidden ***)'
-    else dump
+    if dump.try(:length).to_i > 400 && dump.match(/[\x80-\xff]/)
+      dump = dump[0,dump.index(/[\x80-\xff]/)] + "...[***truncating #{dump.length} bytes of SQL statement***]'"
     end
     format_log_entry_without_blob_filtering(message, dump)
   end

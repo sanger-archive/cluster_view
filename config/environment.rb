@@ -6,18 +6,6 @@ RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
-# Override the behaviour of Rails because this is what we'll do consistently elsewhere
-class Rails::Configuration
-  # Override the default behaviour of #gem so that it will not include the gem dependency
-  # if there is a plugin defined with the same name.
-  def gem_with_vendor_checking(name, options = {})
-    plugin_directory_name = options[ :lib ] || name
-    gem_without_vendor_checking(name, options) unless File.directory?(File.join(Rails.root, 'vendor', 'plugins', plugin_directory_name))
-  end
-  alias_method(:gem_without_vendor_checking, :gem)
-  alias_method(:gem, :gem_with_vendor_checking)
-end
-
 # We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
 I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
 
