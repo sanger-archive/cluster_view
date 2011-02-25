@@ -19,9 +19,10 @@ gem "cbrunnkvist-psd_logger"
 
 group :development do
   gem 'ruby-debug19', :require => false #either use [...]19 or github.com/mark-moseley/ruby-debug.git
-  gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
+# v1.3.0+ and onwards depends libsqlite3-dev 3.6.16+
+gem 'sqlite3-ruby', '~> 1.2.0', :require => 'sqlite3', :groups => [:development, :test, :cucumber]
 gem 'factory_girl', :groups => [:test, :cucumber]
 
 group :test do
