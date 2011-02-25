@@ -1,5 +1,3 @@
-require 'paperclip/fixes_for_db'
-
 module ImageBehaviour
   def self.included(base)
     base.class_eval do
