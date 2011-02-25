@@ -4,7 +4,7 @@ module ImageBehaviour
       has_attached_file :data,
         :storage => :database, :column => "data_file",
         :styles => { :thumbnail => {:geometry => "400x400>", :format => "jpg", :column => "data_thumbnail_file"} },
-        :convert_options => { :thumbnail => "-normalize" }
+        :convert_options => { :thumbnail => "-quiet -normalize" } #"-quiet" should hide warnings like "unknown field with tag"
 
       validates_presence_of :position
       validates_numericality_of :position, :integer_only => true
