@@ -22,7 +22,7 @@ group :development do
   gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
-gem 'factory_girl', '= 1.2.4', :groups => [:test, :cucumber]
+gem 'factory_girl', :groups => [:test, :cucumber]
 
 group :test do
   gem 'test-unit',    '~> 1.2.3'
