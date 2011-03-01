@@ -20,6 +20,8 @@ class BulkUpload < ActiveRecord::Base
   
   has_many :images, :extend => ImagesExtension, :class_name => 'BulkUploadImage', :dependent => :destroy
 
+  before_create :clean_up_leftovers!
+
   # Each upload of an image is attached to this instance through this method.  At this point the image
   # position is simply assumed to be based on the number that have been previously uploaded.
   def upload_data(source, index = nil)
@@ -37,6 +39,14 @@ class BulkUpload < ActiveRecord::Base
     batch = complete_for_batch(Batch.find(batch_id))
     self.destroy
     batch
+  end
+
+  # Destroying upload attempts older than X hours (-which are most likely stale!) should keep this
+  # staging-table from growing beyond reasonable size.
+  # (could've used a scope, but try search the web for "rails 2.3 bugs named_scope destroy_all")
+  def clean_up_leftovers!
+    nr_deleted = BulkUpload.destroy_all(["created_at < ?", 4.hours.ago]).count
+    Rails.logger.info("BulkUpload cleared out #{nr_deleted} record(s)") unless nr_deleted.zero?
   end
 
 private
