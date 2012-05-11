@@ -8,14 +8,12 @@ gem 'authlogic'
 
 # NOTE: using fork of the thoughtbot gem for :database storage module
 # and then a fork of that which adds our changes for ImageMagick compat
-gem 'paperclip', '~> 2.3.0', :git => 'http://github.com/cbrunnkvist/paperclip.git'
+gem 'paperclip', '~> 2.3.0', :git => 'git+ssh://git@github.com/cbrunnkvist/paperclip.git'
 
 
 # These two are only needed in the deployed environments, and in test
 gem 'mysql'
 gem 'net-ldap'
-
-gem "cbrunnkvist-psd_logger"
 
 group :development do
   gem 'ruby-debug19', :require => false #either use [...]19 or github.com/mark-moseley/ruby-debug.git
@@ -40,4 +38,5 @@ end
 
 group :deployment do
   gem 'thin'
+  gem "psd_logger", :git => "git+ssh://git@github.com/sanger/psd_logger.git"
 end
