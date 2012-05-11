@@ -42,11 +42,4 @@ Rails::Initializer.run do |config|
   config.load_paths += Dir["#{RAILS_ROOT}/vendor/gems/**"].map do |dir| 
     File.directory?(lib = "#{dir}/lib") ? lib : dir
   end
-  
-  unless ['development','cucumber','test'].include? ENV['RAILS_ENV'] #Rails.env.development?
-    require 'psd_logger'
-    config.logger = PsdLogger.new
-    config.active_record.colorize_logging = false
-    config.log_level = :warn
-  end
 end
