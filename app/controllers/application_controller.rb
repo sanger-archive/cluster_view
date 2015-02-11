@@ -5,6 +5,25 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
+  class << self
+
+    alias_method :filter_parameter_logging_without_form_vars, :filter_parameter_logging
+
+    def filter_parameter_logging(*filter_words, &block)
+      filter_parameter_logging_without_form_vars(*filter_words) do |key, value|
+        # Rails 2.3 can't split the 'rack.request.form_vars' env into sub
+        # string. So it doesn't filter the password. We need to do it ourselves
+        # in a block.
+        block.call(key,value) if block.present?
+
+        filter_words.each do |word|
+          rex= Regexp.new("&#{word}=[^&]*")
+          value.gsub!(rex,"&#{word}=[FILTERED]")
+        end if key == 'rack.request.form_vars'
+      end
+    end
+  end
+
   filter_parameter_logging :password, :password_confirmation
   helper_method :current_user_session, :current_user
 
