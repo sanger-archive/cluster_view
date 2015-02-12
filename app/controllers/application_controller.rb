@@ -15,10 +15,9 @@ class ApplicationController < ActionController::Base
         # string. So it doesn't filter the password. We need to do it ourselves
         # in a block.
         block.call(key,value) if block.present?
-
         filter_words.each do |word|
-          rex= Regexp.new("&#{word}=[^&]*")
-          value.gsub!(rex,"&#{word}=[FILTERED]")
+          rex= Regexp.new("&([^&]*)(#{word})(%5D){0,1}=[^&]*")
+          value.gsub!(rex,'&\1\2\3=[FILTERED]')
         end if key == 'rack.request.form_vars'
       end
     end
