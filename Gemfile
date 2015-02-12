@@ -21,7 +21,7 @@ end
 
 # v1.3.0+ and onwards depends libsqlite3-dev 3.6.16+
 gem 'sqlite3-ruby', '~> 1.2.0', :require => 'sqlite3', :groups => [:development, :test, :cucumber]
-gem 'factory_girl', :groups => [:test, :cucumber]
+gem 'factory_girl', '~> 1.3.1', :groups => [:test, :cucumber]
 
 group :test do
   gem 'test-unit',    '~> 1.2.3'

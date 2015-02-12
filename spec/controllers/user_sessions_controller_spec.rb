@@ -60,6 +60,15 @@ describe UserSessionsController do
         session_should_be_logged_in_as(@user)
       end
     end
+
+    context 'in any circumstances' do
+      it 'filters password from all lparameters' do
+        assert_equal(
+          {"rack.request.form_vars"=>"authenticity_token=xxxxx&user_session%5Busername%5D=test&user_session%5Bpassword%5D=[FILTERED]&user_session%5Bremember_me%5D=0&commit=Login"},
+          @controller.__send__(:filter_parameters,{"rack.request.form_vars"=>"authenticity_token=xxxxx&user_session%5Busername%5D=test&user_session%5Bpassword%5D=secret&user_session%5Bremember_me%5D=0&commit=Login"})
+          )
+      end
+    end
   end
 
   describe "GET 'destroy'" do
