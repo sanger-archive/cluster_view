@@ -1,13 +1,34 @@
 # Be sure to restart your server when you modify this file
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.15' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.18' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
 # We're on Mac OS X and libxml2 is broken, so stop Nokogiri complaining!
 I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
+
+# Monkey patch for rubygems 2.0 compatibility
+# John Anderson - http://djellemah.com/blog/2013/02/27/rails-23-with-ruby-20/
+module Gem
+  def self.source_index
+    sources
+  end
+
+  def self.cache
+    sources
+  end
+
+  SourceIndex ||= Specification
+
+  class SourceList
+    # If you want vendor gems, this is where to start writing code.
+    def search( *args ); []; end
+    def each( &block ); end
+    include Enumerable
+  end
+end
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
