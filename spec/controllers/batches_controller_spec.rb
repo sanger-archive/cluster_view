@@ -34,37 +34,39 @@ describe BatchesController do
 
     it_should_behave_like 'the batch is invalid'
   end
-  
+
   context "GET 'show'" do
     context 'when the batch is valid' do
       before(:each) do
         get 'show', :id => BatchHelper::VALID_BATCH_ID
       end
-      
+
       it 'assigns the batch for the view' do
         assigns[ :batch ].should_not be_nil
       end
     end
-    
+
     context 'when the batch is invalid' do
       before(:each) do
         get 'show', :id => BatchHelper::INVALID_BATCH_ID
       end
-      
+
       it_should_behave_like 'the batch is invalid'
     end
   end
-  
+
   context "PUT 'update'" do
     def self.performs_update_with_id(id)
       before(:each) do
-        put 'update', :id => id, :batch => { :images => { '0' => { :data => StringIO.new('image data') } } }
+        File.open(RAILS_ROOT+'/public/images/rails.png') do |file|
+          put 'update', :id => id, :batch => { :images => { '0' => { :data => file } } }
+        end
       end
     end
-    
+
     context 'when the batch is valid' do
       performs_update_with_id(BatchHelper::VALID_BATCH_ID)
-      
+
       it 'assigns the batch for the view' do
         assigns[ :batch ].should_not be_nil
       end
