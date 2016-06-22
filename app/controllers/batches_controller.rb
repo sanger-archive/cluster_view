@@ -12,7 +12,7 @@ class BatchesController < ApplicationController
   before_filter Filters::PrepareObjectFilter(Batch, :id), :only => [ :show, :update ]
   before_filter Filters::PrepareObjectFilter(Image, :image_id), :only => [ :image, :thumbnail ]
   before_filter :needs_events, :only => [ :show, :update ]
-  
+
   def index
     # Do nothing and fall through to the view
   end
@@ -20,7 +20,7 @@ class BatchesController < ApplicationController
   def show
     # Do nothing and fall through to the view
   end
-  
+
   def update
     if params[:batch].nil?
       flash[:error] = translate('batches.errors.empty_submission', :batch_id => @batch.id)
@@ -54,7 +54,7 @@ class BatchesController < ApplicationController
     flash[:error] = translate('batches.errors.batch_not_found', :batch_id => exception.batch_id)
     redirect_to root_path
   end
-  
+
 private
 
   def handle_batch_not_found_for(batch_id)
