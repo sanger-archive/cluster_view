@@ -24,15 +24,15 @@ en:
 
   batches:
     errors:
-      batch_not_found: 'Batch {{batch_id}} cannot be found.'
-      timeout: 'Sorry but we timed out trying to retrieve batch {{batch_id}}.  Please try again.'
-      empty_submission: 'You have not attached any images for batch {{batch_id}}'
+      batch_not_found: 'Batch %{batch_id} cannot be found.'
+      timeout: 'Sorry but we timed out trying to retrieve batch %{batch_id}.  Please try again.'
+      empty_submission: 'You have not attached any images for batch %{batch_id}'
 
     messages:
       image_upload:
-        create: 'Image {{data_file_name}} created successfully.'
-        update: 'Image {{data_file_name}} updated successfully.'
-        delete: 'Image {{data_file_name}} deleted successfully.'
+        create: 'Image %{data_file_name} created successfully.'
+        update: 'Image %{data_file_name} updated successfully.'
+        delete: 'Image %{data_file_name} deleted successfully.'
 
       comparison:
         identical_lanes: 'Comparing the same lane against itself makes no sense!'
@@ -48,7 +48,7 @@ en:
   bulk_upload:
     errors:
       not_found: 'Unable to find the bulk upload request'
-      
+
     messages:
-      completed: 'Completed bulk upload for batch {{batch_id}}'
+      completed: 'Completed bulk upload for batch %{batch_id}'
       cancelled: 'Bulkd upload cancelled'
