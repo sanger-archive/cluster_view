@@ -16,7 +16,8 @@ class BulkUploadController < ApplicationController
   # Each image that is uploaded comes through this action from the Flash upload tool.  They are simply
   # attached to the BulkUpload instance and we return OK or error.
   def upload
-    @bulk_upload.upload_data(params[ :data ], params[ :index ])
+    contents = {:file => params[:data]}
+    @bulk_upload.upload_data(contents, params[ :index ])
     render :text => 'DONE', :status => 200  # NOTE[md12]: Send back at least 1 non-whitespace byte for YUI Uploader to work!
   end
 
@@ -28,7 +29,7 @@ class BulkUploadController < ApplicationController
     redirect_to batch_path(batch)
   end
 
-  # This action handles cancelling a bulk upload *before* any files are being uploaded.  It does not 
+  # This action handles cancelling a bulk upload *before* any files are being uploaded.  It does not
   # handle doing it during an upload.
   def cancel
     @bulk_upload.destroy

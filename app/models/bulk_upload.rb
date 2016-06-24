@@ -1,4 +1,4 @@
-# When uploading multiple images in one step an instance of this model is created for the duration 
+# When uploading multiple images in one step an instance of this model is created for the duration
 # of the upload.  This enables us to do some better error handling and dealing with the necessary
 # updates to the Batch.
 class BulkUpload < ActiveRecord::Base
@@ -17,7 +17,7 @@ class BulkUpload < ActiveRecord::Base
       match[ 1 ].to_i
     end
   end
-  
+
   has_many :images, :extend => ImagesExtension, :class_name => 'BulkUploadImage', :dependent => :destroy
 
   before_create :clean_up_leftovers!
@@ -30,7 +30,7 @@ class BulkUpload < ActiveRecord::Base
     # Because the BulkUpload could be resuming from a previously failed state we need to destroy all of
     # the Image instances that may occupy our position.
     self.images.in_position(index).each {|i| i.destroy}
-    self.images.create!(:data => source, :position => index)
+    self.images.create!(:data => source[:file], :position => index)
   end
 
   # Attaches all of the images that have been uploaded within this bulk upload to the specified Batch
@@ -79,7 +79,7 @@ private
         Image.for_batch(batch).all.each(&:destroy)
         Image.insert_from_bulk_upload(self)
       end
-      
+
       batch
     end
   end
