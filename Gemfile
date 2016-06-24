@@ -1,6 +1,6 @@
 source 'http://rubygems.org/'
 
-gem 'rails',      '~> 2.3.15'
+gem 'rails',      '~> 2.3.18'
 gem 'haml',       '~> 2.2.3'
 gem 'compass',    '~> 0.8.0'
 gem 'formtastic', '~> 0.9.8'
@@ -12,7 +12,9 @@ gem 'paperclip', '~> 2.3.0', :git => 'git+ssh://git@github.com/cbrunnkvist/paper
 
 
 # These two are only needed in the deployed environments, and in test
-gem 'mysql'
+gem 'mysql2'
+gem 'activerecord-mysql2-adapter'
+
 gem 'net-ldap'
 
 group :development do
